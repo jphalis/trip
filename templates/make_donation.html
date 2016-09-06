@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}OBY / Make Donation{% endblock title %}
+
+{% block content %}
+    <div class="col-sm-6 col-sm-offset-3 general-container">
+        <p class="lead text-center">Make A Donation</p>
+        <form action="." method="POST" enctype="application/x-www-form-urlencoded" role="form">
+            <fieldset>
+                <legend>Payment Information</legend>
+                <div class="row">
+                    <div class="form-group col-sm-8 col-md-8 col-lg-8 {% if credit_card_form.card_number.errors %}has-error{% endif %}">
+                        <label for="{{ credit_card_form.card_number.auto_id }}" class="control-label">
+                            {{ credit_card_form.card_number.label }}
+                        </label>
+                        {{ credit_card_form.card_number|add_class:"form-control" }}
+                        {{ credit_card_form.card_number.errors }}
+                    </div>
+                    <div class="form-group col-sm-2 col-md-2 col-lg-2 {% if credit_card_form.cvc.errors %}has-error{% endif %}">
+                        <label for="{{ credit_card_form.cvc.auto_id }}" class="control-label">
+                            {{ credit_card_form.cvc.label }}
+                        </label>
+                        {{ credit_card_form.cvc|add_class:"form-control" }}
+                        {{ credit_card_form.cvc.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-3 col-md-3 col-lg-3 {% if credit_card_form.expire_month.errors %}has-error{% endif %}">
+                        <label for="{{ credit_card_form.expire_month.auto_id }}" class="control-label">
+                            {{ credit_card_form.expire_month.label }}
+                        </label>
+                        {{ credit_card_form.expire_month|add_class:"form-control" }}
+                        {{ credit_card_form.expire_month.errors }}
+                    </div>
+                    <div class="form-group col-sm-3 col-md-3 col-lg-3 {% if credit_card_form.expire_year.errors %}has-error{% endif %}">
+                        <label for="{{ credit_card_form.expire_year.auto_id }}" class="control-label">
+                            {{ credit_card_form.expire_year.label }}
+                        </label>
+                        {{ credit_card_form.expire_year|add_class:"form-control" }}
+                        {{ credit_card_form.expire_year.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                        <label for="{{ donation_form.amount.auto_id }}" class="control-label">
+                            {{ donation_form.amount.label }}
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            {{ donation_form.amount|add_class:"form-control" }}
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                        {{ donation_form.amount.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                        <label for="{{ donation_form.message.auto_id }}" class="control-label">
+                            {{ donation_form.message.label }}
+                        </label>
+                        {{ donation_form.message|add_class:"form-control" }}
+                        {{ donation_form.message.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-12 col-lg-12">
+                        <label for="{{ donation_form.is_anonymous.auto_id }}" class="control-label">
+                            Do you want your name hidden?
+                        </label><br/>
+                        {{ donation_form.is_anonymous }}
+                        {{ donation_form.is_anonymous.errors }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12 text-right">
+                        {% csrf_token %}
+                        <button id="submitButton" type="submit" class="submit-btn go-btn-form btn-block">
+                            Donate
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <p style="margin-top: 12px; font-size: 12px;">*No credit card information is stored in our systems.</p>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'js/donate.js' %}"></script>
+{% endblock js %}
