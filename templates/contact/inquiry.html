@@ -98,11 +98,11 @@
         {% csrf_token %}
         <div class="half left cf">
             <input type="text" placeholder="Company" name="company" />
-            <input type="text" placeholder="Name" name="name" required />
-            <input type="email" placeholder="Email" name="email" required />
+            <input type="text" placeholder="Name*" name="name" required />
+            <input type="email" placeholder="Email*" name="email" required />
         </div>
         <div class="half right cf">
-            <textarea type="text" placeholder="Message" name="message" required ></textarea>
+            <textarea type="text" placeholder="Message*" name="message" required ></textarea>
         </div>  
         <input type="submit" value="Submit" id="input-submit" name="contact_form" />
     </form>

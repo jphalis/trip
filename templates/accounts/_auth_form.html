@@ -19,7 +19,7 @@
         <h2>Create an account</h2>
         <form method="POST" action="{% url 'accounts:auth_login_register' %}">
             {% csrf_token %}
-            <input type="text" placeholder="Company name" name="company_name" required />
+            <input type="text" placeholder="Company" name="company_name" required />
             <input type="email" placeholder="Email" name="email" required />
             <input type="password" placeholder="Password" name="password" required />
             <input type="hidden" name="next" value="{{ next }}" />

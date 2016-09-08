@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import BadHeaderError
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_page
 
@@ -18,27 +20,28 @@ def inquiry(request):
         email = form.cleaned_data['email']
         message = form.cleaned_data['message']
 
-        print message
-
-        subject = 'Trip Inquiry'
         from_email = settings.DEFAULT_HR_EMAIL
-        to_email = settings.DEFAULT_HR_EMAIL
-        contact_message = "Name: {} | Organization: {} | Email: {} "
-        "| Message: {}".format(
-            name,
-            company,
-            email,
-            message,
+        contact_message = """
+            <b>Company:</b> {0}<br><br>
+            <b>Name:</b> {1}<br><br>
+            <b>Email:</b> {2}<br><br>
+            <b>Message:</b> {3}""".format(company, name, email, message)
+        email = EmailMessage(
+            'Trip Inquiry',
+            contact_message,
+            from_email,
+            [from_email],
+            # ['bcc@example.com'],
+            reply_to=[email],
+            headers={'From': from_email},
         )
-        # send_mail(
-        #     subject,
-        #     contact_message,
-        #     from_email,
-        #     [to_email],
-        #     fail_silently=True,
-        # )
-        messages.success(request,
-                         "Thank you for your message. "
-                         "We have received it, and will be in touch soon!")
-        return redirect('home')
+        email.content_subtype = "html"
+        try:
+            email.send(fail_silently=True)
+            messages.success(request,
+                             "Thank you for your message. "
+                             "We have received it, and will be in touch soon!")
+            return redirect('home')
+        except BadHeaderError:
+            return HttpResponse('Invalid header found.')
     return render(request, 'contact/inquiry.html', {'form': form})

@@ -51,9 +51,9 @@ urlpatterns = [
                 namespace='contact')),
 
     # EVENTS
-    url(r'^events/$',
-        views.events,
-        name='events'),
+    url(r'^events/',
+        include('events.urls',
+                namespace='events')),
 
     # SPONSORS
     url(r'^sponsors/$',

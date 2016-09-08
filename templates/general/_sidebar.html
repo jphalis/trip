@@ -6,28 +6,20 @@
         <!-- account -->
         <div class="sidebar-widget">
             <h3 class="sidebar-title">Account</h3>
-            <div class="widget-container">
-                {% if not request.user.is_authenticated %}
+            {% if not request.user.is_authenticated %}
+                <div class="widget-container">
                     {% include 'accounts/_auth_form.html' %}
-                {% else %}
+                </div>
+            {% else %}
+                <div class="widget-container widget-about">
                     <h4>Logged in</h4>
+                    <div class="author-title">Developer</div>
                     <p><a href="{% url 'accounts:auth_logout' %}">Sign out</a></p>
                     <!-- show profile information -->
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
         </div>
         <!-- /account -->
-
-        <!-- about -->
-        <div class="sidebar-widget">
-            <h3 class="sidebar-title">About</h3>
-            <div class="widget-container widget-about">
-                <h4>Jamie Mooz</h4>
-                <div class="author-title">Designer</div>
-                <p>While everyone’s eyes are glued to the runway, it’s hard to ignore that there are major fashion moments on the front row too.</p>
-            </div>
-        </div>
-        <!-- /about -->
 
         <!-- featured events -->
         <div class="sidebar-widget">
