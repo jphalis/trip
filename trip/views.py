@@ -7,10 +7,10 @@ from django.views.decorators.cache import cache_page
 
 # @cache_page(60 * 5)
 def home(request):
-    # return redirect('accounts:auth_login_register')
-    return render(request, 'general/index.html', {})
+    next_url = request.GET.get('next', '/')
+    return render(request, 'general/index.html', {'next': next_url})
 
-
+@login_required
 def about(request):
     return render(request, 'general/about.html', {})
 

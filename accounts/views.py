@@ -134,12 +134,17 @@ def auth_logout(request):
     return redirect('home')
 
 
+def auth_base_view(request):
+    next_url = request.GET.get('next', '/')
+    return render(request, 'accounts/login_register.html', {'next': next_url})
+
+
 @never_cache
 def auth_login_register(request):
     if request.user.is_authenticated():
         return redirect('home')
 
-    next_url = request.GET.get('next', None)
+    next_url = request.GET.get('next', '/')
 
     # Login form
     login_form = LoginForm(request.POST or None)
@@ -150,6 +155,7 @@ def auth_login_register(request):
 
         if user is not None:
             login(request, user)
+            print request.POST.get('next')
             return redirect(request.POST.get('next', 'home'))
         else:
             messages.warning(request, 'Username or password is incorrect.')
@@ -177,4 +183,4 @@ def auth_login_register(request):
         'register_form': register_form,
         'next': next_url,
     }
-    return render(request, 'accounts/_authentication.html', context)
+    return render(request, 'accounts/_auth_form.html', context)
