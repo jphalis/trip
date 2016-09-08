@@ -80,33 +80,6 @@
         <!-- /navbar -->
 
         <div class="container">
-            <!-- top banner messages -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div role="alert" style="text-align: center;" class="alert alert-dismissible 
-                        {% if 'success' in message.tags %}
-                            alert-success
-                        {% elif 'info' in message.tags %}
-                            alert-info
-                        {% elif 'warning' in message.tags %}
-                            alert-warning
-                        {% else %}
-                            alert-danger
-                        {% endif %} fade in col-md-8 col-sm-8 col-xs-8 col-sm-offset-3">
-                        <button id='marketing-message-btn' style="position:initial;" type="button" class="close" data-dismiss="alert">
-                            <span aria-hidden="true">&times;</span>
-                            <span class="sr-only">Close</span>
-                        </button>
-                        {% if 'safe' in message.tags %}
-                            {{ message|safe }}
-                        {% else %} 
-                            {{ message }}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            <!-- /top banner messages -->
-
             <!-- Header content -->
             {% block header_content %}{% endblock header_content %}
 
@@ -140,6 +113,8 @@
         <script src="{% static 'vendors/bootstrap/js/bootstrap.min.js' %}" type="text/javascript"></script>
         <!-- NProgress -->
         <script src="{% static 'vendors/nprogress/nprogress.js' %}" type="text/javascript"></script>
+        <!-- Bootbox -->
+        <script src="{% static 'vendors/bootbox/bootbox.min.js' %}" type="text/javascript"></script>
         <!-- Custom theme scripts -->
         <script src="{% static 'custom/js/custom.js' %}" type="text/javascript"></script>
         <script src="{% static 'custom/js/mooz.scripts.min.js' %}" type="text/javascript"></script>
@@ -147,6 +122,18 @@
         {% block js %}{% endblock js %}
         <!-- Extra in-line JavaScript scripts -->
         {% block scripts %}{% endblock scripts %}
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                // top banner messages
+                {% if messages %}
+                    {% for message in messages %}
+                        bootbox.alert("{% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}", function() {});
+                    {% endfor %}
+                {% endif %}
+                // /top banner messages
+            });
+        </script>
 
         {% endspaceless %}
     </body>

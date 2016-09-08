@@ -21,6 +21,8 @@ class ContactForm(forms.Form):
         max_length=1000,
         widget=forms.Textarea(
             attrs={"placeholder": "How may we help you?",
-                   "style": "height: 7em;"}),
-        required=False
+                   "style": "height: 7em;"})
     )
+
+    def clean_email(self):
+        return self.cleaned_data['email'].lower()

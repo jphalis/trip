@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_page
 
@@ -10,7 +9,7 @@ def home(request):
     next_url = request.GET.get('next', '/')
     return render(request, 'general/index.html', {'next': next_url})
 
-@login_required
+
 def about(request):
     return render(request, 'general/about.html', {})
 

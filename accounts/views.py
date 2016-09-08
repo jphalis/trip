@@ -4,8 +4,7 @@ from django.contrib.auth import (authenticate, login, logout,
                                  update_session_auth_hash)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import (get_object_or_404, HttpResponseRedirect,
-                              redirect, render)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_page, never_cache
