@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from datetime import datetime
+
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -52,6 +54,15 @@ class EventManager(models.Manager):
             .prefetch_related('sponsors') \
             .order_by('date')[:num_returned]
 
+    def own(self, user):
+        """
+        Returns all events the user is sponsoring.
+        """
+        return super(EventManager, self).get_queryset() \
+            .filter(sponsors=user) \
+            .prefetch_related('sponsors') \
+            .order_by('date')
+
 
 @python_2_unicode_compatible
 class Event(TimeStampedModel):
@@ -86,6 +97,12 @@ class Event(TimeStampedModel):
         Returns the url for the event.
         """
         return reverse('events:detail', kwargs={"event_pk": self.pk})
+
+    @property
+    def event_status(self):
+        if self.date >= datetime.now():
+            return "Upcoming"
+        return "Completed"
 
     @property
     def event_image(self):

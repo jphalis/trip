@@ -11,37 +11,23 @@
             <table id="table" class="table table-hover table-mc-orange">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Name</th>
+                        <th>Date</th>
                         <th>Link</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td data-title="ID">1</td>
-                        <td data-title="Name">Material Design Color Palette</td>
-                        <td data-title="Link">
-                            <a href="#">GitHub</a>
-                        </td>
-                        <td data-title="Status">Completed</td>
-                    </tr>
-                    <tr>
-                        <td data-title="ID">2</td>
-                        <td data-title="Name">Material Design Iconic Font</td>
-                        <td data-title="Link">
-                            <a href="#">GitHub</a>
-                        </td>
-                        <td data-title="Status">Completed</td>
-                    </tr>
-                    <tr>
-                        <td data-title="ID">3</td>
-                        <td data-title="Name">Material Design Hierarchical Display</td>
-                        <td data-title="Link">
-                            <a href="#">GitHub</a>
-                        </td>
-                        <td data-title="Status">Completed</td>
-                    </tr>
+                    {% for event in own_events %}
+                        <tr>
+                            <td data-title="Name">{{ event.name }}</td>
+                            <td data-title="Date">{{ event.event_date }}</td>
+                            <td data-title="Link">
+                                <a href="{{ event.get_absolute_url }}">View event</a>
+                            </td>
+                            <td data-title="Status">{{ event.event_status }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

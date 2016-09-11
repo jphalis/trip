@@ -10,6 +10,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
+from events.models import Event
+
 from .forms import (AccountSettingsForm, LoginForm, PasswordResetForm,
                     PasswordResetTokenForm, SignupForm)
 from .models import MyUser
@@ -19,7 +21,13 @@ from .models import MyUser
 
 @login_required
 def detail(request, user_pk):
-    return render(request, 'accounts/detail.html', {})
+    user = get_object_or_404(MyUser, pk=user_pk)
+    own_events = Event.objects.own(user=user)
+    context = {
+        'own_events': own_events,
+        'user': user,
+    }
+    return render(request, 'accounts/detail.html', context)
 
 
 @login_required
