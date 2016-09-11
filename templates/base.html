@@ -70,8 +70,12 @@
                         <li><a href="#"><i class="fa fa-twitter"></i></a></li>
                         <li><a href="#"><i class="fa fa-instagram"></i></a></li>
                         <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                        <li><a href="#"><i class="fa fa-reddit"></i></a></li>
+                        {% if request.user.is_authenticated and request.user.is_staff %}
+                            <li style="border-left: 1px solid #ccc;"><a href="{% url 'accounts:account_settings' %}"><i class="fa fa-gear"></i></a></li>
+                            <li><a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/hidden/secure/trip/admin/events/event/add/"><i class="fa fa-plus"></i></a></li>
+                        {% elif request.user.is_authenticated %}
+                            <li style="border-left: 1px solid #ccc;"><a href="{% url 'accounts:account_settings' %}"><i class="fa fa-gear"></i></a></li>
+                        {% endif %}
                     </ul>
 
                 </div>
@@ -97,8 +101,6 @@
                 <a href="#"><i class="fa fa-twitter"></i></a>
                 <a href="#"><i class="fa fa-instagram"></i></a>
                 <a href="#"><i class="fa fa-google-plus"></i></a>
-                <a href="#"><i class="fa fa-dribbble"></i></a>
-                <a href="#"><i class="fa fa-reddit"></i></a>
             </div>
 
             <div class="footer-bottom">
@@ -128,7 +130,14 @@
                 // top banner messages
                 {% if messages %}
                     {% for message in messages %}
-                        bootbox.alert("{% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}", function() {});
+                        $(".tooltip").css("opacity", 0);
+                        bootbox.alert({ 
+                            size: 'medium',
+                            message: "{% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}", 
+                            callback: function(){
+                                $(".tooltip").css("opacity", 1);
+                            }
+                        }) 
                     {% endfor %}
                 {% endif %}
                 // /top banner messages

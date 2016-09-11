@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -7,14 +8,20 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import Sponsor
 from core.models import TimeStampedModel
 
 # Create your models here.
 
 
+def image_upload_loc(instance, filename):
+    """
+    Stores the company logo in <company_name>/logos/filename.
+    """
+    return "{0}/images/{1}".format(instance.name, filename)
+
+
 class EventManager(models.Manager):
-    def create(self, name, date, **extra_fields):
+    def create(self, name, date, image=None, **extra_fields):
         """
         Creates an event.
         """
@@ -23,7 +30,7 @@ class EventManager(models.Manager):
         elif not date:
             raise ValueError('The event must have a date.')
 
-        event = self.model(name=name, date=date, **extra_fields)
+        event = self.model(name=name, date=date, image=image, **extra_fields)
         event.save(using=self._db)
         return event
 
@@ -35,22 +42,32 @@ class EventManager(models.Manager):
             .filter(is_active=True) \
             .prefetch_related('sponsors')
 
-    def featured(self):
+    def featured(self, num_returned=None):
         """
         Returns all featured events.
         Featured events are ordered by closest to their date.
         """
         return super(EventManager, self).get_queryset() \
-            .filter(is_active=True, date__lte=timezone.now()) \
-            .prefetch_related('sponsors')
+            .filter(is_active=True, date__gte=timezone.now()) \
+            .prefetch_related('sponsors') \
+            .order_by('date')[:num_returned]
 
 
 @python_2_unicode_compatible
 class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
     date = models.DateTimeField(verbose_name='Date of Event')
-    sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
-                                      blank=True)
+    image = models.ImageField(_('event image'),
+                              upload_to=image_upload_loc,
+                              blank=True,
+                              help_text='''Please upload an image with
+                               sizes: (W - 750px | H - 300px).''')
+    description = models.TextField(max_length=2000, blank=True)
+    sponsors = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                      related_name='event_sponsors',
+                                      blank=True,
+                                      help_text='''Select the magnifying glass
+                                       to add sponsors.''')
 
     is_active = models.BooleanField(default=True)
 
@@ -60,7 +77,6 @@ class Event(TimeStampedModel):
         app_label = 'events'
         verbose_name = _('event')
         verbose_name_plural = _('events')
-        ordering = ['-date']
 
     def __str__(self):
         return u'{0}'.format(self.name)
@@ -69,11 +85,34 @@ class Event(TimeStampedModel):
         """
         Returns the url for the event.
         """
-        return reverse('events:event_detail', kwargs={"event_pk": self.pk})
+        return reverse('events:detail', kwargs={"event_pk": self.pk})
+
+    @property
+    def event_image(self):
+        """
+        Returns the logo of the user. If there is no logo,
+        a default one will be rendered.
+        """
+        if self.image:
+            return "{0}{1}".format(settings.MEDIA_URL, self.image)
+        return settings.STATIC_URL + 'img/default-company-logo.jpg'
+
+    @cached_property
+    def event_date(self):
+        d = self.date
+        # d.strftime("%A | %B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
+        return d.strftime("%B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
 
     @cached_property
     def get_sponsors_info(self):
         """
         Returns the information for each sponsor of the event.
         """
-        return self.attendees.values('id', 'name', 'logo',)
+        return self.sponsors.values('id', 'name', 'logo',)
+
+    @property
+    def sponsor_count(self):
+        """
+        Returns the number of applicants for the job.
+        """
+        return self.get_sponsors_info.count()

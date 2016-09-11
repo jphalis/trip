@@ -9,10 +9,10 @@ app_name = 'events'
 
 
 urlpatterns = [
-    url(r'^$',
-        views.list,
-        name='list'),
     url(r'^(?P<event_pk>\d+)/$',
         views.detail,
         name='detail'),
+    url(r'^$',
+        views.list,
+        name='list'),
 ]

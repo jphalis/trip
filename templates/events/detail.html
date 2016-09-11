@@ -4,5 +4,22 @@
 {% block title %}{% endblock title %}
 
 {% block content %}
-
+    <section>
+        <div class="row">
+            <div class="col-md-8">
+                <article class="blog-post">
+                    <div class="blog-post-image">
+                        <img src="{{ event.event_image }}" alt="" />
+                    </div>
+                    <div class="blog-post-body">
+                        <h2>{{ event.name }}</h2>
+                        <div class="post-meta"><span><i class="fa fa-clock-o"></i>{{ event.date }}</span></div>
+                        <div class="blog-post-text">
+                            {{ event.description|safe|truncatewords_html:75 }}
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
 {% endblock content %}

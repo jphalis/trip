@@ -60,11 +60,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_summernote',
     'widget_tweaks',
 
     'accounts',
     'contact',
     'ecomm',
+    'events',
 )
 
 

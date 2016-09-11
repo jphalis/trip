@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------
 [Color codes]
-Buttons, etc:	#726FB9 (blue)
-hover color:	#fed136 (yellow)
+Buttons, etc:	#726FB9
+hover color:	#fec503
 -------------------------------------------------------------------*/
 /* main font for menu. */
 @import url(http://fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
@@ -9,6 +9,9 @@ hover color:	#fed136 (yellow)
 body {
 	font-family: "Raleway", Sans-serif;
 	-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: #f1f1f1;
 }
 h1,
 h2,
@@ -45,7 +48,7 @@ a, a:hover, a:focus, a:active, a.active {
 }
 ::selection {
 	text-shadow: none;
-	background: #fed136;
+	background: #fec503;
 }
 section {
 	padding-bottom: 60px;
@@ -145,13 +148,17 @@ header {
 .blog-post:last-child {
 	border-bottom: none;
 }
+.blog-post .blog-post-image img{
+    width: 100%;
+    height: 300px;
+}
 .blog-post .blog-post-body {
 	text-align: center;
 	padding: 20px 0;
 }
 .blog-post .blog-post-body h2 {
 	margin: 0;
-	padding: 15px 0px 20px;
+	padding: 15px 0px 7px;
 	font-size: 41px;
 	line-height: 49px;
 }
@@ -184,14 +191,13 @@ header {
 	color: #B1B1B1;
 }
 .blog-post .post-meta a:hover {
-	color: #fed136;
+	color: #fec503;
 }
 .blog-post .post-meta span {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 .blog-post .post-meta span:first-child {
-	padding-left: 0;
 	padding-right: 15px;
 }
 .blog-post .post-meta i {
@@ -217,8 +223,8 @@ header {
 	transition: all 0.2s ease-out;
 }
 .blog-post .read-more a:hover {
-	background-color: #00e953;
-	border-color: #00e953;
+	background-color: #fec503;
+	border-color: #fec503;
 	color: #fff;
 }
 .blog-post .blog-post-text {
@@ -264,6 +270,7 @@ header {
 }
 .widget-about img {
 	width: 100%;
+    height: 100px;
 }
 .widget-about h4 {
 	text-align: center;
@@ -488,4 +495,374 @@ footer .footer-bottom {
 .form-module .cta a {
     color: #333333;
     text-decoration: none;
+}
+
+/* EVENT TABLE */
+#demo {
+    margin: 20px auto;
+    max-width: 960px;
+}
+#demo h1 {
+    font-size: 2.4rem;
+    line-height: 3.2rem;
+    letter-spacing: 0;
+    font-weight: 300;
+    color: #212121;
+    text-transform: inherit;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+#demo h2 {
+    font-size: 1.5rem;
+    line-height: 2.8rem;
+    letter-spacing: 0.01rem;
+    font-weight: 400;
+    color: #212121;
+    text-align: center;
+}
+.shadow-z-1 {
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+/* -- Material Design Table style -------------- */
+.table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 2rem;
+    background-color: #fff;
+}
+.table > thead > tr,
+.table > tbody > tr,
+.table > tfoot > tr {
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+    text-align: left;
+    padding: 1.6rem;
+    vertical-align: top;
+    border-top: 0;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+.table > thead > tr > th {
+    font-weight: 400;
+    color: #757575;
+    vertical-align: bottom;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.table > caption + thead > tr:first-child > th,
+.table > colgroup + thead > tr:first-child > th,
+.table > thead:first-child > tr:first-child > th,
+.table > caption + thead > tr:first-child > td,
+.table > colgroup + thead > tr:first-child > td,
+.table > thead:first-child > tr:first-child > td {
+    border-top: 0;
+}
+.table > tbody + tbody {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+.table .table {
+    background-color: #fff;
+}
+.table .no-border {
+    border: 0;
+}
+.table-condensed > thead > tr > th,
+.table-condensed > tbody > tr > th,
+.table-condensed > tfoot > tr > th,
+.table-condensed > thead > tr > td,
+.table-condensed > tbody > tr > td,
+.table-condensed > tfoot > tr > td {
+    padding: 0.8rem;
+}
+.table-bordered {
+    border: 0;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+    border: 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td {
+    border-bottom-width: 2px;
+}
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+    background-color: #f5f5f5;
+}
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+    background-color: rgba(0, 0, 0, 0.12);
+}
+@media screen and (max-width: 768px) {
+    .table-responsive-vertical > .table {
+        margin-bottom: 0;
+        background-color: transparent;
+    }
+    .table-responsive-vertical > .table > thead,
+    .table-responsive-vertical > .table > tfoot {
+        display: none;
+    }
+    .table-responsive-vertical > .table > tbody {
+        display: block;
+    }
+    .table-responsive-vertical > .table > tbody > tr {
+        display: block;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        margin-bottom: 1.6rem;
+    }
+    .table-responsive-vertical > .table > tbody > tr > td {
+        background-color: #fff;
+        display: block;
+        vertical-align: middle;
+        text-align: right;
+    }
+    .table-responsive-vertical > .table > tbody > tr > td[data-title]:before {
+        content: attr(data-title);
+        float: left;
+        font-size: inherit;
+        font-weight: 400;
+        color: #757575;
+    }
+    .table-responsive-vertical.shadow-z-1 {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+    .table-responsive-vertical.shadow-z-1 > .table > tbody > tr {
+        border: none;
+        -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+        -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
+    }
+    .table-responsive-vertical > .table-bordered {
+        border: 0;
+    }
+    .table-responsive-vertical > .table-bordered > tbody > tr > td {
+        border: 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .table-responsive-vertical > .table-bordered > tbody > tr > td:last-child {
+        border-bottom: 0;
+    }
+    .table-responsive-vertical > .table-striped > tbody > tr > td,
+    .table-responsive-vertical > .table-striped > tbody > tr:nth-child(odd) {
+        background-color: #fff;
+    }
+    .table-responsive-vertical > .table-striped > tbody > tr > td:nth-child(odd) {
+        background-color: #f5f5f5;
+    }
+    .table-responsive-vertical > .table-hover > tbody > tr:hover > td,
+    .table-responsive-vertical > .table-hover > tbody > tr:hover {
+        background-color: #fff;
+    }
+    .table-responsive-vertical > .table-hover > tbody > tr > td:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+    }
+}
+.table-striped.table-mc-orange > tbody > tr:nth-child(odd) > td,
+.table-striped.table-mc-orange > tbody > tr:nth-child(odd) > th {
+    background-color: #fff3e0;
+}
+.table-hover.table-mc-orange > tbody > tr:hover > td,
+.table-hover.table-mc-orange > tbody > tr:hover > th {
+    background-color: #fec503;
+}
+@media screen and (max-width: 767px) {
+    .table-responsive-vertical .table-striped.table-mc-orange > tbody > tr > td,
+    .table-responsive-vertical .table-striped.table-mc-orange > tbody > tr:nth-child(odd) {
+        background-color: #fff;
+    }
+    .table-responsive-vertical .table-striped.table-mc-orange > tbody > tr > td:nth-child(odd) {
+        background-color: #fff3e0;
+    }
+    .table-responsive-vertical .table-hover.table-mc-orange > tbody > tr:hover > td,
+    .table-responsive-vertical .table-hover.table-mc-orange > tbody > tr:hover {
+        background-color: #fff;
+    }
+    .table-responsive-vertical .table-hover.table-mc-orange > tbody > tr > td:hover {
+        background-color: #fec503;
+    }
+}
+
+/* SETTINGS FORM */
+.form-validation{
+    box-sizing: border-box;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 30px 7px;
+    text-align: center;
+}
+.form-row{
+    position: relative;
+    text-align: left;
+    margin-bottom: 23px;
+}
+.form-title-row{
+    text-align: center;
+    margin-bottom: 45px;
+}
+.form-validation h1{
+    display: inline-block;
+    box-sizing: border-box;
+    color:  #4c565e;
+    font-size: 24px;
+    padding: 15px 8px;
+    border-bottom: 2px solid #fec503;
+    margin:0;
+}
+.form-validation .form-row > label span{
+    display: inline-block;
+    box-sizing: border-box;
+    color:  #5f5f5f;
+    width: 180px;
+    text-align: right;
+    padding: 8px 25px;
+}
+.form-validation input{
+    position: relative;
+    color:  #5f5f5f;
+    box-sizing: border-box;
+    width: 300px;
+    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    padding: 12px 18px;
+    border: 0;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    background: white;
+}
+.form-validation input[type=file] {
+    display: inline-block;
+}
+
+/* Styles for Valid input data */
+.form-validation .form-valid-data-sign{
+    position: absolute;
+    color: #ffffff;
+    line-height: 24px;
+    text-align: center;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background-color:  #a2cf78;
+    left: 440px;
+    top: 10px;
+    display: none;
+}
+
+/* Styles for Invalid input data */
+.form-validation .form-invalid-data{
+    margin-bottom: 55px;
+}
+.form-validation .form-invalid-data input{
+    border: 1px solid #d37171;
+    box-shadow: 2px 3px 4px 0 rgba(200, 77, 77, 0.15);
+}
+.form-validation .form-invalid-data-sign{
+    position: absolute;
+    display: none;
+    color: #ffffff;
+    line-height: 23px;
+    font-size: 14px;
+    text-align: center;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background-color: #e17c4f;
+    left: 440px;
+    top: 10px;
+}
+.form-validation .form-invalid-data-info{
+    display: none;
+    position: absolute;
+    color: #c84d4d;
+    font-weight: normal;
+    bottom: -30px;
+    left: 183px;
+}
+.form-invalid-data .form-invalid-data-sign,
+.form-invalid-data .form-invalid-data-info{
+    display: block;
+}
+.form-valid-data .form-valid-data-sign{
+    display: block;
+}
+.form-validation button{
+    display: block;
+    border-radius: 3px;
+    background-color:  #fec503;
+    color: #ffffff;
+    font-weight: bold;
+    box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.08);
+    padding: 14px 22px;
+    border: 0;
+    margin: 35px 183px 0;
+}
+
+/* Placeholder color */
+.form-validation ::-webkit-input-placeholder {
+    color:  #999;
+}
+.form-validation ::-moz-placeholder {
+    color:  #999;
+    opacity: 1;
+}
+.form-validation :-ms-input-placeholder {
+    color:  #999;
+    opacity: 1;
+}
+@media (max-width: 700px) {
+    .form-validation{
+        margin-top: 0;
+        padding: 30px;
+        max-width: 480px;
+    }
+    .form-validation .form-row{
+        max-width: 300px;
+        margin: 25px auto;
+        text-align: left;
+    }
+    .form-validation .form-title-row{
+        margin-bottom: 50px;
+    }
+    .form-validation h1{
+        padding: 0 0 15px 0;
+    }
+    .form-validation .form-row > label span{
+        display: block;
+        text-align: left;
+        padding: 0 0 15px;
+    }
+    .form-validation .form-valid-data-sign,
+    .form-validation .form-invalid-data-sign{
+        left: 235px;
+        top: 40px;
+    }
+    .form-validation .form-invalid-data{
+        margin-bottom: 55px;
+    }
+    .form-validation .form-invalid-data-info{
+        left: 0;
+    }
+    .form-validation button{
+        margin: 0;
+    }
 }

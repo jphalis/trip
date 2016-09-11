@@ -32,6 +32,9 @@ urlpatterns = [
     # ADMIN
     url(r'^hidden/secure/trip/admin/', include(admin.site.urls)),
 
+    # SUMMERNOTE - WSGIEditor
+    url(r'^summernote/', include('django_summernote.urls')),
+
     # GENERAL
     url(r'^$',
         views.home,

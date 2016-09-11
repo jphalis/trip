@@ -2,7 +2,6 @@
 Glossary of accounts/forms.py:
 
 - Account settings form
-- Change password form
 - Login form
 - MyUser change form (admin only)
 - MyUser creation form (admin only)
@@ -21,6 +20,7 @@ except ImportError:
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
@@ -33,35 +33,50 @@ from django.utils.translation import ugettext_lazy as _
 from .models import MyUser
 
 
+def clean_passwords(data, password1, password2):
+    if password1 in data and password2 in data:
+        if data[password1] != data[password2]:
+            raise forms.ValidationError(
+                _("You must type the same password each time."))
+        validate_password(data[password2])
+    return data[password2]
+
+
 class AccountSettingsForm(forms.ModelForm):
     """
     A form used for users to update their account
     information.
     """
-    first_name = forms.CharField(
-        label=_('First Name'),
-        widget=forms.TextInput(),
-        max_length=50
-    )
-    last_name = forms.CharField(
-        label=_('Last Name'),
-        widget=forms.TextInput(),
-        max_length=50
-    )
     email = forms.EmailField(
         label=_('Email'),
         widget=forms.EmailInput(),
         max_length=120
     )
-    profile_pic = forms.ImageField(
+    name = forms.CharField(
+        label=_('First Name'),
+        widget=forms.TextInput(),
+        max_length=120
+    )
+    logo = forms.ImageField(
         widget=ClearableFileInput(
             attrs={'class': 'form-control'}),
+        required=False
+    )
+    password_new = forms.CharField(
+        label=_("New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
+    )
+    password_new_confirm = forms.CharField(
+        label=_("New Password (again)"),
+        widget=forms.PasswordInput(render_value=False),
         required=False
     )
 
     class Meta:
         model = MyUser
-        fields = ('first_name', 'last_name', 'email', 'profile_pic',)
+        fields = ('email', 'name', 'logo', 'password_new',
+                  'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -80,38 +95,10 @@ class AccountSettingsForm(forms.ModelForm):
                 _('This email is already taken. Please try a different one.'))
         return value
 
-
-class ChangePasswordForm(forms.Form):
-    password_current = forms.CharField(
-        label=_("Current Password"),
-        widget=forms.PasswordInput(render_value=False)
-    )
-    password_new = forms.CharField(
-        label=_("New Password"),
-        widget=forms.PasswordInput(render_value=False)
-    )
-    password_new_confirm = forms.CharField(
-        label=_("New Password (again)"),
-        widget=forms.PasswordInput(render_value=False)
-    )
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop("user")
-        super(ChangePasswordForm, self).__init__(*args, **kwargs)
-
-    def clean_password_current(self):
-        if not self.user.check_password(
-                self.cleaned_data.get("password_current")):
-            raise forms.ValidationError(
-                _("Please type your current password."))
-        return self.cleaned_data["password_current"]
-
     def clean_password_new_confirm(self):
-        if "password_new" in self.cleaned_data and "password_new_confirm" in self.cleaned_data:
-            if self.cleaned_data["password_new"] != self.cleaned_data["password_new_confirm"]:
-                raise forms.ValidationError(
-                    _("You must type the same password each time."))
-        return self.cleaned_data["password_new_confirm"]
+        clean_passwords(data=self.cleaned_data,
+                        password1="password_new",
+                        password2="password_new_confirm")
 
 
 class LoginForm(forms.Form):
@@ -175,7 +162,7 @@ class MyUserCreationForm(UserCreationForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'first_name', 'last_name',)
+        fields = ('email', 'name',)
 
     def clean_email(self):
         """
@@ -184,8 +171,7 @@ class MyUserCreationForm(UserCreationForm):
         value = self.cleaned_data['email'].lower()
         if self.initial.get('email') == value:
             return value
-        if MyUser.objects.filter(
-                Q(email__iexact=value) & ~Q(id=self.user.pk)).exists():
+        if MyUser.objects.filter(email__iexact=value).exists():
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
         return value
@@ -272,11 +258,9 @@ class PasswordResetTokenForm(forms.Form):
         super(PasswordResetTokenForm, self).__init__(*args, **kwargs)
 
     def clean_password_confirm(self):
-        if 'password' in self.cleaned_data and 'password_confirm' in self.cleaned_data:
-            if self.cleaned_data["password"] != self.cleaned_data['password_confirm']:
-                raise forms.ValidationError(
-                    _('You must type the same password each time.'))
-        return self.cleaned_data["password_confirm"]
+        clean_passwords(data=self.cleaned_data,
+                        password1="password",
+                        password2="password_confirm")
 
     def save(self, commit=True):
         """
@@ -292,9 +276,9 @@ class PasswordResetTokenForm(forms.Form):
 
 class SignupForm(forms.Form):
     company_name = forms.CharField(
-        label=_('First Name'),
+        label=_('Company name'),
         widget=forms.TextInput(
-            attrs={'placeholder': 'First Name'},),
+            attrs={'placeholder': 'Company'},),
         max_length=50
     )
     email = forms.EmailField(
@@ -326,12 +310,7 @@ class SignupForm(forms.Form):
                 _('This email is already taken. Please try a different one.'))
         return value
 
-    def clean(self):
-        """
-        Verifies that the password match each other.
-        """
-        if "password" in self.cleaned_data and "password_confirm" in self.cleaned_data:
-            if self.cleaned_data["password"] != self.cleaned_data["password_confirm"]:
-                raise forms.ValidationError(
-                    _("Your passwords do not match."))
-        return self.cleaned_data
+    def clean_password_confirm(self):
+        clean_passwords(data=self.cleaned_data,
+                        password1="password",
+                        password2="password_confirm")

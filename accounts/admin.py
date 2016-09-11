@@ -21,7 +21,7 @@ class MyUserAdmin(UserAdmin):
         (None,
             {'fields': ('email', 'password',)}),
         ('Basic information',
-            {'fields': ('first_name', 'last_name', 'profile_pic',)}),
+            {'fields': ('name', 'logo',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_staff', 'is_superuser',
                         'user_permissions')}),
@@ -31,11 +31,10 @@ class MyUserAdmin(UserAdmin):
     add_fieldsets = (
         (None,
             {'classes': ('wide',),
-             'fields': ('email', 'first_name', 'last_name',
-                        'password1', 'password2',)}),
+             'fields': ('email', 'name', 'password1', 'password2',)}),
     )
     readonly_fields = ('date_joined', 'last_login', 'modified',)
-    search_fields = ('id', 'email', 'last_name',)
+    search_fields = ('id', 'email', 'name',)
     ordering = ('id',)
     filter_horizontal = ('user_permissions',)
     actions = ('enable', 'disable',)
