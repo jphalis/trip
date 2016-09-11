@@ -718,13 +718,9 @@ footer .footer-bottom {
     margin-bottom: 45px;
 }
 .form-validation h1{
-    display: inline-block;
-    box-sizing: border-box;
-    color:  #4c565e;
-    font-size: 24px;
-    padding: 15px 8px;
-    border-bottom: 2px solid #fec503;
-    margin:0;
+    text-align: center;
+    color: #a8a8a8;
+    text-shadow: 1px 1px 0 white;
 }
 .form-validation .form-row > label span{
     display: inline-block;
@@ -733,6 +729,7 @@ footer .footer-bottom {
     width: 180px;
     text-align: right;
     padding: 8px 25px;
+    font-weight: normal !important;
 }
 .form-validation input{
     position: relative;
@@ -748,6 +745,7 @@ footer .footer-bottom {
     -webkit-border-radius: 8px;
     border-radius: 8px;
     background: white;
+    font-weight: normal !important;
 }
 .form-validation input[type=file] {
     display: inline-block;

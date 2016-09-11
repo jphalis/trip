@@ -267,7 +267,7 @@ class PasswordResetTokenForm(forms.Form):
         Saves the form and sets the user's password to be the value he/she
         typed in.
         """
-        password = self.cleaned_data["password2"]
+        password = self.cleaned_data["password_confirm"]
         self.user.set_password(password)
         if commit:
             self.user.save()

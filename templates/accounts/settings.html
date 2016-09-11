@@ -6,21 +6,17 @@
 {% block content %}
     <form class="form-validation" method="POST" action="{% url 'accounts:account_settings' %}">
         {% csrf_token %}
-
         <div class="form-title-row">
             <h1>Company Information</h1>
         </div>
-
         <img src="{{ user.company_logo }}" style="margin-bottom: 21px;" />
-
         <div class="form-row {% if form.logo.errors %}logo-field{% endif %}">
             <label>
                 <span>Logo</span>
                 <input type="file" accept="image/*" name="logo">
             </label>
         </div>
-
-        <div class="form-row form-input-name-row {% if form.name.errors %}name-field{% endif %}">
+        <div class="form-row {% if form.name.errors %}name-field{% endif %}">
             <label>
                 <span>Company</span>
                 <input type="text" name="name" value="{{ form.name.value }}">
@@ -29,8 +25,7 @@
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
             <span class="form-invalid-data-info"></span>
         </div>
-
-        <div class="form-row form-input-email-row {% if form.email.errors %}email-field{% endif %}">
+        <div class="form-row {% if form.email.errors %}email-field{% endif %}">
             <label>
                 <span>Email</span>
                 <input type="email" name="email" value="{{ form.email.value }}">
@@ -39,7 +34,6 @@
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
             <span class="form-invalid-data-info"></span>
         </div>
-
         <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
             <label>
                 <span>New password</span>
@@ -49,7 +43,6 @@
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
             <span class="form-invalid-data-info"></span>
         </div>
-
         <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
             <label>
                 <span>Confirm password</span>
@@ -59,7 +52,6 @@
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
             <span class="form-invalid-data-info"></span>
         </div>
-
         <div class="form-row">
             <button type="submit">Update</button>
         </div>

@@ -53,7 +53,7 @@ def account_settings(request):
 def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,
                    template_name='auth/password_reset_form.html',
                    email_template_name='auth/password_reset_email.html',
-                   subject_template_name='KnobLinx Reset Account Password',
+                   subject_template_name='Trip Reset Account Password',
                    password_reset_form=PasswordResetForm,
                    token_generator=default_token_generator,
                    html_email_template_name='auth/password_reset_email.html'):
@@ -103,12 +103,13 @@ def password_reset_confirm(request, uidb64=None, token=None,
         if request.method == 'POST':
             if form.is_valid():
                 form.save()
-                messages.success(request, "Password reset successfully")
+                login(request, user)
+                messages.success(request, "Password reset successfully.")
                 return redirect('home')
     else:
         validlink = False
         form = None
-        messages.error(request, "Password reset unsuccessful")
+        messages.error(request, "Password reset unsuccessful.")
     context = {
         'form': form,
         'validlink': validlink,
@@ -123,7 +124,7 @@ def auth_logout(request):
 
 def auth_base_view(request):
     next_url = request.GET.get('next', '/')
-    return render(request, 'accounts/login_register.html', {'next': next_url})
+    return render(request, 'auth/login_register.html', {'next': next_url})
 
 
 @never_cache
@@ -142,7 +143,6 @@ def auth_login_register(request):
 
         if user is not None:
             login(request, user)
-            print request.POST.get('next')
             return redirect(request.POST.get('next', 'home'))
         else:
             messages.warning(request, 'Username or password is incorrect.')
@@ -174,4 +174,4 @@ def auth_login_register(request):
         'register_form': register_form,
         'next': next_url,
     }
-    return render(request, 'accounts/_auth_form.html', context)
+    return render(request, 'auth/_auth_form.html', context)

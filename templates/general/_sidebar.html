@@ -8,7 +8,7 @@
             <h3 class="sidebar-title">Account</h3>
             {% if user.is_anonymous %}
                 <div class="widget-container">
-                    {% include 'accounts/_auth_form.html' %}
+                    {% include 'auth/_auth_form.html' %}
                 </div>
             {% else %}
                 <div class="widget-container widget-about">

@@ -21,7 +21,7 @@ urlpatterns = [
     url(r"^settings/$",
         views.account_settings,
         name="account_settings"),
-    url(r"^password/reset/$",
+    url(r"^password/forgot/$",
         views.password_reset,
         name="password_reset"),
     url(r"^password/reset/confirm/"
