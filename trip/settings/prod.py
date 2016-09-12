@@ -26,17 +26,17 @@ ADMINS = (
     # ("Kirk Sanderson", "kirksanderson1@gmail.com"),
 )
 MANAGERS = ADMINS
+FULL_DOMAIN = 'transactionrisk.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 FULL_DOMAIN = 'transactionrisk.herokuapp.com'
-if FULL_DOMAIN:
-    urls = [
-        '*' + FULL_DOMAIN,
-        'wwww.' + FULL_DOMAIN,
-        '*.' + FULL_DOMAIN
-    ]
-    ALLOWED_HOSTS.extend(urls)
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '*' + FULL_DOMAIN,
+    'wwww.' + FULL_DOMAIN,
+    '*.' + FULL_DOMAIN
+]
 
 
 #########
