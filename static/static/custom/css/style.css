@@ -4,7 +4,7 @@ Buttons, etc:	#726FB9
 hover color:	#fec503
 -------------------------------------------------------------------*/
 /* main font for menu. */
-@import url(fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
+@import url(https://fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
 /*- General -*/
 body {
 	font-family: "Raleway", Sans-serif;
