@@ -33,9 +33,9 @@ ALLOWED_HOSTS = [
 FULL_DOMAIN = 'transactionrisk.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    '*' + FULL_DOMAIN,
-    'wwww.' + FULL_DOMAIN,
-    '*.' + FULL_DOMAIN
+    '*{}'.format(FULL_DOMAIN),
+    'wwww.{}'.format(FULL_DOMAIN),
+    '*.{}'.format(FULL_DOMAIN)
 ]
 
 
