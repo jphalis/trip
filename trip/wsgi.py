@@ -1,5 +1,5 @@
 """
-WSGI config for project.
+WSGI config for trip project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 # from accounts import views as account_views
-
 from . import views
 
 
