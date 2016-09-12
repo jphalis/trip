@@ -138,9 +138,10 @@ def auth_login_register(request):
         return redirect('home')
 
     next_url = request.GET.get('next', '/')
+    login_form = LoginForm(request.POST or None)
+    register_form = SignupForm(request.POST or None)
 
     # Login form
-    login_form = LoginForm(request.POST or None)
     if login_form.is_valid() and 'login_form' in request.POST:
         email = login_form.cleaned_data['email']
         password = login_form.cleaned_data['password']
@@ -151,18 +152,14 @@ def auth_login_register(request):
             return redirect(request.POST.get('next', 'home'))
         else:
             messages.warning(request, 'Username or password is incorrect.')
-    else:
-        return redirect('accounts:auth_base_view')
 
     # Registration form
-    register_form = SignupForm(request.POST or None)
-    if register_form.is_valid() and 'register_form' in request.POST:
+    elif register_form.is_valid() and 'register_form' in request.POST:
         email = register_form.cleaned_data['email']
         password = register_form.cleaned_data['password_confirm']
         new_user = MyUser.objects.create_user(
             email=email,
-            first_name=register_form.cleaned_data['first_name'],
-            last_name=register_form.cleaned_data['last_name']
+            name=register_form.cleaned_data['company_name']
         )
         new_user.set_password(password)
         new_user.save()

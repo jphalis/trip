@@ -316,3 +316,4 @@ class SignupForm(forms.Form):
         clean_passwords(data=self.cleaned_data,
                         password1="password",
                         password2="password_confirm")
+        return self.cleaned_data['password_confirm']
