@@ -72,26 +72,22 @@ INSTALLED_APPS += (
 ############
 # DATABASE #
 ############
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '5432',
-    },
-    'extra': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': '',
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST': '',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES['default'] = dj_database_url.config()  # Heroku
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
-DATABASES['default']['NAME'] = ''
-DATABASES['default']['USER'] = ''
-DATABASES['default']['PASSWORD'] = ''
-DATABASES['default']['HOST'] = ''
+DATABASES['default']['NAME'] = 'ddnkqiaue2utva'
+DATABASES['default']['USER'] = 'rcerpdvcjhyord'
+DATABASES['default']['PASSWORD'] = 'O14XyRguW1NDnwssq8y6uSX7-m'
+DATABASES['default']['HOST'] = 'ec2-54-221-234-118.compute-1.amazonaws.com'
 DATABASES['default']['PORT'] = '5432'
 
 
