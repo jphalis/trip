@@ -30,7 +30,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '*{}'.format(FULL_DOMAIN),
     'wwww.{}'.format(FULL_DOMAIN),
-    '*.{}'.format(FULL_DOMAIN)
+    '*.{}'.format(FULL_DOMAIN),
+    FULL_DOMAIN,
 ]
 
 
