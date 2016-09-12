@@ -24,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vme0aiye#am&*@0o4^di1o8d6k5834^#7w7!&m6_x*7py(fka-'
 LOGIN_URL = "/accounts/authenticate/"
 AUTH_USER_MODEL = 'accounts.MyUser'
+APP_NAME = 'trip'
 
 
 #########
@@ -70,8 +71,8 @@ INSTALLED_APPS = (
 )
 
 
-ROOT_URLCONF = 'trip.urls'
-WSGI_APPLICATION = 'trip.wsgi.application'
+ROOT_URLCONF = '{}.urls'.format(APP_NAME)
+WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 
 #######################

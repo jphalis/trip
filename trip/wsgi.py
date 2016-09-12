@@ -1,5 +1,5 @@
 """
-WSGI config for trip project.
+WSGI config for project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -12,14 +12,14 @@ import os
 from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "trip.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "{}.settings".format(
+    settings.APP_NAME))
 
 application = get_wsgi_application()
 
-# Remove if you switch to AWS
-if not settings.DEBUG:
+if not settings.DEBUG and not settings.USING_S3:
     try:
-        from dj_static import Cling
-        application = Cling(get_wsgi_application())
+        from dj_static import Cling, MediaCling
+        application = Cling(MediaCling(get_wsgi_application()))
     except:
         pass

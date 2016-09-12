@@ -13,9 +13,9 @@ Glossary of settings/prod.py:
 - Logging
 """
 
-from trip.settings.common import *
-
 import dj_database_url
+from storages.backends.s3boto import S3BotoStorage
+from .common import *
 
 
 ############################
@@ -27,12 +27,16 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 ALLOWED_HOSTS = [
-    'www.domain.com',
-    'domain.com',
-    '*.domain.com',
     '127.0.0.1',
 ]
-FULL_DOMAIN_NAME = ''
+FULL_DOMAIN = 'transactionrisk.herokuapp.com'
+if FULL_DOMAIN:
+    urls = [
+        '*' + FULL_DOMAIN,
+        'wwww.' + FULL_DOMAIN,
+        '*.' + FULL_DOMAIN
+    ]
+    ALLOWED_HOSTS.extend(urls)
 
 
 #########
@@ -142,7 +146,7 @@ TEMPLATES = [
 # HTML MINIFICATION #
 #####################
 KEEP_COMMENTS_ON_MINIFYING = False
-EXCLUDE_FROM_MINIFYING = ('^hidden/secure/trip/admin/',)
+EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
 
 
 #########
@@ -168,48 +172,55 @@ EXCLUDE_FROM_MINIFYING = ('^hidden/secure/trip/admin/',)
 ###############
 # STATICFILES #
 ###############
-# STATICFILES_DIRS = (
-#     os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
-# )
-# AWS_ACCESS_KEY_ID = ''
-# AWS_SECRET_ACCESS_KEY = ''
-# AWS_STORAGE_BUCKET_NAME = ''
-# S3DIRECT_REGION = 'us-east-1'
-# AWS_CLOUDFRONT_DOMAIN = ''
-# STATICFILES_STORAGE = 'wipp.s3utils.StaticRootS3BotoStorage'  # static files
-# STATIC_S3_PATH = 'media/'
-# DEFAULT_FILE_STORAGE = 'wipp.s3utils.MediaRootS3BotoStorage'  # media uploads
-# DEFAULT_S3_PATH = 'static/'
-# S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
+USING_S3 = False
+USING_CLOUDFRONT = False
 
-# # Without cloudfront
-# MEDIA_URL = S3_URL + STATIC_S3_PATH
-# STATIC_URL = S3_URL + DEFAULT_S3_PATH
-# MEDIA_ROOT = '/home/ubuntu/domain.com/wipp/static/media'  # change to specific
-# STATIC_ROOT = '/home/ubuntu/domain.com/wipp/static/static'  # change to specific
+if USING_S3:
+    AWS_ACCESS_KEY_ID = ''
+    AWS_SECRET_ACCESS_KEY = ''
+    AWS_STORAGE_BUCKET_NAME = ''
+    S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
 
-# # With cloudfront
-# # MEDIA_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
-# # STATIC_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
+    AWS_FILE_EXPIRE = 200
+    AWS_PRELOAD_METADATA = True
+    AWS_S3_SECURE_URLS = True
+    S3DIRECT_REGION = 'us-east-1'
 
-# AWS_FILE_EXPIRE = 200
-# AWS_PRELOAD_METADATA = True
-# AWS_S3_SECURE_URLS = True
-# date_three_months_later = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
-# expires = date_three_months_later.strftime('%A, %d %B %Y 20:00:00 EST')
-# AWS_HEADERS = {
-#     'Expires': expires,
-#     'Cache-Control': 'max-age=31536000',  # 365 days
-# }
+    STATICFILES_STORAGE = lambda: S3BotoStorage(location='static')
+    STATIC_S3_PATH = 'media/'
+    DEFAULT_FILE_STORAGE = lambda: S3BotoStorage(location='media')
+    DEFAULT_S3_PATH = 'static/'
 
-# H E R O K U
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'static')
-STATICFILES_DIRS = (
-    os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
-)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'media')
+    if USING_CLOUDFRONT:
+        AWS_CLOUDFRONT_DOMAIN = ''
+        MEDIA_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
+        STATIC_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
+    else:
+        MEDIA_URL = S3_URL + STATIC_S3_PATH
+        STATIC_URL = S3_URL + DEFAULT_S3_PATH
+        MEDIA_ROOT = '/home/ubuntu/{0}/{1}/static/media'.format(
+            FULL_DOMAIN, APP_NAME)
+        STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
+            FULL_DOMAIN, APP_NAME)
+
+    STATICFILES_DIRS = (
+        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
+    )
+
+    date_three_months_later = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
+    expires = date_three_months_later.strftime('%A, %d %B %Y 20:00:00 EST')
+    AWS_HEADERS = {
+        'Expires': expires,
+        'Cache-Control': 'max-age=86400',
+    }
+else:
+    STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'static')
+    STATICFILES_DIRS = (
+        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
+    )
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'media')
 
 
 ###########
