@@ -17,8 +17,6 @@ import dj_database_url
 from storages.backends.s3boto import S3BotoStorage
 from .common import *
 
-DEBUG = True
-
 ############################
 # HOSTING + AUTHENTICATION #
 ############################
@@ -27,10 +25,6 @@ ADMINS = (
     # ("Kirk Sanderson", "kirksanderson1@gmail.com"),
 )
 MANAGERS = ADMINS
-FULL_DOMAIN = 'transactionrisk.herokuapp.com'
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-]
 FULL_DOMAIN = 'transactionrisk.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
