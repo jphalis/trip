@@ -15,7 +15,7 @@ Glossary of settings/prod.py:
 
 import dj_database_url
 from storages.backends.s3boto import S3BotoStorage
-from .common import *
+from trip.settings.common import *
 
 
 ############################
