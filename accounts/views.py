@@ -36,21 +36,18 @@ def account_settings(request):
     form = AccountSettingsForm(request.POST or None,
                                request.FILES or None,
                                instance=user, user=user)
-    if request.method == 'POST':
-        if form.is_valid():
-            form.email = form.cleaned_data['email']
-            form.name = form.cleaned_data['name']
-            password = form.cleaned_data['password_new_confirm']
-            if password != '':
-                current_user = form.user
-                current_user.set_password(password)
-                current_user.save()
-                update_session_auth_hash(request, current_user)
-            form.save()
-
-            messages.success(request,
-                             "You have successfully updated your profile.")
-
+    if request.method == 'POST' and form.is_valid():
+        form.email = form.cleaned_data['email']
+        form.name = form.cleaned_data['name']
+        password = form.cleaned_data['password_new_confirm']
+        if password:
+            current_user = form.user
+            current_user.set_password(password)
+            current_user.save()
+            update_session_auth_hash(request, current_user)
+        form.save()
+        messages.success(request,
+                         "You have successfully updated your profile.")
     context = {
         'form': form,
         'user': user,

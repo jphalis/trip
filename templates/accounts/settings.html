@@ -10,7 +10,7 @@
             <h1>Company Information</h1>
         </div>
         <img src="{{ user.company_logo }}" style="margin-bottom: 21px;" />
-        <div class="form-row {% if form.logo.errors %}logo-field{% endif %}">
+        <div class="form-row {% if form.logo.errors %}logo-field{% endif %}" />
             <label>
                 <span>Logo</span>
                 <input type="file" accept="image/*" name="logo">
@@ -19,7 +19,7 @@
         <div class="form-row {% if form.name.errors %}name-field{% endif %}">
             <label>
                 <span>Company</span>
-                <input type="text" name="name" value="{{ form.name.value }}">
+                <input type="text" name="name" value="{{ form.name.value }}" />
             </label>
             <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
@@ -28,7 +28,7 @@
         <div class="form-row {% if form.email.errors %}email-field{% endif %}">
             <label>
                 <span>Email</span>
-                <input type="email" name="email" value="{{ form.email.value }}">
+                <input type="email" name="email" value="{{ form.email.value }}" required />
             </label>
             <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
@@ -37,7 +37,7 @@
         <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
             <label>
                 <span>New password</span>
-                <input type="password" name="password_new" placeholder="New password">
+                <input type="password" name="password_new" placeholder="New password" />
             </label>
             <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>

@@ -96,9 +96,11 @@ class AccountSettingsForm(forms.ModelForm):
         return value
 
     def clean_password_new_confirm(self):
-        clean_passwords(data=self.cleaned_data,
-                        password1="password_new",
-                        password2="password_new_confirm")
+        if self.initial.get('password_new_confirm'):
+            clean_passwords(data=self.cleaned_data,
+                            password1="password_new",
+                            password2="password_new_confirm")
+        return self.cleaned_data['password_new_confirm']
 
 
 class LoginForm(forms.Form):
