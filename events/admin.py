@@ -9,13 +9,16 @@ from .models import Event
 
 
 class EventAdmin(SummernoteModelAdmin):
-    list_display = ('id', 'name', 'date', 'sponsor_count', 'is_active',)
+    list_display = ('id', 'name', 'start_date', 'end_date',
+                    'sponsor_count', 'is_active',)
     list_display_links = ('id', 'name',)
-    list_filter = ('date', 'created', 'modified', 'is_active',)
+    list_filter = ('start_date', 'end_date', 'created', 'modified',
+                   'is_active',)
     raw_id_fields = ['sponsors']
     fieldsets = (
         (None,
-            {'fields': ('name', 'date', 'image', 'description', 'sponsors',)}),
+            {'fields': ('name', 'start_date', 'end_date', 'image',
+                        'description', 'sponsors',)}),
         (_('Permissions'),
             {'fields': ('is_active',)}),
         (_('Dates'),

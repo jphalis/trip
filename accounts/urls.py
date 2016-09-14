@@ -9,12 +9,15 @@ app_name = 'accounts'
 
 
 urlpatterns = [
-    url(r"^authenticate/$",
+    url(r"^login/$",
         views.auth_base_view,
         name="auth_base_view"),
-    url(r"^authenticate/complete/$",
-        views.auth_login_register,
-        name="auth_login_register"),
+    url(r"^login/complete/$",
+        views.auth_login,
+        name="auth_login"),
+    url(r"^register/$",
+        views.auth_register,
+        name="auth_register"),
     url(r"^logout/$",
         views.auth_logout,
         name="auth_logout"),

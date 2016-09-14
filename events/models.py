@@ -23,16 +23,19 @@ def image_upload_loc(instance, filename):
 
 
 class EventManager(models.Manager):
-    def create(self, name, date, image=None, **extra_fields):
+    def create(self, name, start_date, end_date, image=None, **extra_fields):
         """
         Creates an event.
         """
         if not name:
             raise ValueError('The event must have a name.')
-        elif not date:
-            raise ValueError('The event must have a date.')
+        elif not start_date:
+            raise ValueError('The event must have a start date.')
+        elif not end_date:
+            raise ValueError('The event must have a end date.')
 
-        event = self.model(name=name, date=date, image=image, **extra_fields)
+        event = self.model(name=name, start_date=start_date, end_date=end_date,
+                           image=image, **extra_fields)
         event.save(using=self._db)
         return event
 
@@ -50,9 +53,9 @@ class EventManager(models.Manager):
         Featured events are ordered by closest to their date.
         """
         return super(EventManager, self).get_queryset() \
-            .filter(is_active=True, date__gte=timezone.now()) \
+            .filter(is_active=True, end_date__gte=timezone.now()) \
             .prefetch_related('sponsors') \
-            .order_by('date')[:num_returned]
+            .order_by('start_date')[:num_returned]
 
     def own(self, user):
         """
@@ -61,13 +64,14 @@ class EventManager(models.Manager):
         return super(EventManager, self).get_queryset() \
             .filter(sponsors=user) \
             .prefetch_related('sponsors') \
-            .order_by('date')
+            .order_by('start_date')
 
 
 @python_2_unicode_compatible
 class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
-    date = models.DateTimeField(verbose_name='Date of Event')
+    start_date = models.DateTimeField(verbose_name='Start of Event')
+    end_date = models.DateTimeField(verbose_name='End of Event')
     image = models.ImageField(_('event image'),
                               upload_to=image_upload_loc,
                               blank=True,
@@ -100,7 +104,11 @@ class Event(TimeStampedModel):
 
     @property
     def event_status(self):
-        if self.date >= datetime.now():
+        now = datetime.now()
+        start = self.start_date
+        if start <= now and self.end_date >= now:
+            return "Happening now"
+        elif start >= now:
             return "Upcoming"
         return "Completed"
 
@@ -116,7 +124,25 @@ class Event(TimeStampedModel):
 
     @cached_property
     def event_date(self):
-        d = self.date
+        start = self.start_date
+        end = self.end_date
+        if start.date() == end.date():
+            return "{0} | {1}-{2}".format(
+                start.strftime("%B %d, %Y"),
+                start.strftime("%I:%M %p").lstrip('0'),
+                end.strftime("%I:%M %p").lstrip('0'))
+        return "{0} - {1}".format(
+            start.strftime("%B %d, %Y"), end.strftime("%B %d, %Y"))
+
+    @cached_property
+    def event_start_date(self):
+        d = self.start_date
+        # d.strftime("%A | %B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
+        return d.strftime("%B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
+
+    @cached_property
+    def event_end_date(self):
+        d = self.end_date
         # d.strftime("%A | %B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
         return d.strftime("%B %d, %Y | ") + d.strftime("%I:%M %p").lstrip('0')
 

@@ -38,9 +38,9 @@ urlpatterns = [
     url(r'^$',
         views.home,
         name='home'),
-    url(r'^about/$',
-        views.about,
-        name='about'),
+    url(r'^memberships/$',
+        views.memberships,
+        name='memberships'),
 
     # ACCOUNTS
     url(r'^accounts/',

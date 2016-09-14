@@ -18,7 +18,7 @@ application = get_wsgi_application()
 
 if not settings.DEBUG and not settings.USING_S3:
     try:
-        from dj_static import Cling, MediaCling
-        application = Cling(MediaCling(get_wsgi_application()))
+        from dj_static import Cling
+        application = Cling(get_wsgi_application())
     except:
         pass

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %} / Login{% endblock title %}
+
+{% block content %}
+    <section style="margin-bottom: 49px;">
+        {% include 'auth/_login_form.html' %}
+    </section>
+{% endblock content %}

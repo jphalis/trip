@@ -12,7 +12,8 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th>Link</th>
                         <th>Status</th>
                     </tr>
@@ -21,7 +22,8 @@
                     {% for event in own_events %}
                         <tr>
                             <td data-title="Name">{{ event.name }}</td>
-                            <td data-title="Date">{{ event.event_date }}</td>
+                            <td data-title="Start Date">{{ event.event_start_date }}</td>
+                            <td data-title="End Date">{{ event.event_end_date }}</td>
                             <td data-title="Link">
                                 <a href="{{ event.get_absolute_url }}">View event</a>
                             </td>

@@ -404,7 +404,6 @@ footer .footer-bottom {
     margin: 0 auto;
 }
 .form-module .toggle {
-    cursor: pointer;
     position: absolute;
     top: -0;
     right: -0;
@@ -416,29 +415,6 @@ footer .footer-bottom {
     font-size: 12px;
     line-height: 30px;
     text-align: center;
-}
-.form-module .toggle .tooltip {
-    position: absolute;
-    top: 5px;
-    right: -55px;
-    display: block;
-    background: rgba(0, 0, 0, 0.6);
-    width: auto;
-    padding: 5px;
-    font-size: 8px;
-    line-height: 1;
-    text-transform: uppercase;
-    opacity: 1;
-}
-.form-module .toggle .tooltip:before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: -5px;
-    display: block;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-right: 5px solid rgba(0, 0, 0, 0.6);
 }
 .form-module .form {
     display: none;
@@ -863,4 +839,113 @@ footer .footer-bottom {
     .form-validation button{
         margin: 0;
     }
+}
+
+/* Registration fees */
+.panel.price,
+.panel.price>.panel-heading{
+    border-radius:0px;
+    -moz-transition: all .3s ease;
+    -o-transition:  all .3s ease;
+    -webkit-transition:  all .3s ease;
+}
+.panel.price:hover{
+    box-shadow: 0px 0px 21px rgba(0,0,0, .2);
+}
+.panel.price:hover>.panel-heading{
+    box-shadow: 0px 0px 21px rgba(0,0,0, .2) inset;
+}      
+.panel.price>.panel-heading{
+    box-shadow: 0px 5px 0px rgba(50,50,50, .1) inset;
+    text-shadow:0px 3px 0px rgba(50,50,50, .2);
+}  
+.panel.price>.panel-heading>h3,
+.panel.price>.panel-body>p {
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
+    margin: 12px auto 12px;
+}
+.price>.panel-body>.lead>strong {
+    text-shadow: 0px 3px 0px rgba(50,50,50, .2);
+    font-size: 40px;
+}
+.panel>.list-group, .panel>.panel-collapse>.list-group{
+    height: 170px;
+}
+.panel>.list-group .list-group-item,
+.panel>.panel-collapse>.list-group .list-group-item{
+    border: 0px;
+    border-top: 1px solid #ddd;
+}
+.price .list-group-item{
+    border-bottom-:1px solid rgba(250,250,250, .5);
+    color: #333;
+    background-color: rgba(50,50,50, .01);
+    font-weight: 600;
+    text-shadow: 0px 1px 0px rgba(250,250,250, .75);
+}
+.panel.price .list-group-item:last-child {
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+.panel.price .list-group-item:first-child {
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+}
+.price .panel-footer {
+    border-bottom: 0px;
+    background-color: rgba(0,0,0, .1);
+    box-shadow: 0px 3px 0px rgba(50,50,50, .1);
+}
+.price .panel-footer a{
+    color: #fff;
+}
+
+/* blue panel */
+.price.panel-blue>.panel-heading {
+    color: #fff;
+    background-color: #608BB4;
+    border-color: #78AEE1;
+    border-bottom: 1px solid #78AEE1;
+} 
+.price.panel-blue>.panel-body {
+    color: #fff;
+    background-color: #73A3D4;
+}
+
+/* red price */
+.price.panel-red>.panel-heading {
+    color: #fff;
+    background-color: #D04E50;
+    border-color: #FF6062;
+    border-bottom: 1px solid #FF6062;
+} 
+.price.panel-red>.panel-body {
+    color: #fff;
+    background-color: #EF5A5C;
+}
+
+/* green panel */ 
+.price.panel-green>.panel-heading {
+    color: #fff;
+    background-color: #57AC57;
+    border-color: #71DF71;
+    border-bottom: 1px solid #71DF71;
+}    
+.price.panel-green>.panel-body {
+    color: #fff;
+    background-color: #65C965;
+}
+
+/* grey price */ 
+.price.panel-grey>.panel-heading {
+    color: #fff;
+    background-color: #6D6D6D;
+    border-color: #B7B7B7;
+    border-bottom: 1px solid #B7B7B7;
+} 
+.price.panel-grey>.panel-body {
+    color: #fff;
+    background-color: #808080;
 }

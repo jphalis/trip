@@ -19,9 +19,10 @@ def home(request):
     return render(request, 'general/index.html', context)
 
 
-def about(request):
-    return render(request, 'general/about.html', {})
+def memberships(request):
+    return render(request, 'general/memberships.html', {})
 
 
 def sponsors(request):
-    return render(request, 'sponsors/sponsors.html', {})
+    sponsors = MyUser.objects.all().values('name', 'website')
+    return render(request, 'sponsors/sponsors.html', {'sponsors': sponsors})

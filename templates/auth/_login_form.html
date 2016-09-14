@@ -1,0 +1,16 @@
+<div class="module form-module">
+    <div class="toggle"></div>
+    <div class="form">
+        <h2>Login to your account</h2>
+        <form method="POST" action="{% url 'accounts:auth_login' %}">
+            {% csrf_token %}
+            <input type="email" placeholder="Email" name="email" required />
+            <input type="password" placeholder="Password" name="password" required />
+            <input type="hidden" name="next" value="{{ next }}" />
+            <button type="submit" name="login_form">Login</button>
+        </form>
+    </div>
+    <a href="{% url 'accounts:password_reset' %}">
+        <div class="cta">Forgot your password?</div>
+    </a>
+</div>

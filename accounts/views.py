@@ -1,3 +1,5 @@
+import locale
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (authenticate, login, logout,
@@ -127,21 +129,18 @@ def auth_logout(request):
     return redirect('home')
 
 
+@never_cache
 def auth_base_view(request):
+    if request.user.is_authenticated():
+        return redirect('home')
     next_url = request.GET.get('next', '/')
-    return render(request, 'auth/login_register.html', {'next': next_url})
+    return render(request, 'auth/login.html', {'next': next_url})
 
 
 @never_cache
-def auth_login_register(request):
-    if request.user.is_authenticated():
-        return redirect('home')
-
+def auth_login(request):
     next_url = request.GET.get('next', '/')
     login_form = LoginForm(request.POST or None)
-    register_form = SignupForm(request.POST or None)
-
-    # Login form
     if login_form.is_valid() and 'login_form' in request.POST:
         email = login_form.cleaned_data['email']
         password = login_form.cleaned_data['password']
@@ -152,9 +151,26 @@ def auth_login_register(request):
             return redirect(request.POST.get('next', 'home'))
         else:
             messages.warning(request, 'Username or password is incorrect.')
+            return redirect('accounts:auth_base_view')
+    context = {
+        'login_form': login_form,
+        'next': next_url,
+    }
+    return render(request, 'auth/_login_form.html', context)
 
-    # Registration form
-    elif register_form.is_valid() and 'register_form' in request.POST:
+
+@never_cache
+def auth_register(request):
+    cost = request.POST['membership_cost']
+    register_form = SignupForm(request.POST or None)
+
+    if cost == 'free':
+        membership_cost = 'FREE'
+    else:
+        locale.setlocale(locale.LC_ALL, '')
+        membership_cost = locale.currency(float(cost), grouping=True)
+
+    if register_form.is_valid() and 'register_form' in request.POST:
         email = register_form.cleaned_data['email']
         password = register_form.cleaned_data['password_confirm']
         new_user = MyUser.objects.create_user(
@@ -167,13 +183,9 @@ def auth_login_register(request):
 
         if user is not None:
             login(request, user)
-            return redirect(request.POST.get('next', 'home'))
-    else:
-        return redirect('accounts:auth_base_view')
-
+            return redirect('home')
     context = {
-        'login_form': login_form,
         'register_form': register_form,
-        'next': next_url,
+        'membership_cost': membership_cost,
     }
-    return render(request, 'auth/_auth_form.html', context)
+    return render(request, 'auth/register.html', context)

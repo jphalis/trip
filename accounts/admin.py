@@ -21,7 +21,7 @@ class MyUserAdmin(UserAdmin):
         (None,
             {'fields': ('email', 'password',)}),
         ('Basic information',
-            {'fields': ('name', 'logo',)}),
+            {'fields': ('name', 'logo', 'website',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_staff', 'is_superuser',
                         'user_permissions')}),

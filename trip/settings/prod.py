@@ -13,9 +13,11 @@ Glossary of settings/prod.py:
 - Logging
 """
 
+from .common import *
 import dj_database_url
 from storages.backends.s3boto import S3BotoStorage
-from .common import *
+
+print "production"
 
 ############################
 # HOSTING + AUTHENTICATION #

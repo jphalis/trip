@@ -10,7 +10,7 @@
         <meta name="author" content="Trip">
         <link rel="icon" href="favicon.ico">
 
-        <title>{% block title %}{% endblock title %}</title>
+        <title>Trip{% block title %}{% endblock title %}</title>
 
         <!-- Bootstrap -->
         <link href="{% static 'vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -18,8 +18,6 @@
         <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
         <!-- NProgress -->
         <link href="{% static 'vendors/nprogress/nprogress.css' %}" rel="stylesheet">
-        <!-- jQuery -->
-        <link href="{% static 'vendors/jquery/jquery.bxslider.css' %}" rel="stylesheet">
         <!-- Custom Theme Style -->
         <link href="{% static 'custom/css/style.css' %}" rel="stylesheet">
         <!-- Extra stylesheets -->
@@ -43,7 +41,7 @@
                 <div id="navbar" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         {% url 'home' as home_url %}
-                        {% url 'about' as about_url %}
+                        {% url 'memberships' as memberships_url %}
                         {% url 'events:list' as events_url %}
                         {% url 'sponsors' as sponsors_url %}
                         {% url 'contact:inquiry' as contact_url %}
@@ -51,8 +49,8 @@
                         <li {% if request.path == home_url %} class="active" {% endif %}>
                             <a href="{{ home_url }}">Home</a>
                         </li>
-                        <li {% if request.path == about_url %} class="active" {% endif %}>
-                            <a href="{{ about_url }}">About</a>
+                        <li {% if request.path == memberships_url %} class="active" {% endif %}>
+                            <a href="{{ memberships_url }}">Memberships</a>
                         </li>
                         <li {% if request.path == events_url %} class="active" {% endif %}>
                             <a href="{{ events_url }}">Events</a>
@@ -110,16 +108,14 @@
 
         <!-- jQuery -->
         <script src="{% static 'vendors/jquery/jquery.min.js' %}" type="text/javascript"></script>
-        <script src="{% static 'vendors/jquery/jquery.bxslider.js' %}" type="text/javascript"></script>
         <!-- Bootstrap -->
         <script src="{% static 'vendors/bootstrap/js/bootstrap.min.js' %}" type="text/javascript"></script>
         <!-- NProgress -->
         <script src="{% static 'vendors/nprogress/nprogress.js' %}" type="text/javascript"></script>
-        <!-- Bootbox -->
-        <script src="{% static 'vendors/bootbox/bootbox.min.js' %}" type="text/javascript"></script>
+        <!-- Noty -->
+        <script src="{% static 'vendors/noty/packaged/jquery.noty.packaged.min.js' %}" type="text/javascript"></script>
         <!-- Custom theme scripts -->
         <script src="{% static 'custom/js/custom.js' %}" type="text/javascript"></script>
-        <script src="{% static 'custom/js/mooz.scripts.min.js' %}" type="text/javascript"></script>
         <!-- Extra scripts -->
         {% block js %}{% endblock js %}
         <!-- Extra in-line JavaScript scripts -->
@@ -130,14 +126,27 @@
                 // top banner messages
                 {% if messages %}
                     {% for message in messages %}
-                        $(".tooltip").css("opacity", 0);
-                        bootbox.alert({ 
-                            size: 'medium',
-                            message: "{% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}", 
-                            callback: function(){
-                                $(".tooltip").css("opacity", 1);
-                            }
-                        }) 
+                        var n = noty({
+                            theme: 'relax', // or 'defaultTheme'
+                            type: '{% if "success" in message.tags %}success{% elif "info" in message.tags %}information{% elif "warning" in message.tags %}warning{% else %}error{% endif %}',
+                            text: '{% if "safe" in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}',
+                            dismissQueue: true,
+                            animation: {
+                                open: {height: 'toggle'},
+                                close: {height: 'toggle'},
+                                easing: 'swing',
+                                speed: 500 // opening & closing animation speed
+                            },
+                            timeout: 3000, // false
+                            modal: true,
+                            callback: {
+                                onShow: function() {},
+                                afterShow: function() {},
+                                onClose: function() {},
+                                afterClose: function() {},
+                                onCloseClick: function() {},
+                            },
+                        });
                     {% endfor %}
                 {% endif %}
                 // /top banner messages

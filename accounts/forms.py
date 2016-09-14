@@ -62,6 +62,11 @@ class AccountSettingsForm(forms.ModelForm):
             attrs={'class': 'form-control'}),
         required=False
     )
+    website = forms.CharField(
+        widget=forms.TextInput(),
+        max_length=120,
+        required=False
+    )
     password_new = forms.CharField(
         label=_("New Password"),
         widget=forms.PasswordInput(render_value=False),
@@ -75,8 +80,8 @@ class AccountSettingsForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'name', 'logo', 'password_new',
-                  'password_new_confirm',)
+        fields = ('email', 'name', 'logo', 'website',
+                  'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
@@ -96,7 +101,7 @@ class AccountSettingsForm(forms.ModelForm):
         return value
 
     def clean_password_new_confirm(self):
-        if self.initial.get('password_new_confirm'):
+        if not self.cleaned_data['password_new_confirm'] == '':
             clean_passwords(data=self.cleaned_data,
                             password1="password_new",
                             password2="password_new_confirm")

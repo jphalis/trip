@@ -60,6 +60,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
                              blank=True,
                              help_text='''Please upload an image with
                               sizes: (W - 488px | H - 150px)''')
+    website = models.CharField(max_length=120, blank=True)
 
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     modified = models.DateTimeField(_('last modified'), auto_now=True)
