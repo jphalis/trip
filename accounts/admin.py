@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.utils.translation import ugettext as _
 
 from .forms import MyUserChangeForm, MyUserCreationForm
-from .models import MyUser
+from .models import MyUser, Sponsor
 
 # Register your models here.
 
@@ -18,10 +18,8 @@ class MyUserAdmin(UserAdmin):
     list_filter = ('is_active', 'is_staff', 'is_superuser',
                    'date_joined', 'modified',)
     fieldsets = (
-        (None,
-            {'fields': ('email', 'password',)}),
-        ('Basic information',
-            {'fields': ('name', 'logo', 'website',)}),
+        ('Basic Information',
+            {'fields': ('email', 'first_name', 'last_name', 'password',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_staff', 'is_superuser',
                         'user_permissions')}),
@@ -31,10 +29,11 @@ class MyUserAdmin(UserAdmin):
     add_fieldsets = (
         (None,
             {'classes': ('wide',),
-             'fields': ('email', 'name', 'password1', 'password2',)}),
+             'fields': ('email', 'first_name', 'last_name',
+                        'password1', 'password2',)}),
     )
     readonly_fields = ('date_joined', 'last_login', 'modified',)
-    search_fields = ('id', 'email', 'name',)
+    search_fields = ('id', 'email', 'first_name', 'last_name',)
     ordering = ('id',)
     filter_horizontal = ('user_permissions',)
     actions = ('enable', 'disable',)
@@ -56,3 +55,4 @@ class MyUserAdmin(UserAdmin):
 
 admin.site.unregister(Group)
 admin.site.register(MyUser, MyUserAdmin)
+# admin.site.register(Sponsor, SponsorAdmin)

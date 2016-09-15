@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.views.decorators.cache import cache_page
 
-from accounts.models import MyUser
+from accounts.models import MyUser, Sponsor
 from events.models import Event
 
 # Create views here.
@@ -24,5 +24,5 @@ def memberships(request):
 
 
 def sponsors(request):
-    sponsors = MyUser.objects.all().values('name', 'website')
+    sponsors = Sponsor.objects.all().values('name', 'website')
     return render(request, 'sponsors/sponsors.html', {'sponsors': sponsors})

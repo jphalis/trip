@@ -32,7 +32,7 @@ urlpatterns = [
         r"(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",
         views.password_reset_confirm,
         name="password_reset_confirm"),
-    url(r'^(?P<user_pk>\d+)/$',
+    url(r'^(?P<sponsor_pk>\d+)/$',
         views.detail,
         name='detail'),
 ]

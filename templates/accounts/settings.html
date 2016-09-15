@@ -7,28 +7,30 @@
     <form class="form-validation" method="POST" action="{% url 'accounts:account_settings' %}">
         {% csrf_token %}
         <div class="form-title-row">
-            <h1>Company Information</h1>
-        </div>
-        <img src="{{ user.company_logo }}" style="margin-bottom: 21px;" />
-        <div class="form-row {% if form.logo.errors %}logo-field{% endif %}" />
-            <label>
-                <span>Logo</span>
-                <input type="file" accept="image/*" name="logo">
-            </label>
-        </div>
-        <div class="form-row {% if form.name.errors %}name-field{% endif %}">
-            <label>
-                <span>Company</span>
-                <input type="text" name="name" value="{{ form.name.value }}" />
-            </label>
-            <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-            <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-            <span class="form-invalid-data-info"></span>
+            <h1>User Information</h1>
         </div>
         <div class="form-row {% if form.email.errors %}email-field{% endif %}">
             <label>
                 <span>Email</span>
                 <input type="email" name="email" value="{{ form.email.value }}" required />
+            </label>
+            <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+            <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+            <span class="form-invalid-data-info"></span>
+        </div>
+        <div class="form-row {% if form.first_name.errors %}first-name-field{% endif %}">
+            <label>
+                <span>First name</span>
+                <input type="text" name="first_name" value="{{ form.first_name.value }}" />
+            </label>
+            <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+            <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+            <span class="form-invalid-data-info"></span>
+        </div>
+        <div class="form-row {% if form.last_name.errors %}last-name-field{% endif %}">
+            <label>
+                <span>Last name</span>
+                <input type="text" name="last_name" value="{{ form.last_name.value }}" />
             </label>
             <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
             <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
@@ -61,13 +63,13 @@
 {% block scripts %}
     <script>
         $(document).ready(function() {
-            var errorField = $('.logo-field');
+            var errorField = $('.first-name-field');
             errorField.addClass('form-invalid-data');
-            errorField.find('.form-invalid-data-info').text('{% for error in form.logo.errors %}{{ error }}{% endfor %}');
+            errorField.find('.form-invalid-data-info').text('{% for error in form.first_name.errors %}{{ error }}{% endfor %}');
 
-            var errorField = $('.name-field');
+            var errorField = $('.last-name-field');
             errorField.addClass('form-invalid-data');
-            errorField.find('.form-invalid-data-info').text('{% for error in form.name.errors %}{{ error }}{% endfor %}');
+            errorField.find('.form-invalid-data-info').text('{% for error in form.last_name.errors %}{{ error }}{% endfor %}');
 
             var errorField = $('.email-field');
             errorField.addClass('form-invalid-data');

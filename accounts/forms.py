@@ -24,7 +24,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Q
-from django.forms.widgets import ClearableFileInput
 from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -52,20 +51,15 @@ class AccountSettingsForm(forms.ModelForm):
         widget=forms.EmailInput(),
         max_length=120
     )
-    name = forms.CharField(
+    first_name = forms.CharField(
         label=_('First Name'),
         widget=forms.TextInput(),
-        max_length=120
+        max_length=50
     )
-    logo = forms.ImageField(
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control'}),
-        required=False
-    )
-    website = forms.CharField(
+    last_name = forms.CharField(
+        label=_('Last Name'),
         widget=forms.TextInput(),
-        max_length=120,
-        required=False
+        max_length=50
     )
     password_new = forms.CharField(
         label=_("New Password"),
@@ -80,7 +74,7 @@ class AccountSettingsForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'name', 'logo', 'website',
+        fields = ('email', 'first_name', 'last_name',
                   'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +163,7 @@ class MyUserCreationForm(UserCreationForm):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'name',)
+        fields = ('email', 'first_name', 'last_name',)
 
     def clean_email(self):
         """
@@ -282,17 +276,23 @@ class PasswordResetTokenForm(forms.Form):
 
 
 class SignupForm(forms.Form):
-    company_name = forms.CharField(
-        label=_('Company name'),
-        widget=forms.TextInput(
-            attrs={'placeholder': 'Company'},),
-        max_length=50
-    )
     email = forms.EmailField(
         label=_("Email"),
         widget=forms.EmailInput(
             attrs={'placeholder': 'Email'}),
         max_length=120
+    )
+    first_name = forms.CharField(
+        label=_('First name'),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'First name'},),
+        max_length=50
+    )
+    last_name = forms.CharField(
+        label=_('Last name'),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Last name'},),
+        max_length=50
     )
     password = forms.CharField(
         label=_("Password"),

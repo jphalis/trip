@@ -11,10 +11,9 @@
                 </div>
             {% else %}
                 <div class="widget-container widget-about">
-                    <img src="{{ user.company_logo }}" alt="">
                     <h4>{{ user.get_full_name }}</h4>
                     <div class="author-title">
-                        <a href="{{ user.get_absolute_url }}">view profile</a>
+                        <a href="{% url 'accounts:account_settings' %}">edit profile</a>
                         <span style="margin: auto 7px;">|</span>
                         <a href="{% url 'accounts:auth_logout' %}">sign out</a>
                     </div>

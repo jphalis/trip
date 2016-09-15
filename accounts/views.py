@@ -40,7 +40,8 @@ def account_settings(request):
                                instance=user, user=user)
     if request.method == 'POST' and form.is_valid():
         form.email = form.cleaned_data['email']
-        form.name = form.cleaned_data['name']
+        form.first_name = form.cleaned_data['first_name']
+        form.last_name = form.cleaned_data['last_name']
         password = form.cleaned_data['password_new_confirm']
         if password:
             current_user = form.user
@@ -175,7 +176,8 @@ def auth_register(request):
         password = register_form.cleaned_data['password_confirm']
         new_user = MyUser.objects.create_user(
             email=email,
-            name=register_form.cleaned_data['company_name']
+            first_name=register_form.cleaned_data['first_name'],
+            last_name=register_form.cleaned_data['last_name']
         )
         new_user.set_password(password)
         new_user.save()
