@@ -1,5 +1,8 @@
 import locale
 
+from re import sub
+from decimal import Decimal
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (authenticate, login, logout,
@@ -56,6 +59,108 @@ def account_settings(request):
         'user': user,
     }
     return render(request, 'accounts/settings.html', context)
+
+
+def auth_logout(request):
+    logout(request)
+    return redirect('home')
+
+
+@never_cache
+def auth_base_view(request):
+    if request.user.is_authenticated():
+        return redirect('home')
+    next_url = request.GET.get('next', '/')
+    return render(request, 'auth/login.html', {'next': next_url})
+
+
+@never_cache
+def auth_login(request):
+    next_url = request.GET.get('next', '/')
+    login_form = LoginForm(request.POST or None)
+    if login_form.is_valid() and 'login_form' in request.POST:
+        email = login_form.cleaned_data['email']
+        password = login_form.cleaned_data['password']
+        user = authenticate(email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect(request.POST.get('next', 'home'))
+        else:
+            messages.warning(request, 'Username or password is incorrect.')
+            return redirect('accounts:auth_base_view')
+    context = {
+        'login_form': login_form,
+        'next': next_url,
+    }
+    return render(request, 'auth/_login_form.html', context)
+
+
+@never_cache
+def auth_register(request):
+    cost = request.POST['membership_cost']
+    register_form = SignupForm(request.POST or None)
+
+    if '$' in cost or 'FREE' in cost:
+        membership_cost = cost
+    else:
+        if cost == 'free':
+            membership_cost = 'FREE'
+        else:
+            locale.setlocale(locale.LC_ALL, '')
+            membership_cost = locale.currency(float(cost), grouping=True)
+
+    # if register_form.is_valid() and 'register_form' in request.POST:
+    #     email = register_form.cleaned_data['email']
+    #     password = register_form.cleaned_data['password_confirm']
+    #     new_user = MyUser.objects.create_user(
+    #         email=email,
+    #         first_name=register_form.cleaned_data['first_name'],
+    #         last_name=register_form.cleaned_data['last_name']
+    #     )
+    #     new_user.set_password(password)
+    #     new_user.save()
+    #     user = authenticate(email=email, password=password)
+
+    #     if user is not None:
+    #         login(request, user)
+    #         request.session['membership_cost'] = membership_cost
+    #         return redirect('accounts:membership_pay')
+    if 'register_form' in request.POST:
+        if membership_cost == 'FREE':
+            messages.success(request,
+                             'Your account has been successfully created.')
+            return redirect('home')
+        else:
+            request.session['membership_cost'] = membership_cost
+            return redirect('accounts:membership_pay')
+
+    context = {
+        'register_form': register_form,
+        'membership_cost': membership_cost,
+    }
+    return render(request, 'auth/register.html', context)
+
+
+def memberships(request):
+    return render(request, 'auth/memberships.html', {})
+
+
+def membership_pay(request):
+    user = request.user
+    context = {'user': user}
+    cost = request.session.pop('membership_cost', None)
+
+    if cost:
+        membership_cost = Decimal(sub(r'[^\d.]', '', cost))
+        context.update({'membership_cost': membership_cost})
+    else:
+        pass
+        # messages.error(
+        #     request,
+        #     'There was an issue creating your account. Please try again.')
+        # return redirect('home')
+    return render(request, 'auth/membership_pay.html', context)
 
 
 def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,
@@ -123,71 +228,3 @@ def password_reset_confirm(request, uidb64=None, token=None,
         'validlink': validlink,
     }
     return render(request, 'auth/password_set.html', context)
-
-
-def auth_logout(request):
-    logout(request)
-    return redirect('home')
-
-
-@never_cache
-def auth_base_view(request):
-    if request.user.is_authenticated():
-        return redirect('home')
-    next_url = request.GET.get('next', '/')
-    return render(request, 'auth/login.html', {'next': next_url})
-
-
-@never_cache
-def auth_login(request):
-    next_url = request.GET.get('next', '/')
-    login_form = LoginForm(request.POST or None)
-    if login_form.is_valid() and 'login_form' in request.POST:
-        email = login_form.cleaned_data['email']
-        password = login_form.cleaned_data['password']
-        user = authenticate(email=email, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect(request.POST.get('next', 'home'))
-        else:
-            messages.warning(request, 'Username or password is incorrect.')
-            return redirect('accounts:auth_base_view')
-    context = {
-        'login_form': login_form,
-        'next': next_url,
-    }
-    return render(request, 'auth/_login_form.html', context)
-
-
-@never_cache
-def auth_register(request):
-    cost = request.POST['membership_cost']
-    register_form = SignupForm(request.POST or None)
-
-    if cost == 'free':
-        membership_cost = 'FREE'
-    else:
-        locale.setlocale(locale.LC_ALL, '')
-        membership_cost = locale.currency(float(cost), grouping=True)
-
-    if register_form.is_valid() and 'register_form' in request.POST:
-        email = register_form.cleaned_data['email']
-        password = register_form.cleaned_data['password_confirm']
-        new_user = MyUser.objects.create_user(
-            email=email,
-            first_name=register_form.cleaned_data['first_name'],
-            last_name=register_form.cleaned_data['last_name']
-        )
-        new_user.set_password(password)
-        new_user.save()
-        user = authenticate(email=email, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-    context = {
-        'register_form': register_form,
-        'membership_cost': membership_cost,
-    }
-    return render(request, 'auth/register.html', context)

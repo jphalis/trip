@@ -10,6 +10,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
+from accounts.models import Sponsor
 from core.models import TimeStampedModel
 
 # Create your models here.
@@ -78,7 +79,7 @@ class Event(TimeStampedModel):
                               help_text='''Please upload an image with
                                sizes: (W - 750px | H - 300px).''')
     description = models.TextField(max_length=2000, blank=True)
-    sponsors = models.ManyToManyField(settings.AUTH_USER_MODEL,
+    sponsors = models.ManyToManyField(Sponsor,
                                       related_name='event_sponsors',
                                       blank=True,
                                       help_text='''Select the magnifying glass
@@ -151,7 +152,7 @@ class Event(TimeStampedModel):
         """
         Returns the information for each sponsor of the event.
         """
-        return self.sponsors.values('id', 'name', 'logo',)
+        return self.sponsors.values('id', 'name', 'logo', 'website')
 
     @property
     def sponsor_count(self):

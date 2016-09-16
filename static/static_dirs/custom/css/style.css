@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 [Color codes]
-Buttons, etc:	#726FB9
-hover color:	#fec503
+#726FB9
+#fec503
+#4A4A4A
 -------------------------------------------------------------------*/
-/* main font for menu. */
-@import url(https://fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
+@import url(//fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
 /*- General -*/
 body {
 	font-family: "Raleway", Sans-serif;
@@ -79,65 +79,6 @@ section:last-child {
 header {
 	margin: 100px 0 -51px;
 	text-align: center;
-}
-/*- BX Slaider reset -*/
-.bxslider {
-	margin: 0;
-	padding: 0;
-}
-.bx-wrapper .bx-viewport {
-	left: 0;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	border: none;
-}
-.bx-wrapper .bx-prev {
-	border: 1px solid #000;
-	background-image: none !important;
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-next {
-	border: 1px solid #000;
-	background-image: none !important;
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-prev:hover {
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-next:hover {
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-controls-direction a {
-	position: absolute;
-	top: 50%;
-	margin-top: -16px;
-	outline: 0;
-	width: 50px;
-	height: 50px;
-	text-indent: inherit;
-	z-index: 99;
-	color: #fff;
-	text-align: center;
-	line-height: 50px;
-}
-.main-slider img {
-	position: relative;
-}
-.main-slider h2 {
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
-	background-color: rgba(0, 0, 0, 0.52);
-	color: #fff;
-	padding: 25px 40px;
-	font-size: 32px;
-}
-.main-slider h2 a {
-	color: #fff;
-}
-.main-slider h2 a:hover {
-	color: #dfdfdf;
 }
 /*- blog post -*/
 .blog-post {
@@ -402,19 +343,6 @@ footer .footer-bottom {
     border-top: 5px solid #fec503;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
-}
-.form-module .toggle {
-    position: absolute;
-    top: -0;
-    right: -0;
-    background: #fec503;
-    width: 30px;
-    height: 30px;
-    margin: -5px 0 0;
-    color: #ffffff;
-    font-size: 12px;
-    line-height: 30px;
-    text-align: center;
 }
 .form-module .form {
     display: none;

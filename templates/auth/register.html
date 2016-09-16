@@ -5,7 +5,7 @@
 
 {% block content %}
     <section style="margin-bottom: 49px;">
-        <h2 style="text-align: center; margin: 0 auto 21px;">Registration cost: {{ membership_cost }}</h2>
+        <h2 style="text-align: center; margin: 0 auto 21px;">Registration fee: {{ membership_cost }}</h2>
         <div class="module form-module">
             <div class="toggle"> </div>
             <div class="form">
@@ -17,6 +17,7 @@
                     <input type="text" placeholder="Last name" name="last_name" required />
                     <input type="password" placeholder="Password" name="password" required />
                     <input type="password" placeholder="Confirm password" name="password_confirm" required />
+                    <input type="hidden" name="membership_cost" value="{{ membership_cost }}" />
                     <button type="submit" name="register_form">Register</button>
                 </form>
             </div>

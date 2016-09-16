@@ -19,10 +19,6 @@ def home(request):
     return render(request, 'general/index.html', context)
 
 
-def memberships(request):
-    return render(request, 'general/memberships.html', {})
-
-
 def sponsors(request):
     sponsors = Sponsor.objects.all().values('name', 'website')
     return render(request, 'sponsors/sponsors.html', {'sponsors': sponsors})
