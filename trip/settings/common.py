@@ -105,11 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # TEMPLATES #
 #############
 CRISPY_TEMPLATE_PACK = "bootstrap3"
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
 
 
 ############

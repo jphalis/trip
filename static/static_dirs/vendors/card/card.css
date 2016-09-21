@@ -1,0 +1,150 @@
+.fa-lock {
+    position: absolute;
+    color: #fff;
+    right: 3em;
+    top: 4em;
+    line-height: 3em;
+    border-radius: 100%;
+}
+h1 {
+    color: #fff;
+    margin: 0;
+    background: #fec503;
+    font-weight: 700;
+    line-height: 1;
+    padding: 1em 1em;
+    font-size: 1em;
+    letter-spacing: 0.5em;
+    font-family: 'Montserrat';
+    text-transform: uppercase;
+    box-sizing: border-box;
+    text-align: center;
+    margin: auto -70px;
+}
+h1 span {
+    color: #fff;
+    margin: 0 0 0;
+    display: block;
+    font-size: 7em;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
+    font-family: 'Roboto Mono';
+}
+h1 span:before {
+    content: '$';
+    font-size: 0.5em;
+    position: relative;
+    top: -0.6em;
+    left: -0.2em;
+}
+h1 span:after {
+    /*content: '00';*/
+    font-size: 0.3em;
+    position: relative;
+    letter-spacing: 0.03em;
+    top: -1.7em;
+    right: -0.1em;
+}
+/* Credit card form */
+.form-container {
+    width: 400px;
+    margin: 0 auto;
+}
+h2 {
+    font-size: 1.6em;
+    color: #fff;
+    margin: 15px auto;
+}
+.card-wrapper {
+    background-color: #4A4A4A;
+    width: 100%;
+    padding: 10px 0px;
+    margin-bottom: 1px;
+}
+.personal-information {
+    background-color: #4A4A4A;
+    color: #fff;
+    padding: 1px 0px;
+    text-align: center;
+    margin-bottom: 2px;
+}
+input {
+    margin: 1px 0px;
+}
+input[type="text"]{
+    display: block;
+    height: 40px;
+    width: 100%;
+    padding-left: 10px;
+    border: none;
+}
+input[type="email"]{
+    display: block;
+    height: 40px;
+    width: 100%;
+    padding-left: 10px;
+    border: none;
+    margin-bottom: 2px;
+}
+input[type="submit"]{
+    display: block;
+    height: 60px;
+    width: 400px;
+    border: none;
+    background-color: #fec503;
+    color: #fff;
+    margin-top: 2px;
+    curson: pointer;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+input[type="submit"]:hover{
+    -moz-box-shadow: 0 1px 1px 1px rgba(170, 170, 170, 0.5);
+    -webkit-box-shadow: 0 1px 1px 1px rgba(170, 170, 170, 0.5);
+    box-shadow: 0 1px 1px 1px rgba(170, 170, 170, 0.5);
+}
+#column-left {
+    width: 49.7%;
+    float: left;
+    margin-bottom: 2px;
+}
+#column-right {
+    width: 49.7%;
+    float: right;
+}
+@media only screen and (min-width: 300px) and (max-width: 400px){
+    .personal-information {
+        width: 300px;
+    }
+    .card-wrapper {
+        background-color: #6FB7E9;
+        width: 300px;
+        padding: 20px 0px;
+    }
+    #input-field {
+        width: 290px;
+    }
+    input[type="text"]{
+        height: 40px;
+    }
+    input[type="email"]{
+        height: 40px;
+    }
+    input[type="submit"]{
+        height: 50px;
+    }
+    #column-left {
+        width: 290px;
+        display: block;
+        float: none;
+    }
+    #column-right {
+        width: 290px;
+        display: block;
+        float: none;
+    }
+    #input-button {
+        width: 300px;
+    }
+}

@@ -1,11 +1,11 @@
 /*------------------------------------------------------------------
 [Color codes]
-Buttons, etc:	#726FB9
-hover color:	#fec503
+#726FB9
+#fec503
+#4A4A4A
 -------------------------------------------------------------------*/
-/* main font for menu. */
 @import url(//fonts.googleapis.com/css?family=Lora:400|Raleway:100,200,300,400,500,700,800);
-/*- General -*/
+/* -------------- General -------------- */
 body {
 	font-family: "Raleway", Sans-serif;
 	-webkit-font-smoothing: antialiased;
@@ -80,66 +80,7 @@ header {
 	margin: 100px 0 -51px;
 	text-align: center;
 }
-/*- BX Slaider reset -*/
-.bxslider {
-	margin: 0;
-	padding: 0;
-}
-.bx-wrapper .bx-viewport {
-	left: 0;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	box-shadow: none;
-	border: none;
-}
-.bx-wrapper .bx-prev {
-	border: 1px solid #000;
-	background-image: none !important;
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-next {
-	border: 1px solid #000;
-	background-image: none !important;
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-prev:hover {
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-next:hover {
-	background-color: rgba(223, 223, 223, 0.34);
-}
-.bx-wrapper .bx-controls-direction a {
-	position: absolute;
-	top: 50%;
-	margin-top: -16px;
-	outline: 0;
-	width: 50px;
-	height: 50px;
-	text-indent: inherit;
-	z-index: 99;
-	color: #fff;
-	text-align: center;
-	line-height: 50px;
-}
-.main-slider img {
-	position: relative;
-}
-.main-slider h2 {
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
-	background-color: rgba(0, 0, 0, 0.52);
-	color: #fff;
-	padding: 25px 40px;
-	font-size: 32px;
-}
-.main-slider h2 a {
-	color: #fff;
-}
-.main-slider h2 a:hover {
-	color: #dfdfdf;
-}
-/*- blog post -*/
+/* -------------- EVENTS -------------- */
 .blog-post {
 	padding-bottom: 30px;
 	margin-bottom: 60px;
@@ -239,7 +180,81 @@ header {
 	letter-spacing: 0.1px;
 	margin-bottom: 30px;
 }
-/*- Sidebar -*/
+.attend-button {
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+    padding: .8em 1.4em;
+    padding-right: 4.7em;
+    background: #009ED8;
+    border: none;
+    color: white;
+    transition: .2s;
+}
+.attend-button:before,
+.attend-button:after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    padding-top: inherit;
+    padding-bottom: inherit;
+    width: 2.8em;
+    content: "\00a0";
+    font-family: 'FontAwesome', sans-serif;
+    font-size: 1.2em;
+    text-align: center;
+    transition: .2s;
+}
+.attend-button:before {
+    background: rgba(0, 0, 0, 0.1);
+}
+.attend-button:hover {
+    background: #0079a5;
+}
+.attend-button:active,
+.attend-button:focus {
+      background: #002e3f;
+      outline: none;
+}
+.attend-button {
+    min-width: 15em;
+}
+.arrow {
+    background: #FE5F55;
+}
+.arrow:hover {
+    background: #fe2f22;
+}
+.arrow:active,
+.arrow:focus {
+    background: #b90c01;
+}
+.arrow:after {
+    content: "\F054";
+}
+.arrow:hover:after {
+    -webkit-animation: bounceright .3s alternate ease infinite;
+    animation: bounceright .3s alternate ease infinite;
+}
+@-webkit-keyframes bounceright {
+    from {
+        -webkit-transform: translateX(0);
+    }
+    to {
+        -webkit-transform: translateX(3px);
+    }
+}
+@keyframes bounceright {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(3px);
+    }
+}
+
+/* -------------- SIDEBAR -------------- */
 .sidebar-title {
 	background-color: #2B2B2B;
 	color: #fff;
@@ -356,7 +371,8 @@ header {
 }
 .section-title span {
 }
-/*- Footer -*/
+
+/* -------------- FOOTER -------------- */
 footer {
 	padding: 0;
 	font-size: 12px;
@@ -393,7 +409,7 @@ footer .footer-bottom {
 	padding: 10px 0 40px;
 }
 
-/* AUTHENTICATION FORM */
+/* -------------- AUTHENTICATION -------------- */
 .form-module {
     position: relative;
     background: #ffffff;
@@ -402,19 +418,6 @@ footer .footer-bottom {
     border-top: 5px solid #fec503;
     box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
-}
-.form-module .toggle {
-    position: absolute;
-    top: -0;
-    right: -0;
-    background: #fec503;
-    width: 30px;
-    height: 30px;
-    margin: -5px 0 0;
-    color: #ffffff;
-    font-size: 12px;
-    line-height: 30px;
-    text-align: center;
 }
 .form-module .form {
     display: none;
@@ -473,7 +476,7 @@ footer .footer-bottom {
     text-decoration: none;
 }
 
-/* EVENT TABLE */
+/* -------------- EVENT TABLE -------------- */
 #demo {
     margin: 20px auto;
     max-width: 960px;
@@ -501,7 +504,8 @@ footer .footer-bottom {
     -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);
 }
-/* -- Material Design Table style -------------- */
+
+/* -------------- SPONSORS -------------- */
 .table {
     width: 100%;
     max-width: 100%;
@@ -676,7 +680,7 @@ footer .footer-bottom {
     }
 }
 
-/* SETTINGS FORM */
+/* -------------- SETTINGS FORM -------------- */
 .form-validation{
     box-sizing: border-box;
     max-width: 700px;
@@ -726,7 +730,6 @@ footer .footer-bottom {
 .form-validation input[type=file] {
     display: inline-block;
 }
-
 /* Styles for Valid input data */
 .form-validation .form-valid-data-sign{
     position: absolute;
@@ -741,7 +744,6 @@ footer .footer-bottom {
     top: 10px;
     display: none;
 }
-
 /* Styles for Invalid input data */
 .form-validation .form-invalid-data{
     margin-bottom: 55px;
@@ -790,7 +792,6 @@ footer .footer-bottom {
     border: 0;
     margin: 35px 183px 0;
 }
-
 /* Placeholder color */
 .form-validation ::-webkit-input-placeholder {
     color:  #999;
@@ -841,7 +842,7 @@ footer .footer-bottom {
     }
 }
 
-/* Registration fees */
+/* -------------- REGISTRATION -------------- */
 .panel.price,
 .panel.price>.panel-heading{
     border-radius:0px;
@@ -901,7 +902,6 @@ footer .footer-bottom {
 .price .panel-footer a{
     color: #fff;
 }
-
 /* blue panel */
 .price.panel-blue>.panel-heading {
     color: #fff;
@@ -913,8 +913,7 @@ footer .footer-bottom {
     color: #fff;
     background-color: #73A3D4;
 }
-
-/* red price */
+/* red panel */
 .price.panel-red>.panel-heading {
     color: #fff;
     background-color: #D04E50;
@@ -925,7 +924,6 @@ footer .footer-bottom {
     color: #fff;
     background-color: #EF5A5C;
 }
-
 /* green panel */ 
 .price.panel-green>.panel-heading {
     color: #fff;
@@ -937,8 +935,7 @@ footer .footer-bottom {
     color: #fff;
     background-color: #65C965;
 }
-
-/* grey price */ 
+/* grey panel */ 
 .price.panel-grey>.panel-heading {
     color: #fff;
     background-color: #6D6D6D;
