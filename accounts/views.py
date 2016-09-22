@@ -36,6 +36,8 @@ def detail(request, user_pk):
 
 
 @login_required
+@never_cache
+@sensitive_post_parameters()
 def account_settings(request):
     user = request.user
     form = AccountSettingsForm(request.POST or None,
@@ -43,8 +45,6 @@ def account_settings(request):
                                instance=user, user=user)
     if request.method == 'POST' and form.is_valid():
         form.email = form.cleaned_data['email']
-        form.first_name = form.cleaned_data['first_name']
-        form.last_name = form.cleaned_data['last_name']
         password = form.cleaned_data['password_new_confirm']
         if password:
             current_user = form.user
@@ -215,14 +215,14 @@ def password_reset_confirm(request, uidb64=None, token=None,
         form = PasswordResetTokenForm(request.POST or None, user=user)
         if request.method == 'POST':
             if form.is_valid():
+                form.password_new_confirm = form.cleaned_data['password_new_confirm']
                 form.save()
-                login(request, user)
                 messages.success(request, "Password reset successfully.")
                 return redirect('home')
     else:
         validlink = False
         form = None
-        messages.error(request, "Password reset unsuccessful.")
+        messages.error(request, "Password reset unsuccessful")
     context = {
         'form': form,
         'validlink': validlink,

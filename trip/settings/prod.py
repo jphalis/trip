@@ -211,13 +211,13 @@ if USING_S3:
         'Cache-Control': 'max-age=86400',
     }
 else:
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'static')
     STATICFILES_DIRS = (
-        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
+        os.path.join(BASE_DIR, '..', 'static', 'static_dirs'),
     )
+    STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static', 'static')
+    STATIC_URL = '/static/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static', 'media')
 
 
 ###########

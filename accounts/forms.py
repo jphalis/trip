@@ -31,6 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models import MyUser
 
+# Create your forms here.
+
 
 def clean_passwords(data, password1, password2):
     if password1 in data and password2 in data:
@@ -89,7 +91,7 @@ class AccountSettingsForm(forms.ModelForm):
         if self.initial.get('email') == value:
             return value
         if MyUser.objects.filter(
-                Q(email__iexact=value) & ~Q(id=self.user.pk)).exists():
+                Q(email__iexact=value) & ~Q(pk=self.user.pk)).exists():
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
         return value
@@ -100,31 +102,6 @@ class AccountSettingsForm(forms.ModelForm):
                             password1="password_new",
                             password2="password_new_confirm")
         return self.cleaned_data['password_new_confirm']
-
-
-class LoginForm(forms.Form):
-    email = forms.EmailField(
-        label=_("Email"),
-        widget=forms.EmailInput(
-            attrs={'placeholder': 'Email'}),
-        max_length=120
-    )
-    password = forms.CharField(
-        label=_("Password"),
-        widget=forms.PasswordInput(
-            attrs={'placeholder': 'Password'},
-            render_value=False)
-    )
-
-    def clean_email(self):
-        """
-        Makes the value of the email lowercase.
-        """
-        value = self.cleaned_data.get("email").lower()
-        if MyUser.objects.filter(Q(email__iexact=value) &
-                                 Q(is_active=False)).exists():
-            raise forms.ValidationError("This account has been disabled")
-        return value
 
 
 class MyUserChangeForm(UserChangeForm):
@@ -176,6 +153,80 @@ class MyUserCreationForm(UserCreationForm):
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
         return value
+
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        label=_("Email"),
+        widget=forms.EmailInput(
+            attrs={'placeholder': 'Email'}),
+        max_length=120
+    )
+    password = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput(
+            attrs={'placeholder': 'Password'},
+            render_value=False)
+    )
+
+    def clean_email(self):
+        """
+        Makes the value of the email lowercase.
+        """
+        value = self.cleaned_data.get("email").lower()
+        if MyUser.objects.filter(Q(email__iexact=value) &
+                                 Q(is_active=False)).exists():
+            raise forms.ValidationError("This account has been disabled")
+        return value
+
+
+class SignupForm(forms.Form):
+    email = forms.EmailField(
+        label=_("Email"),
+        widget=forms.EmailInput(
+            attrs={'placeholder': 'Email'}),
+        max_length=120
+    )
+    first_name = forms.CharField(
+        label=_('First name'),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'First name'},),
+        max_length=50
+    )
+    last_name = forms.CharField(
+        label=_('Last name'),
+        widget=forms.TextInput(
+            attrs={'placeholder': 'Last name'},),
+        max_length=50
+    )
+    password = forms.CharField(
+        label=_("Password"),
+        widget=forms.PasswordInput(
+            attrs={'placeholder': 'Password'},
+            render_value=False)
+    )
+    password_confirm = forms.CharField(
+        label=_("Password (again)"),
+        widget=forms.PasswordInput(
+            attrs={'placeholder': 'Password confirm'},
+            render_value=False)
+    )
+
+    def clean_email(self):
+        """
+        Verify that the new email is not already taken.
+        """
+        value = self.cleaned_data['email'].lower()
+        if MyUser.objects.filter(email__iexact=value):
+            raise forms.ValidationError(
+                _('This email is already taken. Please try a different one.'))
+        return value
+
+    def clean_password_confirm(self):
+        clean_passwords(data=self.cleaned_data,
+                        password1="password",
+                        password2="password_confirm")
+        return self.cleaned_data['password_confirm']
 
 
 class PasswordResetForm(forms.Form):
@@ -245,80 +296,34 @@ class PasswordResetTokenForm(forms.Form):
     A form that lets a user change set their password without entering the old
     password.
     """
-    password = forms.CharField(
-        label=_('New Password'),
-        widget=forms.PasswordInput(render_value=False)
+    password_new = forms.CharField(
+        label=_("New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
     )
-    password_confirm = forms.CharField(
-        label=_('New Password (again)'),
-        widget=forms.PasswordInput(render_value=False)
+    password_new_confirm = forms.CharField(
+        label=_("New Password (again)"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
     )
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
+        self.user = kwargs.pop('user', None)
         super(PasswordResetTokenForm, self).__init__(*args, **kwargs)
 
     def clean_password_confirm(self):
         clean_passwords(data=self.cleaned_data,
-                        password1="password",
-                        password2="password_confirm")
+                        password1="password_new",
+                        password2="password_new_confirm")
 
     def save(self, commit=True):
         """
         Saves the form and sets the user's password to be the value he/she
         typed in.
         """
-        password = self.cleaned_data["password_confirm"]
-        self.user.set_password(password)
-        if commit:
-            self.user.save()
-        return self.user
-
-
-class SignupForm(forms.Form):
-    email = forms.EmailField(
-        label=_("Email"),
-        widget=forms.EmailInput(
-            attrs={'placeholder': 'Email'}),
-        max_length=120
-    )
-    first_name = forms.CharField(
-        label=_('First name'),
-        widget=forms.TextInput(
-            attrs={'placeholder': 'First name'},),
-        max_length=50
-    )
-    last_name = forms.CharField(
-        label=_('Last name'),
-        widget=forms.TextInput(
-            attrs={'placeholder': 'Last name'},),
-        max_length=50
-    )
-    password = forms.CharField(
-        label=_("Password"),
-        widget=forms.PasswordInput(
-            attrs={'placeholder': 'Password'},
-            render_value=False)
-    )
-    password_confirm = forms.CharField(
-        label=_("Password (again)"),
-        widget=forms.PasswordInput(
-            attrs={'placeholder': 'Password confirm'},
-            render_value=False)
-    )
-
-    def clean_email(self):
-        """
-        Verify that the new email is not already taken.
-        """
-        value = self.cleaned_data['email'].lower()
-        if MyUser.objects.filter(email__iexact=value):
-            raise forms.ValidationError(
-                _('This email is already taken. Please try a different one.'))
-        return value
-
-    def clean_password_confirm(self):
-        clean_passwords(data=self.cleaned_data,
-                        password1="password",
-                        password2="password_confirm")
-        return self.cleaned_data['password_confirm']
+        user = self.user
+        if user:
+            user.set_password(self.cleaned_data["password_new_confirm"])
+            if commit:
+                user.save()
+            return user
