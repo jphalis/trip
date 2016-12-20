@@ -9,7 +9,5 @@ app_name = 'contact'
 
 
 urlpatterns = [
-    url(r"^$",
-        views.inquiry,
-        name="inquiry"),
+    url(r"^$", views.inquiry, name="inquiry"),
 ]

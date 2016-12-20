@@ -50,7 +50,7 @@ h1 span:after {
     width: 400px;
     margin: 0 auto;
 }
-h2 {
+.form-title {
     font-size: 1.6em;
     color: #fff;
     margin: 15px auto;
@@ -70,6 +70,7 @@ h2 {
 }
 input {
     margin: 1px 0px;
+    color: #4A4A4A;
 }
 input[type="text"]{
     display: block;
@@ -79,6 +80,14 @@ input[type="text"]{
     border: none;
 }
 input[type="email"]{
+    display: block;
+    height: 40px;
+    width: 100%;
+    padding-left: 10px;
+    border: none;
+    margin-bottom: 2px;
+}
+input[type="password"]{
     display: block;
     height: 40px;
     width: 100%;
@@ -129,6 +138,9 @@ input[type="submit"]:hover{
         height: 40px;
     }
     input[type="email"]{
+        height: 40px;
+    }
+    input[type="password"]{
         height: 40px;
     }
     input[type="submit"]{

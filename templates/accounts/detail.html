@@ -4,35 +4,35 @@
 {% block title %}{% endblock title %}
 
 {% block content %}
-    <h3>Events sponsored</h3>
-    <!-- table -->
-    <div id="demo">
-        <div class="table-responsive-vertical shadow-z-1">
-            <table id="table" class="table table-hover table-mc-orange">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Link</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for event in own_events %}
-                        <tr>
-                            <td data-title="Name">{{ event.name }}</td>
-                            <td data-title="Start Date">{{ event.event_start_date }}</td>
-                            <td data-title="End Date">{{ event.event_end_date }}</td>
-                            <td data-title="Link">
-                                <a href="{{ event.get_absolute_url }}">View event</a>
-                            </td>
-                            <td data-title="Status">{{ event.event_status }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+  <h3>Events sponsored</h3>
+  <!-- table -->
+  <div id="demo">
+    <div class="table-responsive-vertical shadow-z-1">
+      <table id="table" class="table table-hover table-mc-orange">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Link</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for event in own_events %}
+            <tr>
+              <td data-title="Name">{{ event.name }}</td>
+              <td data-title="Start Date">{{ event.event_start_date }}</td>
+              <td data-title="End Date">{{ event.event_end_date }}</td>
+              <td data-title="Link">
+                <a href="{{ event.get_absolute_url }}">View event</a>
+              </td>
+              <td data-title="Status">{{ event.event_status }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-    <!-- /table -->
+  </div>
+  <!-- /table -->
 {% endblock content %}

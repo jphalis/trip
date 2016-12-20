@@ -20,44 +20,45 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 
-# from accounts import views as account_views
 from . import views
 
 
 admin.site.site_header = "Trip Administration"
+admin.site.index_title = "Trip"
 
 
 urlpatterns = [
     # ADMIN
-    url(r'^hidden/secure/trip/admin/', include(admin.site.urls)),
+    url(r'^hidden/secure/trip/admin/',
+        include(admin.site.urls)),
 
     # SUMMERNOTE - WSGIEditor
-    url(r'^summernote/', include('django_summernote.urls')),
+    url(r'^summernote/',
+        include('django_summernote.urls')),
 
     # GENERAL
     url(r'^$',
-        views.home,
-        name='home'),
+        views.home, name='home'),
 
     # ACCOUNTS
     url(r'^accounts/',
-        include('accounts.urls',
-                namespace='accounts')),
+        include('accounts.urls', namespace='accounts')),
+
+    # AUTHENTICATION
+    url(r'^auth/',
+        include('authentication.urls', namespace='authentication')),
 
     # CONTACT
     url(r'^contact/',
-        include('contact.urls',
-                namespace='contact')),
+        include('contact.urls', namespace='contact')),
 
     # EVENTS
     url(r'^events/',
-        include('events.urls',
-                namespace='events')),
+        include('events.urls', namespace='events')),
 
     # SPONSORS
     url(r'^sponsors/$',
-        views.sponsors,
-        name='sponsors'),
+        views.sponsors, name='sponsors'),
 ]
 
 

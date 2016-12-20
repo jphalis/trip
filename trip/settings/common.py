@@ -65,14 +65,31 @@ INSTALLED_APPS = (
     'widget_tweaks',
 
     'accounts',
+    'authentication',
     'contact',
-    'ecomm',
     'events',
 )
 
 
 ROOT_URLCONF = '{}.urls'.format(APP_NAME)
 WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
+
+
+MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'htmlmin.middleware.HtmlMinifyMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    # 'htmlmin.middleware.MarkRequestMiddleware',
+)
 
 
 #######################
@@ -113,6 +130,18 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 14  # 14 days
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+
+###############
+# STATICFILES #
+###############
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, '..', 'static', 'static_dirs'),
+)
+STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static', 'static')
+STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
+MEDIA_URL = '/media/'
 
 
 ################

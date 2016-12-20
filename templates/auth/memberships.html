@@ -3,106 +3,234 @@
 
 {% block title %} / Membership Options{% endblock title %}
 
+{% block stylesheets %}
+  <link rel='stylesheet prefetch' href='//fonts.googleapis.com/css?family=Montserrat'>
+  <link rel='stylesheet prefetch' href='//fonts.googleapis.com/css?family=Roboto+Mono'>
+  <link rel='stylesheet' href="{% static 'vendors/card/card.css' %}">
+{% endblock stylesheets %}
+
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <article class="blog-post">
-                <div class="blog-post-body">
-                    <h2 style="margin-bottom: 18px;">Membership Options</h2>
-                    <div class="blog-post-text">
-                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                            <div class="panel price panel-red">
-                                <div class="panel-heading  text-center">
-                                <h3>Individual</h3>
-                                </div>
-                                <div class="panel-body text-center">
-                                    <p class="lead"><strong>$150.00</strong></p>
-                                    <p>per year</p>
-                                </div>
-                                <ul class="list-group list-group-flush text-center">
-                                    <li class="list-group-item">Any person interested in the promotion and development of the professional liability industry is eligible for membership<br/><br/><br/><br/></li>
-                                </ul>
-                                <div class="panel-footer">
-                                    <form method="POST" action="{% url 'accounts:auth_register' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="membership_cost" value="150" />
-                                        <input class="btn btn-lg btn-block btn-danger" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} type="submit" value="SIGNUP NOW!" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+  <div class="row">
+    <div class="col-md-12">
+      <article class="blog-post" style="border-bottom:None;">
+        <div class="blog-post-body">
+          <h2 style="margin-bottom: 18px;">Membership Options</h2>
+          <div class="blog-post-text">
 
-                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                            <div class="panel price panel-green">
-                                <div class="panel-heading text-center">
-                                <h3>Corporate Member</h3>
-                                </div>
-                                <div class="panel-body text-center">
-                                    <p class="lead"><strong>$1,000.00</strong></p>
-                                    <p>per year</p>
-                                </div>
-                                <ul class="list-group list-group-flush text-center">
-                                    <li class="list-group-item">Must be an employee of a Corporate Sponsor</li>
-                                    <li class="list-group-item">Corporate affiliates hold the same rights as an individual member<br/><br/></li>
-                                </ul>
-                                <div class="panel-footer">
-                                    <form method="POST" action="{% url 'accounts:auth_register' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="membership_cost" value="1000" />
-                                        <input class="btn btn-lg btn-block btn-success" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} type="submit" value="SIGNUP NOW!" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                
-                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                            <div class="panel price panel-blue">
-                                <div class="panel-heading arrow_box text-center">
-                                <h3>Future</h3>
-                                </div>
-                                <div class="panel-body text-center">
-                                    <p class="lead"><strong>$50.00</strong></p>
-                                    <p>per year</p>
-                                </div>
-                                <ul class="list-group list-group-flush text-center">
-                                    <li class="list-group-item">Must be 35 years of age or younger and involved in the professional liability industry</li>
-                                    <li class="list-group-item">Full membership benefits, including member discounts for event registration</li>
-                                </ul>
-                                <div class="panel-footer">
-                                    <form method="POST" action="{% url 'accounts:auth_register' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="membership_cost" value="50" />
-                                        <input class="btn btn-lg btn-block btn-info" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} type="submit" value="SIGNUP NOW!" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-                            <div class="panel price panel-grey">
-                                <div class="panel-heading arrow_box text-center">
-                                <h3>Academic</h3>
-                                </div>
-                                <div class="panel-body text-center">
-                                    <p class="lead"><strong>Free</strong></p>
-                                    <br/><br/>
-                                </div>
-                                <ul class="list-group list-group-flush text-center">
-                                    <li class="list-group-item">Website access only</li>
-                                    <li class="list-group-item">Must be a student or teacher at academic institution<br/><br/><br/><br/></li>
-                                </ul>
-                                <div class="panel-footer">
-                                    <form method="POST" action="{% url 'accounts:auth_register' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="membership_cost" value="free" />
-                                        <input class="btn btn-lg btn-block btn-primary" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} type="submit" value="SIGNUP NOW!" />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+              <div class="panel price panel-red">
+                <div class="panel-heading  text-center">
+                  <h3>Individual</h3>
                 </div>
-            </article>
+                <div class="panel-body text-center">
+                  <p class="lead"><strong>$150.00</strong></p>
+                  <p>per year</p>
+                </div>
+                <ul class="list-group list-group-flush text-center">
+                  <li class="list-group-item">
+                    Any person interested in the promotion and development of the professional liability industry is eligible for membership<br/><br/><br/><br/>
+                  </li>
+                </ul>
+                <div class="panel-footer">
+                  <button type="button" id="individual" class="btn btn-lg btn-block btn-danger" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
+                    SIGNUP NOW!
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+              <div class="panel price panel-green">
+                <div class="panel-heading text-center">
+                  <h3>Corporate Member</h3>
+                </div>
+                <div class="panel-body text-center">
+                  <p class="lead"><strong>$1,000.00</strong></p>
+                  <p>per year</p>
+                </div>
+                <ul class="list-group list-group-flush text-center">
+                  <li class="list-group-item">
+                    Must be an employee of a Corporate Sponsor
+                  </li>
+                  <li class="list-group-item">
+                    Corporate affiliates hold the same rights as an individual member<br/><br/>
+                  </li>
+                </ul>
+                <div class="panel-footer">
+                  <button type="button" id="corporate" class="btn btn-lg btn-block btn-success" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
+                    SIGNUP NOW!
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+              <div class="panel price panel-blue">
+                <div class="panel-heading arrow_box text-center">
+                  <h3>Future</h3>
+                </div>
+                <div class="panel-body text-center">
+                  <p class="lead"><strong>$50.00</strong></p>
+                  <p>per year</p>
+                </div>
+                <ul class="list-group list-group-flush text-center">
+                  <li class="list-group-item">
+                    Must be 35 years of age or younger and involved in the professional liability industry
+                  </li>
+                  <li class="list-group-item">
+                    Full membership benefits, including member discounts for event registration
+                  </li>
+                </ul>
+                <div class="panel-footer">
+                  <button type="button" id="future" class="btn btn-lg btn-block btn-info" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
+                    SIGNUP NOW!
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
+              <div class="panel price panel-grey">
+                  <div class="panel-heading arrow_box text-center">
+                    <h3>Academic</h3>
+                  </div>
+                  <div class="panel-body text-center">
+                    <p class="lead"><strong>Free</strong></p>
+                    <br/><br/>
+                  </div>
+                  <ul class="list-group list-group-flush text-center">
+                    <li class="list-group-item">Website access only</li>
+                    <li class="list-group-item">
+                      Must be a student or teacher at academic institution<br/><br/><br/><br/>
+                    </li>
+                  </ul>
+                  <div class="panel-footer">
+                    <button type="button" id="academic" class="btn btn-lg btn-block btn-primary" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
+                      SIGNUP NOW!
+                    </button>
+                  </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+      </article>
+
+      <!-- FULLSCREEN MODAL -->
+      <div class="modal fade fullscreen" id="menuModal"  tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content" style="color:#fff;">
+            <div class="modal-header" style="border:0;">
+              <button type="button" class="close btn btn-link" data-dismiss="modal" aria-hidden="true">
+                <i class="fa fa-close fa-lg" style="color:#999;"></i>
+              </button>
+            </div>
+            <div class="modal-body text-center">
+              <h1>
+                Membership fee<span id="membership-fee"></span>{% if request.is_secure %}<i class="fa fa-lock"></i>{% endif %}
+              </h1>
+              <section style="margin-bottom: 49px;">
+
+                <form method="POST" action="{% url 'authentication:auth_register' %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="membership_cost" value="" />
+
+                  <!-- register form -->
+                  <div class="form-container">
+                    <div class="personal-information">
+                      <h2 class="form-title">Account Information</h2>
+                    </div>
+                    <input id="input-field" type="email" name="email" required="required" autocomplete="on" maxlength="120" placeholder="Email*" />
+                    <input id="column-left" type="text" name="first_name" required="required" placeholder="First name*" />
+                    <input id="column-right" type="text" name="last_name" required="required" placeholder="Last name*" />
+                    <input id="input-field" type="password" name="password" required="required" placeholder="Password*" />
+                    <input id="input-field" type="password" name="password_confirm" required="required" placeholder="Confirm password*" />
+                  </div>
+                  <!-- /register form -->
+
+                  <!-- credit card form -->
+                  <div id="cc-form" class="form-container">
+                    <div class="personal-information">
+                      <h2 class="form-title">Payment Information</h2>
+                    </div>
+                    <input id="input-field" type="text" name="street_address" required="required" autocomplete="on" maxlength="50" placeholder="Streed Address*" />
+                    <input id="column-left" type="text" name="city" required="required" autocomplete="on" maxlength="35" placeholder="City*" />
+                    <input id="column-right" type="text" name="zip_code" required="required" autocomplete="on" pattern="[0-9]*" maxlength="5" placeholder="ZIP code*" />
+                    <br><br><br>
+                    <div class="card-wrapper"></div>
+                    <input id="input-field" type="text" name="number" required="required" placeholder="Card Number*" />
+                    <input id="column-left" type="text" name="expiry" required="required" placeholder="MM / YY*" />
+                    <input id="column-right" type="text" name="cvc" required="required" placeholder="CVV*" />
+                  </div>
+                  <!-- /credit card form -->
+
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <button type="submit" class="btn btn-block register-submit" name="register_form">
+                      Register
+                    </button>
+                  </div>
+                </form>
+
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /FULLSCREEN MODAL -->
+
     </div>
+  </div>
 {% endblock content %}
+
+{% block js %}
+    <script src="{% static 'vendors/card/card.js' %}" type="text/javascript"></script>
+{% endblock js %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $('form').card({
+            container: '.card-wrapper',
+            formSelectors: {
+                numberInput: 'input[name="number"]',
+                expiryInput: 'input[name="expiry"]',
+                cvcInput: 'input[name="cvc"]',
+                nameInput: 'input[name="first_name"], input[name="last_name"]'
+            },
+            width: 280,
+            formatting: true,
+            messages: {
+                validDate: 'valid\ndate',
+                monthYear: 'mm/yy',
+            },
+            placeholders: {
+                number: '•••• •••• •••• ••••',
+                name: 'Full Name',
+                expiry: '••/••',
+                cvc: '•••'
+            },
+        });
+        $('#individual').click(function(){
+            $('#membership-fee').html('150.00');
+            $('input[name=membership_cost]').attr('value', 150);
+        });
+        $('#corporate').click(function(){
+            $('#membership-fee').html('1,000.00');
+            $('input[name=membership_cost]').attr('value', 1000);
+        });
+        $('#future').click(function(){
+            $('#membership-fee').html('50.00');
+            $('input[name=membership_cost]').attr('value', 50);
+        });
+        $('#academic').click(function(){
+            $('#membership-fee').html('FREE');
+            $('input[name=membership_cost]').attr('value', 'FREE');
+            $('#cc-form').hide();
+            $('input[name=street_address]').attr("disabled", true);
+            $('input[name=city]').attr("disabled", true);
+            $('input[name=zip_code]').attr("disabled", true);
+            $('input[name=number]').attr("disabled", true);
+            $('input[name=expiry]').attr("disabled", true);
+            $('input[name=cvc]').attr("disabled", true);
+        });
+    </script>
+{% endblock scripts %}

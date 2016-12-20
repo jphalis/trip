@@ -82,7 +82,7 @@
 
 {% block content %}
     <h1>Contact Us</h1>
-    <form class="cf" method="POST" action="{% url 'contact:inquiry' %}">
+    <form class="cf" method="POST" action=".">
         {% csrf_token %}
         <div class="half left cf">
             <input type="text" placeholder="Company" name="company" />

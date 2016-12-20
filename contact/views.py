@@ -11,7 +11,7 @@ from .forms import ContactForm
 # Create your views here.
 
 
-# @cache_page(60 * 7)
+@cache_page(60 * 7)
 def inquiry(request):
     form = ContactForm(request.POST or None)
     if form.is_valid() and 'contact_form' in request.POST:

@@ -1,64 +1,72 @@
 {% load staticfiles %}
 
 <div class="col-md-4 sidebar-gutter">
-    <aside>
-        <!-- account -->
-        <div class="sidebar-widget">
-            <h3 class="sidebar-title">Account</h3>
-            {% if user.is_anonymous %}
-                <div class="widget-container">
-                    {% include 'auth/_login_form.html' %}
-                </div>
-            {% else %}
-                <div class="widget-container widget-about">
-                    <h4>{{ user.get_full_name }}</h4>
-                    <div class="author-title">
-                        <a href="{% url 'accounts:account_settings' %}">edit profile</a>
-                        <span style="margin: auto 7px;">|</span>
-                        <a href="{% url 'accounts:auth_logout' %}">sign out</a>
-                    </div>
-                    <!-- show profile information -->
-                </div>
-            {% endif %}
+  <aside>
+    <!-- account -->
+    <div class="sidebar-widget">
+      <h3 class="sidebar-title">Account</h3>
+      {% if user.is_anonymous %}
+        <div class="widget-container">
+          {% include 'auth/_login_form.html' %}
         </div>
-        <!-- /account -->
+      {% else %}
+        <div class="widget-container widget-about">
+          <h4>{{ user.get_full_name }}</h4>
+          <div class="author-title">
+            <a href="{% url 'accounts:account_settings' %}">edit profile</a>
+            <span style="margin: auto 7px;">|</span>
+            <a href="{% url 'authentication:auth_logout' %}">sign out</a>
+          </div>
+          <!-- show profile information -->
+        </div>
+      {% endif %}
+    </div>
+    <!-- /account -->
 
-        <!-- featured events -->
-        <div class="sidebar-widget">
-            <h3 class="sidebar-title">Featured Events</h3>
-            <div class="widget-container">
-                {% for event in featured_events %}
-                    <article class="widget-post">
-                        <div class="post-image" style="background:#ccc; width:52px; margin-right:10px; border-radius:10px; padding:5px;">
-                            <a href="{{ event.get_absolute_url }}">
-                                <p class="month" style="margin:0; text-align:center; color:#fff;">{{ event.start_date|date:"N" }}</p>
-                                <p class="day" style="font-family:'Helvetica Neue'; text-align:center; color:#fff; font-size:27px; margin:0; line-height:27px; font-weight:bold;">{{ event.start_date.day }}</p>
-                            </a>
-                        </div>
-                        <div class="post-body">
-                            <h2><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></h2>
-                            <div class="post-meta">
-                                <span><i class="fa fa-clock-o"></i> {{ event.event_date }}</span>
-                            </div>
-                        </div>
-                    </article>
-                {% endfor %}
+    <!-- featured events -->
+    <div class="sidebar-widget">
+      <h3 class="sidebar-title">Featured Events</h3>
+      <div class="widget-container">
+        {% for event in featured_events %}
+          <article class="widget-post">
+            <div class="post-image" style="background:#ccc; width:52px; margin-right:10px; border-radius:10px; padding:5px;">
+              <a href="{{ event.get_absolute_url }}">
+                <p class="month" style="margin:0; text-align:center; color:#fff;">
+                  {{ event.start_date|date:"N" }}
+                </p>
+                <p class="day" style="font-family:'Helvetica Neue'; text-align:center; color:#fff; font-size:27px; margin:0; line-height:27px; font-weight:bold;">
+                  {{ event.start_date.day }}
+                </p>
+              </a>
             </div>
-        </div>
-        <!-- /featured events -->
+            <div class="post-body">
+              <h2>
+                <a href="{{ event.get_absolute_url }}">{{ event.name }}</a>
+              </h2>
+              <div class="post-meta">
+                <span>
+                  <i class="fa fa-clock-o"></i> {{ event.event_date }}
+                </span>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- /featured events -->
 
-        <!-- social links -->
-        <div class="sidebar-widget">
-            <h3 class="sidebar-title">Follow us!</h3>
-            <div class="widget-container">
-                <div class="widget-socials">
-                    <a href="#"><i class="fa fa-facebook"></i></a>
-                    <a href="#"><i class="fa fa-twitter"></i></a>
-                    <a href="#"><i class="fa fa-instagram"></i></a>
-                    <a href="#"><i class="fa fa-google-plus"></i></a>
-                </div>
-            </div>
+    <!-- social links -->
+    <div class="sidebar-widget">
+      <h3 class="sidebar-title">Follow us!</h3>
+      <div class="widget-container">
+        <div class="widget-socials">
+          <a href="#"><i class="fa fa-facebook"></i></a>
+          <a href="#"><i class="fa fa-twitter"></i></a>
+          <a href="#"><i class="fa fa-instagram"></i></a>
+          <a href="#"><i class="fa fa-google-plus"></i></a>
         </div>
-        <!-- /social links -->
-    </aside>
+      </div>
+    </div>
+    <!-- /social links -->
+  </aside>
 </div>

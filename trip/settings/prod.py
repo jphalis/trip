@@ -15,7 +15,6 @@ Glossary of settings/prod.py:
 
 from .common import *
 import dj_database_url
-from storages.backends.s3boto import S3BotoStorage
 
 
 ############################
@@ -30,8 +29,8 @@ FULL_DOMAIN = 'transactionrisk.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '*{}'.format(FULL_DOMAIN),
-    'wwww.{}'.format(FULL_DOMAIN),
     '*.{}'.format(FULL_DOMAIN),
+    'wwww.{}'.format(FULL_DOMAIN),
     FULL_DOMAIN,
 ]
 
@@ -83,31 +82,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-DATABASES['default'] = dj_database_url.config()  # Heroku
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
-DATABASES['default']['NAME'] = 'ddnkqiaue2utva'
-DATABASES['default']['USER'] = 'rcerpdvcjhyord'
-DATABASES['default']['PASSWORD'] = 'O14XyRguW1NDnwssq8y6uSX7-m'
-DATABASES['default']['HOST'] = 'ec2-54-221-234-118.compute-1.amazonaws.com'
-DATABASES['default']['PORT'] = '5432'
-
-
-##############
-# MIDDLEWARE #
-##############
-MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
-)
+DATABASES['default'].update(dj_database_url.config())  # For Heroku only
 
 
 #############
@@ -171,53 +146,43 @@ EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
 ###############
 USING_S3 = False
 USING_CLOUDFRONT = False
+USING_EC2 = False
 
 if USING_S3:
     AWS_ACCESS_KEY_ID = ''
     AWS_SECRET_ACCESS_KEY = ''
     AWS_STORAGE_BUCKET_NAME = ''
-    S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
+    S3DIRECT_REGION = 'us-east-1'
 
+    AWS_QUERYSTRING_AUTH = False
     AWS_FILE_EXPIRE = 200
     AWS_PRELOAD_METADATA = True
     AWS_S3_SECURE_URLS = True
-    S3DIRECT_REGION = 'us-east-1'
 
-    STATICFILES_STORAGE = lambda: S3BotoStorage(location='static')
+    STATICFILES_STORAGE = '{}.utils.StaticRootS3BotoStorage'.format(APP_NAME)
     STATIC_S3_PATH = 'media/'
-    DEFAULT_FILE_STORAGE = lambda: S3BotoStorage(location='media')
+    DEFAULT_FILE_STORAGE = '{}.utils.MediaRootS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
 
     if USING_CLOUDFRONT:
         AWS_CLOUDFRONT_DOMAIN = ''
         MEDIA_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
         STATIC_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
-    else:
+    elif USING_EC2:
+        S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
         MEDIA_URL = S3_URL + STATIC_S3_PATH
         STATIC_URL = S3_URL + DEFAULT_S3_PATH
-        MEDIA_ROOT = '/home/ubuntu/{0}/{1}/static/media'.format(
+        MEDIA_ROOT = '/home/ubuntu/{0}/{1}/media'.format(
             FULL_DOMAIN, APP_NAME)
         STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
             FULL_DOMAIN, APP_NAME)
 
-    STATICFILES_DIRS = (
-        os.path.join(os.path.dirname(BASE_DIR), 'static', 'static_dirs'),
-    )
-
-    date_three_months_later = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
-    expires = date_three_months_later.strftime('%A, %d %B %Y 20:00:00 EST')
+    two_months = datetime.timedelta(days=61)
+    two_months_later = datetime.date.today() + two_months
     AWS_HEADERS = {
-        'Expires': expires,
-        'Cache-Control': 'max-age=86400',
+        'Expires': two_months_later.strftime('%A, %d %B %Y 20:00:00 EST'),
+        'Cache-Control': 'max-age=%d' % (int(two_months.total_seconds()), ),
     }
-else:
-    STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, '..', 'static', 'static_dirs'),
-    )
-    STATIC_ROOT = os.path.join(BASE_DIR, '..', 'static', 'static')
-    STATIC_URL = '/static/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'media')
-    MEDIA_URL = '/media/'
 
 
 ###########

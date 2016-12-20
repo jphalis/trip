@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
@@ -105,7 +105,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         """
         Returns the first name for the user.
         """
-        return self.first_name
+        return str(self.first_name)
 
     def email_user(self, subject, message, from_email=None):
         """
@@ -127,18 +127,23 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
 
 class SponsorManager(models.Manager):
-    pass
+    def active(self):
+        """
+        Returns all active sponsors.
+        """
+        return super(SponsorManager, self).get_queryset().filter(
+            is_active=True)
 
 
 @python_2_unicode_compatible
 class Sponsor(TimeStampedModel):
-    name = models.CharField(_('company name'), max_length=100, blank=True)
+    name = models.CharField(_('company name'), max_length=100)
     logo = models.ImageField(_('company logo'),
                              upload_to=logo_upload_loc,
                              blank=True,
                              help_text='''Please upload an image with
                               sizes: (W - 488px | H - 150px)''')
-    website = models.CharField(max_length=120, blank=True)
+    website = models.URLField(max_length=150, null=True, blank=True)
     affiliates = models.ManyToManyField(MyUser,
                                         related_name='sponsor_affiliates',
                                         blank=True)
@@ -153,13 +158,13 @@ class Sponsor(TimeStampedModel):
         verbose_name_plural = _('sponsors')
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def get_absolute_url(self):
         """
         Returns the url for the user.
         """
-        return reverse('accounts:detail', kwargs={"sponsor_pk": self.pk})
+        return reverse_lazy('accounts:detail', kwargs={"sponsor_pk": self.pk})
 
     @property
     def company_logo(self):

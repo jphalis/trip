@@ -2,34 +2,39 @@
 {% load staticfiles %}
 
 {% block header_content %}
-    <header>
-        <img src="{% static 'img/default-company-logo.jpg' %}">
-    </header>
+  <header>
+    <img src="{% static 'img/default-company-logo.jpg' %}">
+  </header>
 {% endblock header_content %}
 
 {% block content %}
-    <section>
-        <div class="row">
-            <div class="col-md-8">
-                {% for event in featured_events %}
-                    <article class="blog-post">
-                        <div class="blog-post-image">
-                            <img src="{{ event.event_image }}" alt="" />
-                        </div>
-                        <div class="blog-post-body">
-                            <h2><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></h2>
-                            <div class="post-meta"><span><i class="fa fa-clock-o"></i>{{ event.event_date }}</span></div>
-                            <div class="blog-post-text">
-                                {{ event.description|safe|truncatewords_html:75 }}
-                            </div>
-                        </div>
-                    </article>
-                {% endfor %}
+  <section>
+    <div class="row">
+      <div class="col-md-8">
+        {% for event in featured_events %}
+          <article class="blog-post">
+            <div class="blog-post-image">
+              <img src="{{ event.event_image }}" alt="" />
             </div>
-            
-            <!-- sidebar -->
-            {% include 'general/_sidebar.html' %}
+            <div class="blog-post-body">
+              <h2>
+                <a href="{{ event.get_absolute_url }}">{{ event.name }}</a>
+              </h2>
+              <div class="post-meta">
+                <span>
+                  <i class="fa fa-clock-o"></i>{{ event.event_date }}
+                </span>
+              </div>
+              <div class="blog-post-text">
+                {{ event.description|safe|truncatewords_html:75 }}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
 
-        </div>
-    </section>
+      <!-- sidebar -->
+      {% include 'general/_sidebar.html' %}
+    </div>
+  </section>
 {% endblock content %}

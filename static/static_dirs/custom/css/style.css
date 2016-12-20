@@ -37,7 +37,7 @@ img {
 	height: auto;
 }
 a {
-    color: #4A4A4A;	
+    color: #4A4A4A;
 }
 a:hover, a:focus, a:active, a.active {
 	color: #fec503;
@@ -77,9 +77,67 @@ section:last-child {
 	color:#fff;
 }
 header {
-	margin: 100px 0 -51px;
+	margin: 80px 0 -70px;
 	text-align: center;
 }
+
+.register-submit {
+    color: #fff;
+    margin: 0;
+    background: #fec503;
+    font-weight: 700;
+    padding: 1em 1em;
+    font-size: 1.2em;
+    font-family: 'Montserrat';
+    text-transform: uppercase;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 2em auto;
+}
+
+/* --------- FULLSCREEN MODAL --------- */
+.fullscreen .modal-dialog {
+    margin: 0 0 0 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    padding: 0;
+    color: #333;
+}
+.fullscreen .modal-content {
+    height: 100%;
+    min-height: 100%;
+    border-radius: 0;
+    color: #333;
+    background: #f1f1f1;
+    overflow:auto;
+}
+.fullscreen .modal-body ul {
+    padding: 100px 0 0 0;
+}
+.fullscreen .modal-body li {
+    padding: 10px 0 10px 0 ;
+}
+.fullscreen .modal-body a {
+    color: #333;
+    font-size: 300%;
+}
+@media (max-width: 480px){
+    .fullscreen .modal-body ul {
+        padding: 30px 0 0 0;
+        overflow: auto;
+    }
+    .fullscreen .modal-body li {
+        padding: 4px 0 4px 0 ;
+    }
+    .fullscreen .modal-body a {
+        color: #333;
+        font-size: 200%;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+}
+
 /* -------------- EVENTS -------------- */
 .blog-post {
 	padding-bottom: 30px;
@@ -268,7 +326,7 @@ header {
 	font-family: "Raleway", Sans-serif;
 }
 .sidebar-widget {
-	margin-bottom: 40px;	
+	margin-bottom: 40px;
 }
 .sidebar-widget li {
 	font-size: 17px;
@@ -855,11 +913,11 @@ footer .footer-bottom {
 }
 .panel.price:hover>.panel-heading{
     box-shadow: 0px 0px 21px rgba(0,0,0, .2) inset;
-}      
+}
 .panel.price>.panel-heading{
     box-shadow: 0px 5px 0px rgba(50,50,50, .1) inset;
     text-shadow:0px 3px 0px rgba(50,50,50, .2);
-}  
+}
 .panel.price>.panel-heading>h3,
 .panel.price>.panel-body>p {
     color: #fff;
@@ -908,7 +966,7 @@ footer .footer-bottom {
     background-color: #608BB4;
     border-color: #78AEE1;
     border-bottom: 1px solid #78AEE1;
-} 
+}
 .price.panel-blue>.panel-body {
     color: #fff;
     background-color: #73A3D4;
@@ -919,29 +977,29 @@ footer .footer-bottom {
     background-color: #D04E50;
     border-color: #FF6062;
     border-bottom: 1px solid #FF6062;
-} 
+}
 .price.panel-red>.panel-body {
     color: #fff;
     background-color: #EF5A5C;
 }
-/* green panel */ 
+/* green panel */
 .price.panel-green>.panel-heading {
     color: #fff;
     background-color: #57AC57;
     border-color: #71DF71;
     border-bottom: 1px solid #71DF71;
-}    
+}
 .price.panel-green>.panel-body {
     color: #fff;
     background-color: #65C965;
 }
-/* grey panel */ 
+/* grey panel */
 .price.panel-grey>.panel-heading {
     color: #fff;
     background-color: #6D6D6D;
     border-color: #B7B7B7;
     border-bottom: 1px solid #B7B7B7;
-} 
+}
 .price.panel-grey>.panel-body {
     color: #fff;
     background-color: #808080;
