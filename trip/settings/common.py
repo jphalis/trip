@@ -2,6 +2,7 @@
 Glossary of settings/common.py:
 
 - Hosting + Authentication
+- Maintenance mode
 - Email
 - Internationalization
 - Installed applications
@@ -9,6 +10,7 @@ Glossary of settings/common.py:
 - Password validation
 - Templates
 - Sessions
+- Static files
 - File uploads
 """
 
@@ -29,7 +31,7 @@ SITE_ID = 1
 
 
 ####################
-# MAINTANENCE MODE #
+# MAINTENANCE MODE #
 ####################
 MAINTENANCE_ADMIN_IGNORED_URLS = [
     '^hidden/secure/trip/admin/'
@@ -86,6 +88,9 @@ ROOT_URLCONF = '{}.urls'.format(APP_NAME)
 WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 
+##############
+# MIDDLEWARE #
+##############
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
     'htmlmin.middleware.HtmlMinifyMiddleware',

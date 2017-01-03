@@ -15,6 +15,7 @@ media/
 ./fabfile/
 hosts.json
 *.sublime-*
+*.sqlite3
 pip-selfcheck.json
 
 # Distribution / packaging
