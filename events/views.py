@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Event
 
@@ -6,9 +6,11 @@ from .models import Event
 
 
 def list(request):
+    events = Event.objects.active()
     featured_events = Event.objects.featured(num_returned=5)
 
     context = {
+        'events': events,
         'featured_events': featured_events,
     }
     return render(request, 'events/list.html', context)
