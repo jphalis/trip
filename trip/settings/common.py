@@ -25,6 +25,15 @@ SECRET_KEY = 'vme0aiye#am&*@0o4^di1o8d6k5834^#7w7!&m6_x*7py(fka-'
 LOGIN_URL = "/accounts/authenticate/"
 AUTH_USER_MODEL = 'accounts.MyUser'
 APP_NAME = 'trip'
+SITE_ID = 1
+
+
+####################
+# MAINTANENCE MODE #
+####################
+MAINTENANCE_ADMIN_IGNORED_URLS = [
+    '^hidden/secure/trip/admin/'
+]
 
 
 #########
@@ -59,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
 
     'django_summernote',
@@ -68,6 +78,7 @@ INSTALLED_APPS = (
     'authentication',
     'contact',
     'events',
+    'maintenancemode',
 )
 
 
@@ -77,7 +88,7 @@ WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
-    # 'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.HtmlMinifyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,8 +98,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'maintenancemode.middleware.MaintenanceModeMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    # 'htmlmin.middleware.MarkRequestMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware',
 )
 
 
