@@ -153,7 +153,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 ############
 # SESSIONS #
 ############
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 14  # 14 days
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 4 * 3  # three months
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 

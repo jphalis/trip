@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 
-from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -10,17 +9,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import Sponsor
+from accounts.models import MyUser, Sponsor
 from core.models import TimeStampedModel
 
 # Create your models here.
-
-
-def image_upload_loc(instance, filename):
-    """
-    Stores the company logo in <company_name>/logos/filename.
-    """
-    return "{0}/images/{1}".format(instance.name, filename)
 
 
 class EventManager(models.Manager):
@@ -73,17 +65,11 @@ class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
     start_date = models.DateTimeField(verbose_name='Start of Event')
     end_date = models.DateTimeField(verbose_name='End of Event')
-    image = models.ImageField(_('event image'),
-                              upload_to=image_upload_loc,
-                              blank=True,
-                              help_text='''Please upload an image with
-                               sizes: (W - 750px | H - 300px).''')
     description = models.TextField(max_length=2000, blank=True)
-    sponsors = models.ManyToManyField(Sponsor,
-                                      related_name='event_sponsors',
-                                      blank=True,
-                                      help_text='''Select the magnifying glass
-                                       to add sponsors.''')
+    sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
+                                      blank=True)
+    attendees = models.ManyToManyField(MyUser, related_name='event_attendees',
+                                       blank=True)
 
     is_active = models.BooleanField(default=True)
 
@@ -112,16 +98,6 @@ class Event(TimeStampedModel):
         elif start >= now:
             return "Upcoming"
         return "Completed"
-
-    @property
-    def event_image(self):
-        """
-        Returns the logo of the user. If there is no logo,
-        a default one will be rendered.
-        """
-        if self.image:
-            return "{0}{1}".format(settings.MEDIA_URL, self.image)
-        return settings.STATIC_URL + 'img/default-company-logo.jpg'
 
     @cached_property
     def event_date(self):
@@ -154,9 +130,23 @@ class Event(TimeStampedModel):
         """
         return self.sponsors.values('id', 'name', 'logo', 'website')
 
+    @cached_property
+    def get_attendees_info(self):
+        """
+        Returns the information for each user registered for the event.
+        """
+        return self.attendees.values('id', 'first_name', 'last_name')
+
     @property
     def sponsor_count(self):
         """
-        Returns the number of applicants for the job.
+        Returns the number of sponsors for the event..
         """
         return self.get_sponsors_info.count()
+
+    @property
+    def attendee_count(self):
+        """
+        Returns the number of attendees of the event.
+        """
+        return self.get_attendees_info.count()

@@ -4,25 +4,54 @@
 {% block title %}{% endblock title %}
 
 {% block content %}
-    <section>
-        <div class="row">
-            <div class="col-md-8">
-                <article class="blog-post">
-                    <div class="blog-post-image">
-                        <img src="{{ event.event_image }}" alt="" />
-                    </div>
-                    <div class="blog-post-body">
-                        <h2>{{ event.name }}</h2>
-                        <div class="post-meta"><span><i class="fa fa-clock-o"></i>{{ event.event_date }}</span></div>
-                        <div class="blog-post-text">
-                            {{ event.description|safe }}
-                        </div>
-                    </div>
-                </article>
+  <section>
+    <div class="row">
+      <div class="col-md-8">
+        <article class="blog-post">
+          <div class="blog-post-body">
+            <h2>{{ event.name }}</h2>
+            <div class="post-meta"><span><i class="fa fa-clock-o"></i>{{ event.event_date }}</span></div>
+            <div class="blog-post-text">
+              {{ event.description|safe }}
             </div>
-            <div class="col-md-4 sidebar-gutter">
-                <a href="#"><button class="attend-button arrow">Attend event</button></a>
-            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-md-4 sidebar-gutter">
+
+        <div class="sidebar-widget">
+          <a href="#">
+            <button class="attend-button arrow">Register For Event</button>
+          </a>
         </div>
-    </section>
+
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Registration Fees</h3>
+          <div class="widget-container">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th class="text-left">Price Description</th>
+                  <th class="text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Member Registration</td>
+                  <td class="text-right">$0.00</td>
+                </tr>
+                <tr>
+                  <td>Non-Member Registration</td>
+                  <td class="text-right">$10.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
 {% endblock content %}

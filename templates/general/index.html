@@ -14,9 +14,6 @@
         {% if featured_events %}
           {% for event in featured_events %}
             <article class="blog-post">
-              <div class="blog-post-image">
-                <img src="{{ event.event_image }}" alt="" />
-              </div>
               <div class="blog-post-body">
                 <h2>
                   <a href="{{ event.get_absolute_url }}">{{ event.name }}</a>
