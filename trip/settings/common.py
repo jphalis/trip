@@ -88,6 +88,15 @@ ROOT_URLCONF = '{}.urls'.format(APP_NAME)
 WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 
+################
+# SOCIAL LINKS #
+################
+FACEBOOK_USERNAME = ''
+GOOGLE_PLUS_USERNAME = ''
+INSTAGRAM_USERNAME = ''
+TWITTER_USERNAME = ''
+
+
 ##############
 # MIDDLEWARE #
 ##############

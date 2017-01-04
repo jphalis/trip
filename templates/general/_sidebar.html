@@ -56,17 +56,35 @@
     <!-- /featured events -->
 
     <!-- social links -->
-    <div class="sidebar-widget">
-      <h3 class="sidebar-title">Follow us!</h3>
-      <div class="widget-container">
-        <div class="widget-socials">
-          <a href="#"><i class="fa fa-facebook"></i></a>
-          <a href="#"><i class="fa fa-twitter"></i></a>
-          <a href="#"><i class="fa fa-instagram"></i></a>
-          <a href="#"><i class="fa fa-google-plus"></i></a>
+    {% if socials_exist %}
+      <div class="sidebar-widget">
+        <h3 class="sidebar-title">Follow us!</h3>
+        <div class="widget-container">
+          <div class="widget-socials">
+            {% if facebook_username %}
+              <a href="https://www.facebook.com/{{ facebook_username }}">
+                <i class="fa fa-facebook"></i>
+              </a>
+            {% endif %}
+            {% if twitter_username %}
+              <a href="https://twitter.com/{{ twitter_username }}">
+                <i class="fa fa-twitter"></i>
+              </a>
+            {% endif %}
+            {% if instagram_username %}
+              <a href="https://www.instagram.com/{{ instagram_username }}">
+                <i class="fa fa-instagram"></i>
+              </a>
+            {% endif %}
+            {% if google_plus_username %}
+              <a href="https://plus.google.com/+{{ google_plus_username }}">
+                <i class="fa fa-google-plus"></i>
+              </a>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
+    {% endif %}
     <!-- /social links -->
   </aside>
 </div>

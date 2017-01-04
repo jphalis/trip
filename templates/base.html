@@ -64,10 +64,40 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-              <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-              <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+
+              <!-- social links -->
+              {% if socials_exist %}
+                {% if facebook_username %}
+                  <li>
+                    <a href="https://www.facebook.com/{{ facebook_username }}">
+                      <i class="fa fa-facebook"></i>
+                    </a>
+                  </li>
+                {% endif %}
+                {% if twitter_username %}
+                  <li>
+                    <a href="https://twitter.com/{{ twitter_username }}">
+                      <i class="fa fa-twitter"></i>
+                    </a>
+                  </li>
+                {% endif %}
+                {% if instagram_username %}
+                  <li>
+                    <a href="https://www.instagram.com/{{ instagram_username }}">
+                      <i class="fa fa-instagram"></i>
+                    </a>
+                  </li>
+                {% endif %}
+                {% if google_plus_username %}
+                  <li>
+                    <a href="https://plus.google.com/+{{ google_plus_username }}">
+                      <i class="fa fa-google-plus"></i>
+                    </a>
+                  </li>
+                {% endif %}
+              {% endif %}
+              <!-- /social links -->
+
               {% if request.user.is_authenticated and request.user.is_staff %}
                 <li style="border-left: 1px solid #ccc;">
                   <a href="{% url 'accounts:account_settings' %}">
@@ -105,14 +135,32 @@
 
     <footer class="footer">
       <div class="footer-socials">
-        <a href="#"><i class="fa fa-facebook"></i></a>
-        <a href="#"><i class="fa fa-twitter"></i></a>
-        <a href="#"><i class="fa fa-instagram"></i></a>
-        <a href="#"><i class="fa fa-google-plus"></i></a>
+        {% if socials_exist %}
+          {% if facebook_username %}
+            <a href="https://www.facebook.com/{{ facebook_username }}">
+              <i class="fa fa-facebook"></i>
+            </a>
+          {% endif %}
+          {% if twitter_username %}
+            <a href="https://twitter.com/{{ twitter_username }}">
+              <i class="fa fa-twitter"></i>
+            </a>
+          {% endif %}
+          {% if instagram_username %}
+            <a href="https://www.instagram.com/{{ instagram_username }}">
+              <i class="fa fa-instagram"></i>
+            </a>
+          {% endif %}
+          {% if google_plus_username %}
+            <a href="https://plus.google.com/+{{ google_plus_username }}">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          {% endif %}
+        {% endif %}
       </div>
 
       <div class="footer-bottom">
-        <i class="fa fa-copyright"></i> Copyright 2016. All rights reserved.
+        <i class="fa fa-copyright"></i> Copyright {% now 'Y' %}. All rights reserved.
       </div>
     </footer>
 
