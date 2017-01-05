@@ -32,10 +32,6 @@ urlpatterns = [
     url(r'^hidden/secure/trip/admin/',
         include(admin.site.urls)),
 
-    # SUMMERNOTE - WSGIEditor
-    url(r'^summernote/',
-        include('django_summernote.urls')),
-
     # GENERAL
     url(r'^$',
         views.home, name='home'),
@@ -47,6 +43,10 @@ urlpatterns = [
     # AUTHENTICATION
     url(r'^auth/',
         include('authentication.urls', namespace='authentication')),
+
+    # BILLING
+    url(r'^billing/',
+        include('billing.urls', namespace='billing')),
 
     # CONTACT
     url(r'^contact/',

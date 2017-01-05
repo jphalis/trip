@@ -9,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
 from accounts.models import MyUser
+from billing.models import Membership
 from .forms import (LoginForm, SignupForm, PasswordResetForm,
                     PasswordResetTokenForm)
 
@@ -70,7 +71,11 @@ def auth_register(request):
         if user is not None:
             login(request, user)
 
-            if cost != 'FREE':
+            if cost == 'FREE':
+                Membership.objects.create(user=user, billing_fee='0')
+            else:
+                membership = Membership.objects.create(
+                    user=user, billing_fee=cost)
                 # CHARGE CUSTOMER
                 pass
 

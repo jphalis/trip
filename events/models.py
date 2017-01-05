@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -63,13 +64,21 @@ class EventManager(models.Manager):
 @python_2_unicode_compatible
 class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
-    start_date = models.DateTimeField(verbose_name='Start of Event')
-    end_date = models.DateTimeField(verbose_name='End of Event')
-    description = models.TextField(max_length=2000, blank=True)
+    description = models.TextField(max_length=2000, blank=True,
+                                   help_text='You may use HTML when rendering')
+    member_fee = models.DecimalField(_('member fee'), default=0.00,
+                                     max_digits=8, decimal_places=2,
+                                     validators=[MinValueValidator(0.0)])
+    non_member_fee = models.DecimalField(_('non-member fee'), max_digits=8,
+                                         decimal_places=2,
+                                         validators=[MinValueValidator(0.0)])
     sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
                                       blank=True)
     attendees = models.ManyToManyField(MyUser, related_name='event_attendees',
                                        blank=True)
+
+    start_date = models.DateTimeField(_('start date of event'))
+    end_date = models.DateTimeField(_('end date of event'))
 
     is_active = models.BooleanField(default=True)
 

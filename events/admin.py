@@ -1,14 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from django_summernote.admin import SummernoteModelAdmin
-
 from .models import Event
 
 # Register your models here.
 
 
-class EventAdmin(SummernoteModelAdmin):
+class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'start_date', 'end_date',
                     'sponsor_count', 'attendee_count', 'is_active',)
     list_display_links = ('id', 'name',)
@@ -18,7 +16,8 @@ class EventAdmin(SummernoteModelAdmin):
     fieldsets = (
         (None,
             {'fields': ('name', 'start_date', 'end_date', 'description',
-                        'sponsors', 'attendees',)}),
+                        'member_fee', 'non_member_fee', 'sponsors',
+                        'attendees',)}),
         (_('Permissions'),
             {'fields': ('is_active',)}),
         (_('Dates'),

@@ -19,3 +19,8 @@ def list(request):
 def detail(request, event_pk):
     event = get_object_or_404(Event, pk=event_pk)
     return render(request, 'events/detail.html', {'event': event})
+
+
+def registration_success(request, event_pk):
+    event = get_object_or_404(Event, pk=event_pk)
+    return render(request, 'events/success.html', {'event': event})

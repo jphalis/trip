@@ -87,12 +87,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return u"{0} {1}".format(self.first_name, self.last_name)
 
-    # def get_absolute_url(self):
-    #     """
-    #     Returns the url for the user.
-    #     """
-    #     return reverse('accounts:detail', kwargs={"user_pk": self.pk})
-
     @cached_property
     def get_full_name(self):
         """

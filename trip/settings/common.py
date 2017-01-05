@@ -73,11 +73,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
-    'django_summernote',
     'widget_tweaks',
 
     'accounts',
     'authentication',
+    'billing',
     'contact',
     'events',
     'maintenancemode',

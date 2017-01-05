@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
+from billing.models import Membership
 from events.models import Event
 from .forms import AccountSettingsForm
 from .models import MyUser
@@ -28,12 +29,15 @@ def detail(request, user_pk):
 @sensitive_post_parameters()
 def account_settings(request):
     user = request.user
+    membership = Membership.objects.get(user=user)
     form = AccountSettingsForm(request.POST or None,
                                request.FILES or None,
                                instance=user, user=user)
+
     if request.method == 'POST' and form.is_valid():
         form.email = form.cleaned_data['email']
         password = form.cleaned_data['password_new_confirm']
+
         if password:
             current_user = form.user
             current_user.set_password(password)
@@ -44,6 +48,7 @@ def account_settings(request):
                          "You have successfully updated your profile.")
     context = {
         'form': form,
+        'membership': membership,
         'user': user,
     }
     return render(request, 'accounts/settings.html', context)

@@ -4,60 +4,76 @@
 {% block title %} / Settings{% endblock title %}
 
 {% block content %}
-  <form class="form-validation" method="POST" action="{% url 'accounts:account_settings' %}">
-    {% csrf_token %}
-    <div class="form-title-row">
-      <h1>User Information</h1>
+  <div class="col-md-8 col-lg-8">
+    <form class="form-validation" method="POST" action="{% url 'accounts:account_settings' %}">
+      {% csrf_token %}
+      <div class="form-title-row">
+        <h1>User Information</h1>
+      </div>
+      <div class="form-row {% if form.email.errors %}email-field{% endif %}">
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" value="{{ form.email.value }}" required />
+        </label>
+        <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+        <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+        <span class="form-invalid-data-info"></span>
+      </div>
+      <div class="form-row {% if form.first_name.errors %}first-name-field{% endif %}">
+        <label>
+          <span>First name</span>
+          <input type="text" name="first_name" value="{{ form.first_name.value }}" />
+        </label>
+        <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+        <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+        <span class="form-invalid-data-info"></span>
+      </div>
+      <div class="form-row {% if form.last_name.errors %}last-name-field{% endif %}">
+        <label>
+          <span>Last name</span>
+          <input type="text" name="last_name" value="{{ form.last_name.value }}" />
+        </label>
+        <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+        <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+        <span class="form-invalid-data-info"></span>
+      </div>
+      <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
+        <label>
+          <span>New password</span>
+          <input type="password" name="password_new" placeholder="New password" />
+        </label>
+        <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+        <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+        <span class="form-invalid-data-info"></span>
+      </div>
+      <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
+        <label>
+          <span>Confirm password</span>
+          <input type="password" name="password_new_confirm" placeholder="Confirm new password">
+        </label>
+        <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
+        <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
+        <span class="form-invalid-data-info"></span>
+      </div>
+      <div class="form-row">
+        <button type="submit">Update</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-4 col-lg-4 sidebar-gutter">
+    <br><br>
+    <div class="sidebar-widget">
+      <h3 class="sidebar-title">Membership Information</h3>
+      <div class="widget-container">
+        <p><em>Start Date</em> : {{ membership.start_date }}</p>
+        <p><em>End Date</em> : {{ membership.end_date }}</p>
+        <p>
+          <em>Auto-Renew</em> : <span style="margin-left:7px;"><input type="checkbox" id="auto-renew" {% if membership.auto_renew %}checked{% endif %}></span>
+        </p>
+      </div>
     </div>
-    <div class="form-row {% if form.email.errors %}email-field{% endif %}">
-      <label>
-        <span>Email</span>
-        <input type="email" name="email" value="{{ form.email.value }}" required />
-      </label>
-      <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-      <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-      <span class="form-invalid-data-info"></span>
-    </div>
-    <div class="form-row {% if form.first_name.errors %}first-name-field{% endif %}">
-      <label>
-        <span>First name</span>
-        <input type="text" name="first_name" value="{{ form.first_name.value }}" />
-      </label>
-      <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-      <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-      <span class="form-invalid-data-info"></span>
-    </div>
-    <div class="form-row {% if form.last_name.errors %}last-name-field{% endif %}">
-      <label>
-        <span>Last name</span>
-        <input type="text" name="last_name" value="{{ form.last_name.value }}" />
-      </label>
-      <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-      <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-      <span class="form-invalid-data-info"></span>
-    </div>
-    <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
-      <label>
-        <span>New password</span>
-        <input type="password" name="password_new" placeholder="New password" />
-      </label>
-      <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-      <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-      <span class="form-invalid-data-info"></span>
-    </div>
-    <div class="form-row {% if form.password_new_confirm.errors %}password-field{% endif %}">
-      <label>
-        <span>Confirm password</span>
-        <input type="password" name="password_new_confirm" placeholder="Confirm new password">
-      </label>
-      <span class="form-valid-data-sign"><i class="fa fa-check"></i></span>
-      <span class="form-invalid-data-sign"><i class="fa fa-close"></i></span>
-      <span class="form-invalid-data-info"></span>
-    </div>
-    <div class="form-row">
-      <button type="submit">Update</button>
-    </div>
-  </form>
+  </div>
 {% endblock content %}
 
 {% block scripts %}
@@ -82,5 +98,24 @@
           // var successField = $('.form-input-email-row');
           // successField.addClass('form-valid-data');
       });
+      $("#auto-renew").click(function(e) {
+            e.preventDefault();
+            var t = $(this),
+                a = $(e.target);
+            $.ajax({
+                type: "POST",
+                url: "{% url 'billing:update_auto_renew' %}",
+                data: {
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                dataType: "json",
+                success: function(e) {
+                    location.reload()
+                },
+                error: function() {
+                    alert("Sorry, there was an error with your request. Please try again later.");
+                }
+            })
+        });
   </script>
 {% endblock scripts %}

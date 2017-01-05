@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Trip / Registration Success</title>
+
+    <!-- Fonts -->
+    <link href="//fonts.googleapis.com/css?family=Montserrat" rel="stylesheet prefetch">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet prefetch">
+    <!-- Bootstrap -->
+    <link href="{% static 'vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff;
+            color: #5c5c5c; }
+        h5 {
+            font-size: 25px; }
+        .logo {
+            margin-top: 3em; }
+        .headline {
+            font-size: 55px;
+            font-family: 'Montserrat', Arial, sans-serif;
+            font-weight: 800;
+            line-height: 1.5; }
+        .headline-support {
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-weight: 600;
+            line-height: 1.5; }
+        .home-btn {
+            font-size: 14px;
+            font-weight: 400;
+            color: #337ab7; }
+    </style>
+  </head>
+
+  <body>
+    <div class="col-md-12">
+      <div class="text-center">
+        <img class="logo" src="{% static 'img/check.png' %}" alt="Checkmark" />
+        <h1 class="headline">Thank you!</h1>
+        <h5 class="headline-support">
+          You have successfully registered for <em>{{ event.name }}</em>.
+          <br>
+          We look forward to seeing you there!
+        </h5>
+        <p style="margin: 6em;">
+          <a href="{% url 'home' %}" class="home-btn">&#8592; BACK TO HOME</a>
+        </p>
+        <p>&#169; Trip. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+
+</html>
