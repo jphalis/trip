@@ -10,11 +10,6 @@ Glossary of authentication/forms.py:
 
 from __future__ import unicode_literals
 
-try:
-    from collections import OrderedDict
-except ImportError:
-    OrderedDict = None
-
 from django import forms
 from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
@@ -92,18 +87,9 @@ class LoginForm(forms.Form):
 
 
 class SignupForm(forms.Form):
-    email = forms.EmailField(
-        widget=forms.EmailInput(),
-        max_length=120
-    )
-    first_name = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=50
-    )
-    last_name = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=50
-    )
+    email = forms.EmailField(max_length=120)
+    first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)
     password = forms.CharField(
         widget=forms.PasswordInput(render_value=False)
     )

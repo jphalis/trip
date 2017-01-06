@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods
 
-from .models import Membership
+from .models import Customer
 
 # Create your views here.
 
@@ -12,14 +12,14 @@ from .models import Membership
 @login_required
 @require_http_methods(['POST'])
 def update_auto_renew(request):
-    membership = get_object_or_404(Membership, user=request.user)
+    customer = get_object_or_404(Customer, user=request.user)
 
-    if membership.auto_renew:
-        membership.auto_renew = False
+    if customer.auto_renew:
+        customer.auto_renew = False
     else:
-        membership.auto_renew = True
+        customer.auto_renew = True
 
-    membership.save(update_fields=['auto_renew'])
+    customer.save(update_fields=['auto_renew'])
     messages.success(request,
                      "You have updated your preferences.")
-    return JsonResponse({'auto_renew': membership.auto_renew})
+    return JsonResponse({'auto_renew': customer.auto_renew})

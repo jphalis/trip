@@ -66,10 +66,10 @@
     <div class="sidebar-widget">
       <h3 class="sidebar-title">Membership Information</h3>
       <div class="widget-container">
-        <p><em>Start Date</em> : {{ membership.start_date }}</p>
-        <p><em>End Date</em> : {{ membership.end_date }}</p>
+        <p><em>Start Date</em> : {{ customer.start_date }}</p>
+        <p><em>End Date</em> : {{ customer.end_date }}</p>
         <p>
-          <em>Auto-Renew</em> : <span style="margin-left:7px;"><input type="checkbox" id="auto-renew" {% if membership.auto_renew %}checked{% endif %}></span>
+          <em>Auto-Renew</em> : <span style="margin-left:7px;"><input type="checkbox" id="auto-renew" {% if customer.auto_renew %}checked{% endif %}></span>
         </p>
       </div>
     </div>

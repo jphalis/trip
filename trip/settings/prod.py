@@ -35,6 +35,13 @@ ALLOWED_HOSTS = [
 ]
 
 
+##########
+# STRIPE #
+##########
+STRIPE_SECRET_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
+
+
 #########
 # EMAIL #
 #########

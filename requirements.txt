@@ -12,13 +12,16 @@ django-toolbelt==0.0.1
 django-widget-tweaks==1.4.1
 gunicorn==19.6.0
 html5lib==0.999999999
+jsonfield==1.0.3
 kombu==3.0.35
 pilkit==1.1.12
 Pillow==3.3.0
 psycopg2==2.6.1
 pytz==2016.6.1
+requests==2.12.4
 six==1.10.0
 sqlparse==0.2.0
 static3==0.5.1
+stripe==1.44.0
 webencodings==0.5
 whitenoise==3.2

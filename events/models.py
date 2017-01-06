@@ -49,7 +49,7 @@ class EventManager(models.Manager):
         return super(EventManager, self).get_queryset() \
             .filter(is_active=True, end_date__gte=timezone.now()) \
             .prefetch_related('sponsors') \
-            .order_by('start_date')[:num_returned]
+            .order_by('start_date', 'end_date')[:num_returned]
 
     def own(self, user):
         """

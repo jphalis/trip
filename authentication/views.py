@@ -9,7 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
 from accounts.models import MyUser
-from billing.models import Membership
+from billing.models import Customer
 from .forms import (LoginForm, SignupForm, PasswordResetForm,
                     PasswordResetTokenForm)
 
@@ -53,6 +53,8 @@ def auth_login(request):
 
 @never_cache
 def auth_register(request):
+    # delete account if credit card does not process
+
     cost = request.POST['membership_cost']
     form = SignupForm(request.POST or None)
 
@@ -72,9 +74,9 @@ def auth_register(request):
             login(request, user)
 
             if cost == 'FREE':
-                Membership.objects.create(user=user, billing_fee='0')
+                Customer.objects.create(user=user, billing_fee='0')
             else:
-                membership = Membership.objects.create(
+                customer = Customer.objects.create(
                     user=user, billing_fee=cost)
                 # CHARGE CUSTOMER
                 pass
