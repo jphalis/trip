@@ -1,22 +1,25 @@
-from decimal import Decimal
+from datetime import timedelta
 
 from django.db import models
+from django.utils import timezone
+
+from core.utils import rand_code_generator
 
 # Create you managers here.
 
 
 class CustomerManager(models.Manager):
-    def create(self, user, billing_fee, **extra_fields):
-        """
-        Creates a customer.
-        """
+    def create(self, user, account_balance, plan_id='', subscription_id='',
+               currency="usd", cus_id=rand_code_generator(start_text='cus_'),
+               end_date=timezone.now() + timedelta(days=365), **extra_fields):
+
         if not user:
             raise ValueError('Customers must have a user.')
-        elif not billing_fee:
-            raise ValueError('Customers must have a billing fee.')
 
-        customer = self.model(user=user, billing_fee=Decimal(str(billing_fee)),
-                              **extra_fields)
+        customer = self.model(user=user, cus_id=cus_id,
+                              account_balance=account_balance, plan_id=plan_id,
+                              subscription_id=subscription_id,
+                              currency=currency, **extra_fields)
         customer.save(using=self._db)
         return customer
 
@@ -66,7 +69,48 @@ class CustomerManager(models.Manager):
         )
 
 
+class SubscriptionManager(models.Manager):
+    def create(self, customer, plan, start, current_period_start,
+               status='active', sub_id=rand_code_generator(start_text='sub_'),
+               **extra_fields):
+
+        if not customer:
+            raise ValueError('Subscriptions must have a customer.')
+        elif not plan:
+            raise ValueError('Subscriptions must have a plan associated.')
+        elif not start:
+            raise ValueError('Subscriptions must have a start date.')
+        elif not current_period_start:
+            raise ValueError('Subscriptions must have a start date.')
+        elif not status:
+            raise ValueError('Subscriptions must have a status.')
+
+        sub = self.model(customer=customer, plan=plan, start=start,
+                         status=status, sub_id=sub_id,
+                         current_period_start=current_period_start,
+                         **extra_fields)
+        sub.save(using=self._db)
+        return sub
+
+
 class ChargeManager(models.Manager):
+    def create(self, customer, source, amount, currency='usd', description='',
+               charge_id=rand_code_generator(start_text='charge_'),
+               **extra_fields):
+
+        if not customer:
+            raise ValueError('Charges must have a customer.')
+        elif not source:
+            raise ValueError('Charges must have a source.')
+        elif not amount:
+            raise ValueError('Charges must have an amount.')
+
+        charge = self.model(customer=customer, source=source, amount=amount,
+                            currency=currency, description=description,
+                            charge_id=charge_id, **extra_fields)
+        charge.save(using=self._db)
+        return charge
+
     def during(self, year, month):
         return self.filter(
             charge_created__year=year,
