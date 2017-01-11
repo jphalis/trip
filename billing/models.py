@@ -10,7 +10,8 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from core.models import TimeStampedModel
-from .managers import CustomerManager, ChargeManager, SubscriptionManager
+from .managers import (PlanManager, CustomerManager, ChargeManager,
+                       SubscriptionManager)
 
 # Create your models here.
 
@@ -31,25 +32,22 @@ HELP_TXT = {
     'metadata': ("A set of key/value pairs that you can attach to a plan. "
                  "It can be useful for storing additional information about "
                  "the plan in a structured format."),
-    'statement_descr': ("An arbitrary string to be displayed on your "
-                        "customer's credit card statement. This may be "
-                        "up to 22 characters."),
-    'trial_days': ("Specifies a trial period in (an integer number of) days. "
-                   "If you include a trial period, the customer won't be "
-                   "billed for the first time until the trial period ends."),
+    'descriptor': ("An arbitrary string to be displayed on your customer's "
+                   "credit card statement. This may be up to 22 characters."),
     'status': ("Choices are: trialing, active, past_due, canceled, or unpaid.")
 }
 
 
 @python_2_unicode_compatible
 class Plan(TimeStampedModel):
-    plan_id = models.SlugField(max_length=255, unique=True, editable=False)
+    plan_id = models.SlugField(max_length=255, unique=True, null=True,
+                               blank=True)
+    name = models.CharField(max_length=150, help_text=HELP_TXT['name'])
     amount = models.DecimalField(decimal_places=2, max_digits=15,
                                  validators=[MinValueValidator(0.0)],
                                  help_text=HELP_TXT['amount'])
     interval = models.CharField(max_length=5, default='year',
                                 help_text=HELP_TXT['interval'])
-    name = models.CharField(max_length=150, help_text=HELP_TXT['name'])
     currency = models.CharField(max_length=3, default='usd',
                                 help_text=HELP_TXT['currency'])
     interval_count = models.IntegerField(default=1,
@@ -57,11 +55,12 @@ class Plan(TimeStampedModel):
     metadata = JSONField(blank=True, null=True,
                          help_text=HELP_TXT['metadata'])
     statement_descriptor = models.CharField(max_length=22, blank=True,
-                                            help_text=HELP_TXT['statement_descr'])
-    trial_period_days = models.PositiveIntegerField(default=0, null=True,
-                                                    help_text=HELP_TXT['trial_days'])
+                                            help_text=HELP_TXT['descriptor'])
+    trial_period_days = models.PositiveIntegerField(default=0, null=True)
 
     is_active = models.BooleanField(default=True)
+
+    objects = PlanManager()
 
     class Meta:
         app_label = 'billing'
@@ -76,13 +75,18 @@ class Plan(TimeStampedModel):
 class Customer(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
-    cus_id = models.SlugField(max_length=255, unique=True, editable=False)
-    plan_id = models.SlugField(max_length=255, blank=True)
-    subscription_id = models.SlugField(max_length=120, blank=True)
+    cu_id = models.SlugField(max_length=255, unique=True, null=True,
+                             blank=True)
     account_balance = models.DecimalField(max_digits=9, decimal_places=2,
                                           validators=[MinValueValidator(0.0)])
-    currency = models.CharField(max_length=3, default='usd', blank=True,
-                                help_text=HELP_TXT['currency'])
+    business_vat_id = models.CharField(max_length=120, blank=True)
+    currency = models.CharField(max_length=3, blank=True)
+    default_source = models.SlugField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
+    email = models.EmailField(max_length=120)
+    metadata = JSONField(blank=True, null=True)
+    shipping = JSONField(blank=True, null=True)
+    subscriptions = JSONField(blank=True, null=True)
     auto_renew = models.BooleanField(default=True)
 
     start_date = models.DateTimeField(auto_now_add=True)
@@ -109,24 +113,28 @@ class Customer(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Subscription(TimeStampedModel):
+    sub_id = models.SlugField(max_length=255, unique=True, null=True,
+                              blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
-    sub_id = models.SlugField(max_length=255, unique=True, editable=False)
     application_fee_percent = models.DecimalField(max_digits=3,
                                                   decimal_places=2,
                                                   default=None, null=True)
+    metadata = JSONField(blank=True, null=True)
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    status = models.CharField(max_length=25)
+    tax_percent = models.DecimalField(max_digits=5, decimal_places=2,
+                                      null=True, blank=True)
+
+    trial_period_days = models.PositiveIntegerField(default=0, null=True)
+    trial_end = models.DateTimeField(blank=True, null=True)
+    trial_start = models.DateTimeField(blank=True, null=True)
     cancel_at_period_end = models.BooleanField(default=False)
     canceled_at = models.DateTimeField(blank=True, null=True)
     current_period_end = models.DateTimeField(blank=True, null=True)
     current_period_start = models.DateTimeField(blank=True, null=True)
     ended_at = models.DateTimeField(blank=True, null=True)
-    quantity = models.PositiveIntegerField(default=1)
     start = models.DateTimeField()
-    status = models.CharField(max_length=25, help_text=HELP_TXT['status'])
-    trial_period_days = models.PositiveIntegerField(default=0, null=True,
-                                                    help_text=HELP_TXT['trial_days'])
-    trial_end = models.DateTimeField(blank=True, null=True)
-    trial_start = models.DateTimeField(blank=True, null=True)
 
     objects = SubscriptionManager()
 
@@ -153,10 +161,12 @@ class Subscription(TimeStampedModel):
 class Invoice(TimeStampedModel):
     customer = models.ForeignKey(Customer, related_name="invoices",
                                  on_delete=models.CASCADE)
-    invoice_id = models.SlugField(max_length=255, unique=True, editable=False)
+    invoice_id = models.SlugField(max_length=255, unique=True, null=True,
+                                  blank=True)
     amount_due = models.DecimalField(decimal_places=2, max_digits=9)
     attempted = models.NullBooleanField()
     attempt_count = models.PositiveIntegerField(null=True)
+    metadata = JSONField(blank=True, null=True)
     charge = models.ForeignKey("Charge", null=True, related_name="invoices",
                                on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, null=True,
@@ -171,6 +181,8 @@ class Invoice(TimeStampedModel):
     period_start = models.DateTimeField()
     subtotal = models.DecimalField(decimal_places=2, max_digits=9)
     total = models.DecimalField(decimal_places=2, max_digits=9)
+    tax_percent = models.DecimalField(max_digits=5, decimal_places=2,
+                                      null=True, blank=True)
 
     class Meta:
         app_label = 'billing'
@@ -189,15 +201,17 @@ class Invoice(TimeStampedModel):
 class Charge(models.Model):
     customer = models.ForeignKey(Customer, related_name="charges",
                                  on_delete=models.CASCADE)
-    charge_id = models.SlugField(max_length=255, unique=True, editable=False)
+    charge_id = models.SlugField(max_length=255, unique=True, null=True,
+                                 blank=True)
     invoice = models.ForeignKey(Invoice, null=True, related_name="charges",
                                 on_delete=models.CASCADE)
-    source = models.CharField(max_length=100)
     currency = models.CharField(max_length=10, default="usd")
     amount = models.DecimalField(decimal_places=2, max_digits=9, null=True)
     amount_refunded = models.DecimalField(decimal_places=2, max_digits=9,
                                           null=True)
     description = models.TextField(blank=True)
+    metadata = JSONField(blank=True, null=True)
+    fraud_details = JSONField(blank=True, null=True)
     paid = models.NullBooleanField(null=True)
     disputed = models.NullBooleanField(null=True)
     refunded = models.NullBooleanField(null=True)
