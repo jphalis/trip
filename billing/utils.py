@@ -11,7 +11,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def get_or_create_stripe_plan(plan_id, name, amount, interval, currency='usd',
                               interval_count=1, metadata={},
-                              statement_descriptor='',
+                              statement_descriptor=None,
                               trial_period_days=None):
     try:
         plan = stripe.Plan.retrieve(plan_id)
@@ -52,8 +52,8 @@ def delete_stripe_plan(plan_id):
 
 
 def get_or_create_stripe_cus(customer_id, account_balance=None,
-                             business_vat_id='', coupon=None,
-                             default_source=None, description='', email=None,
+                             business_vat_id=None, coupon=None,
+                             default_source=None, description=None, email=None,
                              metadata={}, shipping={}, source={}):
 
     try:
@@ -145,9 +145,10 @@ def cancel_stripe_sub(subscription_id):
 
 
 def get_or_create_stripe_invoice(invoice_id, customer_id, application_fee=None,
-                                 closed=False, description='', forgiven=False,
-                                 metadata={}, statement_descriptor='',
-                                 subscription=None, tax_percent=None):
+                                 closed=False, description=None,
+                                 forgiven=False, metadata={},
+                                 statement_descriptor=None, subscription=None,
+                                 tax_percent=None):
     try:
         invoice = stripe.Invoice.retrieve(invoice_id)
     except stripe.error.InvalidRequestError:
@@ -189,10 +190,10 @@ def delete_stripe_invoice(invoice_id):
 
 def get_or_create_stripe_charge(charge_id, amount, currency='usd',
                                 application_fee=None, capture=True,
-                                description='', destination=None, metadata={},
-                                fraud_details={}, receipt_email=None,
-                                shipping={}, customer=None, source=None,
-                                statement_descriptor=None):
+                                description=None, destination=None,
+                                metadata={}, fraud_details={},
+                                receipt_email=None, shipping={}, customer=None,
+                                source=None, statement_descriptor=None):
     if not source or customer:
         raise ValueError('Charges must have a source or a customer.')
 
