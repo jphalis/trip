@@ -9,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
 from accounts.models import MyUser
+from billing.forms import StripeCreditCardForm
 from billing.models import Customer, Plan, Subscription
 from .forms import (LoginForm, SignupForm, PasswordResetForm,
                     PasswordResetTokenForm)
@@ -73,13 +74,16 @@ def auth_register(request):
         if user is not None:
             login(request, user)
 
-            if plan.amount == 0:
-                Customer.objects.create(user=user)
-            else:
-                cu = Customer.objects.create(
-                    user=user, account_balance=plan.amount)
+            cu = Customer.objects.create(
+                user=user,
+                account_balance=plan.amount if plan.amount > 0 else None)
 
-                pass
+            if plan.amount > 0:
+                stripe_form = StripeCreditCardForm(request.POST, user=user,
+                                                   customer=cu)
+                if stripe_form.is_valid():
+                    pass
+                    # sub = Subscription.objects.create(customer=cu, plan=plan)
 
             messages.success(request,
                              'Your account has been successfully created.')
@@ -89,6 +93,7 @@ def auth_register(request):
         for field in form:
             for error in field.errors:
                 messages.error(request, error)
+        return redirect('accounts:memberships')
     return render(request, 'auth/memberships.html', {'form': form})
 
 

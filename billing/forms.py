@@ -7,19 +7,22 @@ from django import forms
 from django.conf import settings
 from django.utils import timezone
 
+from .utils import get_or_create_stripe_cus
+
 # Create your forms here.
 
 
 class StripeCreditCardForm(forms.Form):
-    card_number = forms.CharField(required=False)
-    expire_month = forms.IntegerField(min_value=1, max_value=12,
-                                      required=False)
-    expire_year = forms.IntegerField(min_value=timezone.now().year,
-                                     max_value=9999, required=False)
+    number = forms.CharField(required=False)
+    expiry = forms.CharField(max_length=12, required=False)
     cvc = forms.CharField(max_length=5, min_length=3, required=False)
+    street_address = forms.CharField(max_length=120, required=False)
+    city = forms.CharField(max_length=80, required=False)
+    zip_code = forms.CharField(max_length=20, required=False)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
+        self.customer = kwargs.pop('customer')
 
         super(StripeCreditCardForm, self).__init__(*args, **kwargs)
         self.token = None
@@ -31,13 +34,13 @@ class StripeCreditCardForm(forms.Form):
         """
         Checks to make sure that the card passes a luhn mod-10 checksum.
         """
-        card_number = self.strip_non_numbers(
-            self.cleaned_data.get('card_number', ''))
+        number = self.strip_non_numbers(
+            self.cleaned_data.get('number', ''))
         sum = 0
-        num_digits = len(card_number)
+        num_digits = len(number)
         oddeven = num_digits & 1
         for count in range(0, num_digits):
-            digit = int(card_number[count])
+            digit = int(number[count])
             if not ((count & 1) ^ oddeven):
                 digit = digit * 2
             if digit > 9:
@@ -45,40 +48,36 @@ class StripeCreditCardForm(forms.Form):
             sum = sum + digit
         return (sum % 10) == 0
 
-    def strip_non_numbers(self, card_number):
+    def strip_non_numbers(self, number):
         """
         Gets rid of all non-numeric characters.
         """
         non_numbers = re.compile('\D')
-        return non_numbers.sub('', card_number)
+        return non_numbers.sub('', number)
 
     def get_or_create_customer(self):
-        try:
-            customer = self.stripe.Customer.retrieve(
-                self.user.stripe_customer_id)
-        except stripe.error.InvalidRequestError:
-            customer = self.stripe.Customer.create(
-                description='Customer for {}'.format(self.user.email)
-            )
-
-            # persist customer id on user model
-            self.user.stripe_customer_id = customer.id
-            self.user.save()
-
+        customer = get_or_create_stripe_cus(
+            customer_id=self.customer.cu_id,
+            description='Customer for {}'.format(self.user)
+        )
         self.customer = customer
         return customer
 
-    def create_card(self, card_number, expire_month, expire_year, cvc):
+    def create_card(self, number, expire_month, expire_year, cvc, city,
+                    street_address, zip_code):
         customer = self.get_or_create_customer()
 
         try:
             # Create the card for the customer
             self.card = customer.sources.create(source={
                 'object': 'card',
-                'number': card_number,
+                'number': number,
                 'exp_month': expire_month,
                 'exp_year': expire_year,
                 'cvc': cvc,
+                'address_city': city,
+                'address_line1': street_address,
+                'address_zip': zip_code,
                 'name': self.user.get_full_name()
             })
 
@@ -112,8 +111,16 @@ class StripeCreditCardForm(forms.Form):
         today = timezone.now().today()
         this_year = today.year
         this_month = today.month
-        expire_month = int(cleaned_data.get('expire_month'))
-        expire_year = int(cleaned_data.get('expire_year'))
+        expiry = cleaned_data.get('expiry')
+        expire_month = int(expiry.replace(' ', '').split('/')[0])
+        expire_year = int(expiry.replace(' ', '').split('/')[1])
+
+        print expire_month
+        print expire_year
+
+        city = cleaned_data.get('city')
+        street_address = cleaned_data.get('street_address')
+        zip_code = cleaned_data.get('zip_code')
 
         if expire_year == this_year and expire_month < this_month:
             raise forms.ValidationError(
@@ -121,13 +128,13 @@ class StripeCreditCardForm(forms.Form):
                 'than or equal to {} for {}'.format(this_month, this_year))
 
         # Validate card number and create Stripe token
-        card_number = cleaned_data.get('card_number')
+        number = cleaned_data.get('number')
         cvc = cleaned_data.get('cvc')
 
-        if card_number and cvc:
-            # we aren't storing any card ids, so create a new one.
-            # When the Stripe "card" object is created, it also functions
-            # as the stripe "token".
-            self.create_card(card_number, expire_month, expire_year, cvc)
-
+        # if number and cvc:
+        #     # we aren't storing any card ids, so create a new one.
+        #     # When the Stripe "card" object is created, it also functions
+        #     # as the stripe "token".
+        #     self.create_card(number, expire_month, expire_year, cvc, city,
+        #                      street_address, zip_code)
         return cleaned_data
