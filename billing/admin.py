@@ -17,12 +17,12 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'amount', 'is_active',)
+    list_display = ('name', 'display_amount', 'is_active',)
     list_filter = ('name', 'created', 'modified', 'is_active',)
     prepopulated_fields = {'plan_id': ['name'], }
     fieldsets = (
         (None,
-            {'fields': ('name', 'plan_id', 'amount', 'currency',
+            {'fields': ('name', 'description', 'plan_id', 'amount', 'currency',
                         'interval',)}),
         ('Optional Information',
             {'fields': ('interval_count', 'metadata', 'statement_descriptor',

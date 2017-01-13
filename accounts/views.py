@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
-from billing.models import Customer
+from billing.models import Customer, Plan
 from events.models import Event
 from .forms import AccountSettingsForm
 from .models import MyUser
@@ -55,4 +55,5 @@ def account_settings(request):
 
 
 def memberships(request):
-    return render(request, 'auth/memberships.html', {})
+    plans = Plan.objects.active()
+    return render(request, 'auth/memberships.html', {'plans': plans})

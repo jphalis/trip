@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from jsonfield.fields import JSONField
 
 from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import intcomma
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
@@ -43,9 +44,8 @@ class Plan(TimeStampedModel):
     plan_id = models.SlugField(max_length=255, unique=True, null=True,
                                blank=True)
     name = models.CharField(max_length=150, help_text=HELP_TXT['name'])
-    amount = models.DecimalField(decimal_places=2, max_digits=15,
-                                 validators=[MinValueValidator(0.0)],
-                                 help_text=HELP_TXT['amount'])
+    description = models.TextField(blank=True)
+    amount = models.PositiveIntegerField(help_text=HELP_TXT['amount'])
     interval = models.CharField(max_length=5, default='year',
                                 help_text=HELP_TXT['interval'])
     currency = models.CharField(max_length=3, default='usd',
@@ -69,6 +69,9 @@ class Plan(TimeStampedModel):
 
     def __str__(self):
         return u"{} ({}{})".format(self.name, self.amount, self.currency)
+
+    def display_amount(self):
+        return '{} cents'.format(intcomma(self.amount))
 
 
 @python_2_unicode_compatible

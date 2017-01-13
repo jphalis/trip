@@ -28,7 +28,7 @@ def get_or_create_stripe_plan(plan_id, name, amount, interval, currency='usd',
         plan = stripe.Plan.create(
             id=slugify(name),
             name=name,
-            amount=int(round(float(amount) * 100)),  # converted to cents,
+            amount=amount,
             interval=interval,
             currency=currency,
             interval_count=interval_count,
@@ -211,7 +211,7 @@ def get_or_create_stripe_charge(charge_id, amount, currency='usd',
         charge.save()
     else:
         charge = stripe.Charge.create(
-            amount=int(round(float(amount) * 100)),  # converted to cents
+            amount=amount,
             currency=currency,
             application_fee=application_fee,
             capture=capture,

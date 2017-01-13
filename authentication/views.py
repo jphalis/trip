@@ -2,14 +2,14 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
 from accounts.models import MyUser
-from billing.models import Customer
+from billing.models import Customer, Plan, Subscription
 from .forms import (LoginForm, SignupForm, PasswordResetForm,
                     PasswordResetTokenForm)
 
@@ -55,10 +55,10 @@ def auth_login(request):
 def auth_register(request):
     # delete account if credit card does not process
 
-    cost = request.POST['membership_cost']
     form = SignupForm(request.POST or None)
 
-    if form.is_valid():
+    if request.method == 'POST' and form.is_valid():
+        plan = get_object_or_404(Plan, plan_id=request.POST['plan_id'])
         email = form.cleaned_data['email']
         password = form.cleaned_data['password_confirm']
         new_user = MyUser.objects.create_user(
@@ -73,12 +73,12 @@ def auth_register(request):
         if user is not None:
             login(request, user)
 
-            if cost == 'FREE':
-                Customer.objects.create(user=user, billing_fee='0')
+            if plan.amount == 0:
+                Customer.objects.create(user=user)
             else:
-                customer = Customer.objects.create(
-                    user=user, billing_fee=cost)
-                # CHARGE CUSTOMER
+                cu = Customer.objects.create(
+                    user=user, account_balance=plan.amount)
+
                 pass
 
             messages.success(request,

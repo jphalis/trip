@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load billing_extras %}
 
 {% block title %} / Membership Options{% endblock title %}
 
@@ -9,108 +10,51 @@
   <link rel='stylesheet' href="{% static 'vendors/card/card.css' %}">
 {% endblock stylesheets %}
 
+{% block css %}
+<style>
+  .grid-item {
+      width: 284px; padding:4px;}
+</style>
+{% endblock css %}
+
 {% block content %}
   <div class="row">
     <div class="col-md-12">
       <article class="blog-post" style="border-bottom:None;">
         <div class="blog-post-body">
           <h2 style="margin-bottom: 18px;">Membership Options</h2>
-          <div class="blog-post-text">
+          <div class="blog-post-text grid">
 
-            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-              <div class="panel price panel-red">
-                <div class="panel-heading  text-center">
-                  <h3>Individual</h3>
-                </div>
-                <div class="panel-body text-center">
-                  <p class="lead"><strong>$150.00</strong></p>
-                  <p>per year</p>
-                </div>
-                <ul class="list-group list-group-flush text-center">
-                  <li class="list-group-item">
-                    Any person interested in the promotion and development of the professional liability industry is eligible for membership<br/><br/><br/><br/>
-                  </li>
-                </ul>
-                <div class="panel-footer">
-                  <button type="button" id="individual" class="btn btn-lg btn-block btn-danger" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
-                    SIGNUP NOW!
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-              <div class="panel price panel-green">
-                <div class="panel-heading text-center">
-                  <h3>Corporate Member</h3>
-                </div>
-                <div class="panel-body text-center">
-                  <p class="lead"><strong>$1,000.00</strong></p>
-                  <p>per year</p>
-                </div>
-                <ul class="list-group list-group-flush text-center">
-                  <li class="list-group-item">
-                    Must be an employee of a Corporate Sponsor
-                  </li>
-                  <li class="list-group-item">
-                    Corporate affiliates hold the same rights as an individual member<br/><br/>
-                  </li>
-                </ul>
-                <div class="panel-footer">
-                  <button type="button" id="corporate" class="btn btn-lg btn-block btn-success" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
-                    SIGNUP NOW!
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-              <div class="panel price panel-blue">
-                <div class="panel-heading arrow_box text-center">
-                  <h3>Future</h3>
-                </div>
-                <div class="panel-body text-center">
-                  <p class="lead"><strong>$50.00</strong></p>
-                  <p>per year</p>
-                </div>
-                <ul class="list-group list-group-flush text-center">
-                  <li class="list-group-item">
-                    Must be 35 years of age or younger and involved in the professional liability industry
-                  </li>
-                  <li class="list-group-item">
-                    Full membership benefits, including member discounts for event registration
-                  </li>
-                </ul>
-                <div class="panel-footer">
-                  <button type="button" id="future" class="btn btn-lg btn-block btn-info" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
-                    SIGNUP NOW!
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3">
-              <div class="panel price panel-grey">
-                  <div class="panel-heading arrow_box text-center">
-                    <h3>Academic</h3>
+            {% for plan in plans %}
+              <div class="grid-item">
+                <div class="panel price {% cycle 'panel-red' 'panel-green' 'panel-blue' 'panel-grey' %}">
+                  <div class="panel-heading text-center">
+                    <h3>{{ plan.name }}</h3>
                   </div>
                   <div class="panel-body text-center">
-                    <p class="lead"><strong>Free</strong></p>
-                    <p>&nbsp;</p>
+                    {% if plan.amount == 0 %}
+                      <p class="lead"><strong>Free</strong></p>
+                      <p>&nbsp;</p>
+                    {% else %}
+                      <p class="lead">
+                        <strong>${{ plan.amount|divide:"100" }}</strong>
+                      </p>
+                      <p>per year</p>
+                    {% endif %}
                   </div>
                   <ul class="list-group list-group-flush text-center">
-                    <li class="list-group-item">Website access only</li>
                     <li class="list-group-item">
-                      Must be a student or teacher at academic institution<br/><br/><br/><br/>
+                      {{ plan.description|safe|linebreaksbr }}
                     </li>
                   </ul>
                   <div class="panel-footer">
-                    <button type="button" id="academic" class="btn btn-lg btn-block btn-primary" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal">
+                    <button type="button" id="{{ plan.plan_id }}" class="btn btn-lg btn-block {% cycle 'btn-danger' 'btn-success' 'btn-info' 'btn-primary' %}" {% if request.user.is_authenticated %}disabled="disabled"{% endif%} data-toggle="modal" data-target="#menuModal" data-amount="{% if plan.amount == 0 %}FREE{% else %}{{ plan.amount|divide:'100' }}{% endif %}">
                       SIGNUP NOW!
                     </button>
                   </div>
+                </div>
               </div>
-            </div>
+            {% endfor %}
 
           </div>
         </div>
@@ -133,7 +77,7 @@
 
                 <form method="POST" action="{% url 'authentication:auth_register' %}">
                   {% csrf_token %}
-                  <input type="hidden" name="membership_cost" value="" />
+                  <input type="hidden" name="plan_id" value="" />
 
                   <!-- register form -->
                   <div class="form-container">
@@ -183,11 +127,16 @@
 {% endblock content %}
 
 {% block js %}
+    <script src="{% static 'vendors/masonry/masonry.pkgd.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'vendors/card/card.js' %}" type="text/javascript"></script>
 {% endblock js %}
 
 {% block scripts %}
     <script type="text/javascript">
+        $('.grid').masonry({
+            itemSelector: '.grid-item',
+            columnWidth: 284
+        });
         $('form').card({
             container: '.card-wrapper',
             formSelectors: {
@@ -209,28 +158,19 @@
                 cvc: '•••'
             },
         });
-        $('#individual').click(function(){
-            $('#membership-fee').html('150.00');
-            $('input[name=membership_cost]').attr('value', 150);
-        });
-        $('#corporate').click(function(){
-            $('#membership-fee').html('1,000.00');
-            $('input[name=membership_cost]').attr('value', 1000);
-        });
-        $('#future').click(function(){
-            $('#membership-fee').html('50.00');
-            $('input[name=membership_cost]').attr('value', 50);
-        });
-        $('#academic').click(function(){
-            $('#membership-fee').html('FREE');
-            $('input[name=membership_cost]').attr('value', 'FREE');
-            $('#cc-form').hide();
-            $('input[name=street_address]').attr("disabled", true);
-            $('input[name=city]').attr("disabled", true);
-            $('input[name=zip_code]').attr("disabled", true);
-            $('input[name=number]').attr("disabled", true);
-            $('input[name=expiry]').attr("disabled", true);
-            $('input[name=cvc]').attr("disabled", true);
+        $(".btn").click(function(){
+            var amount = $(this).data('amount');
+            $('#membership-fee').html(amount);
+            $('input[name=plan_id]').attr('value', $(this).attr('id'));
+            if (amount == 'FREE') {
+                $('#cc-form').hide();
+                $('input[name=street_address]').attr("disabled", true);
+                $('input[name=city]').attr("disabled", true);
+                $('input[name=zip_code]').attr("disabled", true);
+                $('input[name=number]').attr("disabled", true);
+                $('input[name=expiry]').attr("disabled", true);
+                $('input[name=cvc]').attr("disabled", true);
+            }
         });
     </script>
 {% endblock scripts %}

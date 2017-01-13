@@ -59,6 +59,9 @@ class PlanManager(models.Manager):
         plan.save(using=self._db)
         return plan
 
+    def active(self):
+        return super(PlanManager, self).get_queryset().filter(is_active=True)
+
 
 class CustomerManager(models.Manager):
     def create(self, user, account_balance,
