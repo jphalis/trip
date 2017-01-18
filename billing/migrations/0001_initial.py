@@ -6,7 +6,6 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -27,8 +26,6 @@ class Migration(migrations.Migration):
                 ('amount', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('amount_refunded', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('description', models.TextField(blank=True)),
-                ('metadata', jsonfield.fields.JSONField(blank=True, null=True)),
-                ('fraud_details', jsonfield.fields.JSONField(blank=True, null=True)),
                 ('paid', models.NullBooleanField()),
                 ('disputed', models.NullBooleanField()),
                 ('refunded', models.NullBooleanField()),
@@ -55,9 +52,6 @@ class Migration(migrations.Migration):
                 ('default_source', models.SlugField(blank=True, max_length=255)),
                 ('description', models.TextField(blank=True)),
                 ('email', models.EmailField(max_length=120)),
-                ('metadata', jsonfield.fields.JSONField(blank=True, null=True)),
-                ('shipping', jsonfield.fields.JSONField(blank=True, null=True)),
-                ('subscriptions', jsonfield.fields.JSONField(blank=True, null=True)),
                 ('auto_renew', models.BooleanField(default=True)),
                 ('start_date', models.DateTimeField(auto_now_add=True)),
                 ('end_date', models.DateTimeField(help_text='The default end date will be 365 days from now.')),
@@ -79,7 +73,6 @@ class Migration(migrations.Migration):
                 ('amount_due', models.DecimalField(decimal_places=2, max_digits=9)),
                 ('attempted', models.NullBooleanField()),
                 ('attempt_count', models.PositiveIntegerField(null=True)),
-                ('metadata', jsonfield.fields.JSONField(blank=True, null=True)),
                 ('statement_descriptor', models.TextField(blank=True)),
                 ('currency', models.CharField(default='usd', max_length=10)),
                 ('closed', models.BooleanField(default=False)),
@@ -111,7 +104,6 @@ class Migration(migrations.Migration):
                 ('interval', models.CharField(default='year', help_text='Specifies billing frequency. Either day, week, month or year.', max_length=5)),
                 ('currency', models.CharField(default='usd', help_text='3-letter ISO code for currency.', max_length=3)),
                 ('interval_count', models.IntegerField(default=1, help_text='The number of intervals between each subscription billing. For example, interval=month and interval_count=3 bills every 3 months. Maximum of one year interval allowed (1 year, 12 months, or 52 weeks).')),
-                ('metadata', jsonfield.fields.JSONField(blank=True, help_text='A set of key/value pairs that you can attach to a plan. It can be useful for storing additional information about the plan in a structured format.', null=True)),
                 ('statement_descriptor', models.CharField(blank=True, help_text="An arbitrary string to be displayed on your customer's credit card statement. This may be up to 22 characters.", max_length=22)),
                 ('trial_period_days', models.PositiveIntegerField(default=0, null=True)),
                 ('is_active', models.BooleanField(default=True)),
@@ -129,7 +121,6 @@ class Migration(migrations.Migration):
                 ('modified', models.DateTimeField(auto_now=True)),
                 ('sub_id', models.SlugField(blank=True, max_length=255, null=True, unique=True)),
                 ('application_fee_percent', models.DecimalField(decimal_places=2, default=None, max_digits=3, null=True)),
-                ('metadata', jsonfield.fields.JSONField(blank=True, null=True)),
                 ('quantity', models.PositiveIntegerField(default=1)),
                 ('status', models.CharField(max_length=25)),
                 ('tax_percent', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),

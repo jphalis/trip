@@ -54,8 +54,6 @@ def auth_login(request):
 
 @never_cache
 def auth_register(request):
-    # delete account if credit card does not process
-
     form = SignupForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
@@ -73,21 +71,32 @@ def auth_register(request):
 
         if user is not None:
             login(request, user)
-
-            cu = Customer.objects.create(
-                user=user,
-                account_balance=plan.amount if plan.amount > 0 else None)
+            cu = Customer.objects.create(user=user, account_balance=0)
 
             if plan.amount > 0:
                 stripe_form = StripeCreditCardForm(request.POST, user=user,
                                                    customer=cu)
                 if stripe_form.is_valid():
-                    pass
-                    # sub = Subscription.objects.create(customer=cu, plan=plan)
+                    sub = Subscription.objects.create(customer=cu, plan=plan)
 
-            messages.success(request,
-                             'Your account has been successfully created.')
-            return redirect('home')
+                    if sub:
+                        messages.success(request,
+                                         'Your account has been successfully created.')
+                        return redirect('home')
+                    else:
+                        user.delete()
+                        messages.error(request,
+                                   'There was an error creating your account.')
+                        return redirect('accounts:memberships')
+                elif stripe_form.errors:
+                    for field in stripe_form:
+                        for error in field.errors:
+                            messages.error(request, error)
+                else:
+                    messages.error(request,
+                                   'There was an error creating your account.')
+                user.delete()
+                return redirect('accounts:memberships')
 
     elif form.errors:
         for field in form:

@@ -12,7 +12,6 @@ django-toolbelt==0.0.1
 django-widget-tweaks==1.4.1
 gunicorn==19.6.0
 html5lib==0.999999999
-jsonfield==1.0.3
 kombu==3.0.35
 pilkit==1.1.12
 Pillow==3.3.0

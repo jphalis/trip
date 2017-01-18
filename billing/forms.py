@@ -78,7 +78,7 @@ class StripeCreditCardForm(forms.Form):
                 'address_city': city,
                 'address_line1': street_address,
                 'address_zip': zip_code,
-                'name': self.user.get_full_name()
+                'name': self.user.get_full_name
             })
 
         except stripe.error.CardError:
@@ -90,9 +90,9 @@ class StripeCreditCardForm(forms.Form):
         # Amount must be a positive integer in cents.
         try:
             charge = self.stripe.Charge.create(
-                amount=int(amount) * 100,
+                amount=amount,
                 currency='usd',
-                customer=self.customer.id,
+                customer=self.customer.cu_id,
                 description=description,
                 source=self.card
             )
@@ -114,10 +114,6 @@ class StripeCreditCardForm(forms.Form):
         expiry = cleaned_data.get('expiry')
         expire_month = int(expiry.replace(' ', '').split('/')[0])
         expire_year = int(expiry.replace(' ', '').split('/')[1])
-
-        print expire_month
-        print expire_year
-
         city = cleaned_data.get('city')
         street_address = cleaned_data.get('street_address')
         zip_code = cleaned_data.get('zip_code')
@@ -131,10 +127,10 @@ class StripeCreditCardForm(forms.Form):
         number = cleaned_data.get('number')
         cvc = cleaned_data.get('cvc')
 
-        # if number and cvc:
-        #     # we aren't storing any card ids, so create a new one.
-        #     # When the Stripe "card" object is created, it also functions
-        #     # as the stripe "token".
-        #     self.create_card(number, expire_month, expire_year, cvc, city,
-        #                      street_address, zip_code)
+        if number and cvc:
+            # we aren't storing any card ids, so create a new one.
+            # When the Stripe "card" object is created, it also functions
+            # as the stripe "token".
+            self.create_card(number, expire_month, expire_year, cvc, city,
+                             street_address, zip_code)
         return cleaned_data

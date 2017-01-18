@@ -1,5 +1,7 @@
 import stripe
 
+from datetime import datetime
+
 from django.conf import settings
 from django.utils.text import slugify
 
@@ -9,10 +11,14 @@ from django.utils.text import slugify
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+def convert_tstamp(timestamp):
+    return datetime.fromtimestamp(timestamp) if timestamp else None
+
+
 def get_or_create_stripe_plan(plan_id, name, amount, interval, currency='usd',
                               interval_count=1, metadata={},
                               statement_descriptor=None,
-                              trial_period_days=None):
+                              trial_period_days=0):
     try:
         plan = stripe.Plan.retrieve(plan_id)
     except stripe.error.InvalidRequestError:
@@ -51,10 +57,8 @@ def delete_stripe_plan(plan_id):
     return False
 
 
-def get_or_create_stripe_cus(customer_id, account_balance=None,
-                             business_vat_id=None, coupon=None,
-                             default_source=None, description=None, email=None,
-                             metadata={}, shipping={}, source={}):
+def get_or_create_stripe_cus(customer_id, account_balance=0, description=None,
+                             email=None, metadata={}, shipping={}, source={}):
 
     try:
         cu = stripe.Customer.retrieve(customer_id)
@@ -62,10 +66,8 @@ def get_or_create_stripe_cus(customer_id, account_balance=None,
         cu = None
 
     if cu:
-        cu.account_balance = account_balance
-        cu.business_vat_id = business_vat_id
-        cu.coupon = coupon
-        cu.default_source = default_source
+        if account_balance > 0:
+            cu.account_balance = account_balance
         cu.description = description
         cu.email = email
         cu.metadata = metadata
@@ -74,9 +76,8 @@ def get_or_create_stripe_cus(customer_id, account_balance=None,
         cu.save()
     else:
         cu = stripe.Customer.create(
-            account_balance=account_balance, business_vat_id=business_vat_id,
-            coupon=coupon, description=description, email=email,
-            metadata=metadata, shipping=shipping, source=source
+            account_balance=account_balance, description=description,
+            email=email, metadata=metadata, shipping=shipping, source=source
         )
     return cu
 
@@ -93,62 +94,48 @@ def delete_stripe_cus(customer_id):
     return False
 
 
-def get_or_create_stripe_sub(subscription_id, customer,
-                             application_fee_percent=None, coupon=None,
-                             metadata={}, plan=None, prorate=None,
-                             proation_date=None, quantity=1, source=None,
-                             tax_percent=None, trial_end=None,
-                             trial_period_days=None):
+def get_or_create_stripe_sub(subscription_id, customer, metadata={}, plan=None,
+                             quantity=1, source={}, trial_end=None,
+                             trial_period_days=0):
     try:
         sub = stripe.Subscription.retrieve(subscription_id)
     except stripe.error.InvalidRequestError:
         sub = None
 
     if sub:
-        sub.application_fee_percent = application_fee_percent
-        sub.coupon = coupon
         sub.metadata = metadata
         sub.plan = plan
-        sub.prorate = prorate
-        sub.proation_date = proation_date
         sub.quantity = quantity
         sub.source = source
-        sub.tax_percent = tax_percent
-        sub.trial_end = trial_end
         sub.save()
     else:
         sub = stripe.Subscription.create(
             customer=customer,
-            application_fee_percent=application_fee_percent,
-            coupon=coupon,
             metadata=metadata,
             plan=plan,
             quantity=quantity,
             source=source,
-            tax_percent=tax_percent,
             trial_end=trial_end,
             trial_period_days=trial_period_days
         )
     return sub
 
 
-def cancel_stripe_sub(subscription_id):
+def cancel_stripe_sub(subscription_id, at_period_end=False):
     try:
         sub = stripe.Subscription.retrieve(subscription_id)
     except stripe.error.InvalidRequestError:
         sub = None
 
     if sub:
-        sub.delete()
-        return True
-    return False
+        sub.delete(at_period_end=at_period_end)
+    return sub
 
 
 def get_or_create_stripe_invoice(invoice_id, customer_id, application_fee=None,
                                  closed=False, description=None,
                                  forgiven=False, metadata={},
-                                 statement_descriptor=None, subscription=None,
-                                 tax_percent=None):
+                                 statement_descriptor=None, subscription=None):
     try:
         invoice = stripe.Invoice.retrieve(invoice_id)
     except stripe.error.InvalidRequestError:
@@ -161,7 +148,6 @@ def get_or_create_stripe_invoice(invoice_id, customer_id, application_fee=None,
         invoice.forgiven = forgiven
         invoice.metadata = metadata
         invoice.statement_descriptor = statement_descriptor
-        invoice.tax_percent = tax_percent
         invoice.save()
     else:
         invoice = stripe.Invoice.create(
@@ -170,8 +156,7 @@ def get_or_create_stripe_invoice(invoice_id, customer_id, application_fee=None,
             description=description,
             metadata=metadata,
             statement_descriptor=statement_descriptor,
-            subscription=subscription,
-            tax_percent=tax_percent
+            subscription=subscription
         )
     return invoice
 
@@ -193,7 +178,7 @@ def get_or_create_stripe_charge(charge_id, amount, currency='usd',
                                 description=None, destination=None,
                                 metadata={}, fraud_details={},
                                 receipt_email=None, shipping={}, customer=None,
-                                source=None, statement_descriptor=None):
+                                source={}, statement_descriptor=None):
     if not source or customer:
         raise ValueError('Charges must have a source or a customer.')
 

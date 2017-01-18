@@ -8,7 +8,7 @@ from billing.utils import (get_or_create_stripe_plan, delete_stripe_plan,
                            get_or_create_stripe_cus, delete_stripe_cus,
                            get_or_create_stripe_sub, cancel_stripe_sub,
                            get_or_create_stripe_invoice, delete_stripe_invoice,
-                           get_or_create_stripe_charge)
+                           get_or_create_stripe_charge, convert_tstamp)
 from .models import Customer, Plan, Subscription, Invoice, Charge
 
 # Register your models here.
@@ -25,7 +25,7 @@ class PlanAdmin(admin.ModelAdmin):
             {'fields': ('name', 'description', 'plan_id', 'amount', 'currency',
                         'interval',)}),
         ('Optional Information',
-            {'fields': ('interval_count', 'metadata', 'statement_descriptor',
+            {'fields': ('interval_count', 'statement_descriptor',
                         'trial_period_days',)}),
         ('Permissions',
             {'fields': ('is_active',)}),
@@ -46,7 +46,6 @@ class PlanAdmin(admin.ModelAdmin):
             interval=obj.interval,
             currency=obj.currency,
             interval_count=obj.interval_count,
-            metadata=obj.metadata,
             statement_descriptor=obj.statement_descriptor,
             trial_period_days=obj.trial_period_days
         )
@@ -62,20 +61,19 @@ class PlanAdmin(admin.ModelAdmin):
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('id', 'user',)
     list_display_links = ('id', 'user',)
-    list_filter = ('created', 'start_date', 'end_date', 'currency',)
+    list_filter = ('created', 'currency',)
     fieldsets = (
         (None,
             {'fields': ('user', 'auto_renew',)}),
         (_('Stripe Information'),
-            {'fields': ('cu_id', 'account_balance', 'business_vat_id',
-                        'currency', 'default_source', 'description', 'email',
-                        'metadata', 'shipping', 'subscriptions',)}),
+            {'fields': ('cu_id', 'account_balance', 'currency', 'description',
+                        'email',)}),
         (_('Dates'),
-            {'fields': ('start_date', 'end_date', 'created', 'modified',)}),
+            {'fields': ('created', 'modified',)}),
         (_('Permissions'),
             {'fields': ('is_active',)}),
     )
-    readonly_fields = ('cu_id', 'start_date', 'currency', 'email',
+    readonly_fields = ('cu_id', 'currency', 'email',
                        'created', 'modified',)
     search_fields = ('user__first_name', 'user__last_name', 'email', 'cu_id',)
 
@@ -86,13 +84,9 @@ class CustomerAdmin(admin.ModelAdmin):
         cu = get_or_create_stripe_cus(
             customer_id=obj.cu_id,
             account_balance=obj.account_balance,
-            business_vat_id=obj.business_vat_id,
-            default_source=obj.default_source,
             description=obj.description,
             email=obj.email,
-            currency=obj.currency,
-            metadata=obj.metadata,
-            shipping=obj.shipping
+            currency=obj.currency
         )
         if cu:
             obj.cu_id = cu['id']
@@ -109,9 +103,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_filter = ('start', 'ended_at', 'canceled_at', 'created', 'modified',)
     fieldsets = (
         (None,
-            {'fields': ('sub_id', 'customer', 'plan', 'metadata', 'status',
-                        'quantity', 'tax_percent',
-                        'application_fee_percent', 'trial_period_days',)}),
+            {'fields': ('sub_id', 'customer', 'plan', 'status', 'quantity',
+                        'trial_period_days',)}),
         (_('Dates'),
             {'fields': ('start', 'ended_at', 'current_period_start',
                         'current_period_end', 'trial_start', 'trial_end',
@@ -129,26 +122,28 @@ class SubscriptionAdmin(admin.ModelAdmin):
         sub = get_or_create_stripe_sub(
             subscription_id=obj.sub_id,
             customer=obj.customer.cu_id,
-            application_fee_percent=obj.application_fee_percent,
-            metadata=obj.metadata,
             plan=obj.plan.plan_id,
             quantity=obj.quantity,
-            tax_percent=obj.tax_percent,
             trial_end=obj.trial_end,
             trial_period_days=obj.trial_period_days
         )
 
+        if obj.cancel_at_period_end:
+            sub = cancel_stripe_sub(subscription_id=obj.sub_id,
+                                    at_period_end=True)
+
         if sub:
+            _trial_days = sub['plan']['trial_period_days']
             obj.sub_id = sub['id']
             obj.status = sub['status']
-            obj.trial_period_days = sub['trial_period_days']
-            obj.trial_start = sub['trial_start']
-            obj.cancel_at_period_end = sub['cancel_at_period_end']
-            obj.canceled_at = sub['canceled_at']
-            obj.current_period_end = sub['current_period_end']
-            obj.current_period_start = sub['current_period_start']
-            obj.ended_at = sub['ended_at']
-            obj.start = sub['start']
+            obj.trial_period_days = _trial_days if _trial_days else 0
+            obj.trial_start = convert_tstamp(sub['trial_start'])
+            obj.canceled_at = convert_tstamp(sub['canceled_at'])
+            obj.current_period_end = convert_tstamp(sub['current_period_end'])
+            obj.current_period_start = convert_tstamp(sub['current_period_start'])
+            obj.ended_at = convert_tstamp(sub['ended_at'])
+            obj.start = convert_tstamp(sub['start'])
+
         obj.save()
 
     def delete_model(self, request, obj):
@@ -164,8 +159,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         (None,
             {'fields': ('customer', 'invoice_id', 'charge', 'subscription',
                         'receipt_number', 'amount_due', 'subtotal', 'total',
-                        'currency', 'statement_descriptor', 'description',
-                        'metadata', 'tax_percent',)}),
+                        'currency', 'statement_descriptor', 'description',)}),
         ('Actions',
             {'fields': ('attempted', 'attempted_count', 'closed', 'paid',)}),
         (_('Dates'),
@@ -186,10 +180,8 @@ class InvoiceAdmin(admin.ModelAdmin):
             closed=obj.closed,
             description=obj.description,
             forgiven=obj.forgiven,
-            metadata=obj.metadata,
             statement_descriptor=obj.statement_descriptor,
-            subscription=obj.subscription.sub_id,
-            tax_percent=obj.tax_percent
+            subscription=obj.subscription.sub_id
         )
 
         if invoice:
@@ -199,8 +191,8 @@ class InvoiceAdmin(admin.ModelAdmin):
             obj.attempted_count = invoice['attempted_count']
             obj.currency = invoice['currency']
             obj.receipt_number = invoice['receipt_number']
-            obj.period_end = invoice['period_end']
-            obj.period_start = invoice['period_start']
+            obj.period_end = convert_tstamp(invoice['period_end'])
+            obj.period_start = convert_tstamp(invoice['period_start'])
             obj.subtotal = invoice['subtotal']
             obj.total = invoice['total']
         obj.save()
@@ -219,8 +211,7 @@ class ChargeAdmin(admin.ModelAdmin):
         (None,
             {'fields': ('customer', 'charge_id', 'invoice', 'amount',
                         'amount_refunded', 'currency', 'description',
-                        'statement_descriptor', 'metadata',
-                        'fraud_details',)}),
+                        'statement_descriptor',)}),
         ('Actions',
             {'fields': ('paid', 'disputed', 'refunded', 'captured',)}),
         (_('Dates'),
@@ -241,8 +232,6 @@ class ChargeAdmin(admin.ModelAdmin):
             amount=obj.amount,
             currency=obj.currency,
             description=obj.description,
-            metadata=obj.metadata,
-            fraud_details=obj.fraud_details,
             customer=obj.customer.cu_id,
             statement_descriptor=obj.statement_descriptor
         )
@@ -260,8 +249,8 @@ class ChargeAdmin(admin.ModelAdmin):
         obj.save()
 
 
-admin.site.register(Customer, CustomerAdmin)
+# admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Plan, PlanAdmin)
-admin.site.register(Subscription, SubscriptionAdmin)
+# admin.site.register(Subscription, SubscriptionAdmin)
 # admin.site.register(Invoice, InvoiceAdmin)
-admin.site.register(Charge, ChargeAdmin)
+# admin.site.register(Charge, ChargeAdmin)

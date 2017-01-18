@@ -1,13 +1,12 @@
 import stripe
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
 
-from billing.utils import (get_or_create_stripe_plan, get_or_create_stripe_cus,
-                           get_or_create_stripe_sub,
+from billing.utils import (convert_tstamp, get_or_create_stripe_plan,
+                           get_or_create_stripe_cus, get_or_create_stripe_sub,
                            get_or_create_stripe_charge)
 
 # Create you managers here.
@@ -19,7 +18,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class PlanManager(models.Manager):
     def create(self, name, amount, interval, currency='usd',
                interval_count=1, metadata={}, statement_descriptor='',
-               trial_period_days=None, **extra_fields):
+               trial_period_days=0, **extra_fields):
 
         if not name:
             raise ValueError('Plans must have a name.')
@@ -64,13 +63,10 @@ class PlanManager(models.Manager):
 
 
 class CustomerManager(models.Manager):
-    def create(self, user, account_balance,
-               end_date=timezone.now() + timedelta(days=365), **extra_fields):
+    def create(self, user, account_balance, **extra_fields):
 
         if not user:
             raise ValueError('Customers must have a user.')
-        elif not account_balance:
-            raise ValueError('Customers must have an account balance.')
 
         try:
             stripe_cu = get_or_create_stripe_cus(
@@ -85,12 +81,9 @@ class CustomerManager(models.Manager):
             user=user,
             cu_id=stripe_cu['id'],
             account_balance=account_balance,
-            business_vat_id='',
-            currency=stripe_cu['currency'],
-            default_source='',
+            currency=stripe_cu['currency'] if stripe_cu['currency'] else '',
             description=stripe_cu['description'],
             email=user.email,
-            end_date=end_date,
             **extra_fields
         )
         cu.save(using=self._db)
@@ -98,9 +91,8 @@ class CustomerManager(models.Manager):
 
 
 class SubscriptionManager(models.Manager):
-    def create(self, customer, plan, application_fee_percent=None, metadata={},
-               quantity=1, trial_end=None, trial_period_days=None,
-               **extra_fields):
+    def create(self, customer, plan, metadata={}, trial_end=None, quantity=1,
+               trial_period_days=0, **extra_fields):
 
         if not customer:
             raise ValueError('Subscriptions must have a customer.')
@@ -111,7 +103,6 @@ class SubscriptionManager(models.Manager):
             stripe_sub = get_or_create_stripe_sub(
                 subscription_id=None,
                 customer=customer.cu_id,
-                application_fee_percent=application_fee_percent,
                 metadata=metadata,
                 plan=plan.plan_id,
                 quantity=quantity,
@@ -127,16 +118,15 @@ class SubscriptionManager(models.Manager):
             customer=customer,
             plan=plan,
             status=stripe_sub['status'],
-            tax_percent=stripe_sub['tax_percent'],
             trial_period_days=trial_period_days,
-            trial_end=stripe_sub['trial_end'],
-            trial_start=stripe_sub['trial_start'],
+            trial_end=convert_tstamp(stripe_sub['trial_end']),
+            trial_start=convert_tstamp(stripe_sub['trial_start']),
             cancel_at_period_end=stripe_sub['cancel_at_period_end'],
-            canceled_at=stripe_sub['canceled_at'],
-            current_period_end=stripe_sub['current_period_end'],
-            current_period_start=stripe_sub['current_period_start'],
-            ended_at=stripe_sub['ended_at'],
-            start=stripe_sub['start'],
+            canceled_at=convert_tstamp(stripe_sub['canceled_at']),
+            current_period_end=convert_tstamp(stripe_sub['current_period_end']),
+            current_period_start=convert_tstamp(stripe_sub['current_period_start']),
+            ended_at=convert_tstamp(stripe_sub['ended_at']),
+            start=convert_tstamp(stripe_sub['start']),
             **extra_fields)
         sub.save(using=self._db)
         return sub

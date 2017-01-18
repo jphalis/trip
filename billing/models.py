@@ -1,12 +1,8 @@
 from __future__ import unicode_literals
 
-from jsonfield.fields import JSONField
-
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -52,8 +48,6 @@ class Plan(TimeStampedModel):
                                 help_text=HELP_TXT['currency'])
     interval_count = models.IntegerField(default=1,
                                          help_text=HELP_TXT['interval_count'])
-    metadata = JSONField(blank=True, null=True,
-                         help_text=HELP_TXT['metadata'])
     statement_descriptor = models.CharField(max_length=22, blank=True,
                                             help_text=HELP_TXT['descriptor'])
     trial_period_days = models.PositiveIntegerField(default=0, null=True)
@@ -80,21 +74,11 @@ class Customer(TimeStampedModel):
                                 on_delete=models.CASCADE)
     cu_id = models.SlugField(max_length=255, unique=True, null=True,
                              blank=True)
-    account_balance = models.DecimalField(max_digits=9, decimal_places=2,
-                                          validators=[MinValueValidator(0.0)])
-    business_vat_id = models.CharField(max_length=120, blank=True)
+    account_balance = models.PositiveIntegerField(help_text=HELP_TXT['amount'])
     currency = models.CharField(max_length=3, blank=True)
-    default_source = models.SlugField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     email = models.EmailField(max_length=120)
-    metadata = JSONField(blank=True, null=True)
-    shipping = JSONField(blank=True, null=True)
-    subscriptions = JSONField(blank=True, null=True)
     auto_renew = models.BooleanField(default=True)
-
-    start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField(help_text=('The default end date will be '
-                                               '365 days from now.'))
 
     is_active = models.BooleanField(default=True)
 
@@ -108,26 +92,15 @@ class Customer(TimeStampedModel):
     def __str__(self):
         return str(self.user)
 
-    def update_status(self):
-        _user = self.user
-        _user.is_active = True if self.end_date >= timezone.now() else False
-        _user.save()
-
 
 @python_2_unicode_compatible
 class Subscription(TimeStampedModel):
     sub_id = models.SlugField(max_length=255, unique=True, null=True,
                               blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    application_fee_percent = models.DecimalField(max_digits=3,
-                                                  decimal_places=2,
-                                                  default=None, null=True)
-    metadata = JSONField(blank=True, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=25)
-    tax_percent = models.DecimalField(max_digits=5, decimal_places=2,
-                                      null=True, blank=True)
 
     trial_period_days = models.PositiveIntegerField(default=0, null=True)
     trial_end = models.DateTimeField(blank=True, null=True)
@@ -137,7 +110,7 @@ class Subscription(TimeStampedModel):
     current_period_end = models.DateTimeField(blank=True, null=True)
     current_period_start = models.DateTimeField(blank=True, null=True)
     ended_at = models.DateTimeField(blank=True, null=True)
-    start = models.DateTimeField()
+    start = models.DateTimeField(blank=True, null=True)
 
     objects = SubscriptionManager()
 
@@ -169,7 +142,6 @@ class Invoice(TimeStampedModel):
     amount_due = models.DecimalField(decimal_places=2, max_digits=9)
     attempted = models.NullBooleanField()
     attempt_count = models.PositiveIntegerField(null=True)
-    metadata = JSONField(blank=True, null=True)
     charge = models.ForeignKey("Charge", null=True, related_name="invoices",
                                on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, null=True,
@@ -184,8 +156,6 @@ class Invoice(TimeStampedModel):
     period_start = models.DateTimeField()
     subtotal = models.DecimalField(decimal_places=2, max_digits=9)
     total = models.DecimalField(decimal_places=2, max_digits=9)
-    tax_percent = models.DecimalField(max_digits=5, decimal_places=2,
-                                      null=True, blank=True)
 
     class Meta:
         app_label = 'billing'
@@ -209,12 +179,11 @@ class Charge(models.Model):
     invoice = models.ForeignKey(Invoice, null=True, related_name="charges",
                                 on_delete=models.CASCADE)
     currency = models.CharField(max_length=10, default="usd")
-    amount = models.DecimalField(decimal_places=2, max_digits=9, null=True)
+    amount = models.PositiveIntegerField(help_text=HELP_TXT['amount'],
+                                         null=True)
     amount_refunded = models.DecimalField(decimal_places=2, max_digits=9,
                                           null=True)
     description = models.TextField(blank=True)
-    metadata = JSONField(blank=True, null=True)
-    fraud_details = JSONField(blank=True, null=True)
     paid = models.NullBooleanField(null=True)
     disputed = models.NullBooleanField(null=True)
     refunded = models.NullBooleanField(null=True)
