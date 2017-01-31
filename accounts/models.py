@@ -11,6 +11,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
+from billing.models import Customer, Plan, Subscription
 from core.models import TimeStampedModel
 
 # Create your models here.
@@ -56,9 +57,13 @@ class MyUserManager(BaseUserManager):
 
     def create_superuser(self, email, first_name, last_name, password,
                          **extra_fields):
-        return self._create_user(email, first_name, last_name, password,
+        user = self._create_user(email, first_name, last_name, password,
                                  is_staff=True, is_superuser=True,
                                  **extra_fields)
+        cu = Customer.objects.create(user=user, account_balance=0)
+        plan = Plan.objects.get(name='Admin')
+        sub = Subscription.objects.create(customer=cu, plan=plan)
+        return user
 
 
 @python_2_unicode_compatible

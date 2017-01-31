@@ -66,11 +66,25 @@
     <div class="sidebar-widget">
       <h3 class="sidebar-title">Membership Information</h3>
       <div class="widget-container">
-        <p><em>Start Date</em> : {{ customer.start_date }}</p>
-        <p><em>End Date</em> : {{ customer.end_date }}</p>
         <p>
-          <em>Auto-Renew</em> : <span style="margin-left:7px;"><input type="checkbox" id="auto-renew" {% if customer.auto_renew %}checked{% endif %}></span>
+          <strong>Plan</strong>: {{ subscription.plan.name }}
         </p>
+        <p>
+          <strong>Start Date</strong>: {{ subscription.current_period_start }}
+        </p>
+        <p>
+          <strong>End Date</strong>: {{ subscription.current_period_end }}
+        </p>
+        <p>
+          <strong>Auto-Renew</strong>: <span style="margin-left:7px;"><input type="checkbox" id="auto-renew" {% if customer.auto_renew %}checked{% endif %}></span>
+        </p>
+        {% if not customer.auto_renew %}
+          <small>
+            <em>
+              * Your membership will be deactivated on the end date above, and you will no longer be charged.
+            </em>
+          </small>
+        {% endif %}
       </div>
     </div>
   </div>

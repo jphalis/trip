@@ -2,7 +2,8 @@ import stripe
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils.text import slugify
+
+from billing.models import Plan
 
 # Create your commands here.
 
@@ -14,21 +15,57 @@ class Command(BaseCommand):
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
         plans = [
-            ['Individual', 1000.036],
-            ['Corporate Member', 1000],
-            ['Future', 1000],
-            ['Academic', 1000],
+            [
+                'Individual',
+                15000,
+                "Any person interested in the promotion and development of "
+                "the professional liability industry is eligible for "
+                "membership<br/><br/><br/><br/>"
+            ],
+            [
+                'Corporate Member',
+                100000,
+                "Must be an employee of a Corporate Sponsor\n\n"
+                "Corporate affiliates hold the same rights as an individual "
+                "member"
+            ],
+            [
+                'Future',
+                5000,
+                "Must be 35 years of age or younger and involved in the "
+                "professional liability industry\n\n"
+                "Full membership benefits, including member discounts for "
+                "event registration"
+            ],
+            [
+                'Academic',
+                0,
+                "Website access only\n\n"
+                "Must be a student or teacher at an academic institution"
+            ],
+            [
+                'Admin',
+                0,
+                "Used for administrative purposes only"
+            ]
         ]
 
         for plan in plans:
-            stripe.Plan.create(
-                amount=int(round(float(plan[1]) * 100)),
-                interval='year',
-                name=plan[0],
-                currency='usd',
-                id=slugify(plan[0])
-            )
-            self.stdout.write(
-                self.style.WARNING('Created {} plan.'.format(plan[0])))
+
+            if not Plan.objects.filter(name=plan[0]).exists():
+                new_p = Plan.objects.create(
+                    name=plan[0],
+                    amount=plan[1],
+                    interval='year',
+                    description=plan[2] if plan[2] else ''
+                )
+
+                if plan[0] == 'Admin':
+                    new_p.is_active = False
+                    new_p.save(update_fields=['is_active'])
+
+                self.stdout.write(
+                    self.style.WARNING('Created {} plan.'.format(new_p.name))
+                )
         self.stdout.write(
             self.style.SUCCESS('Successfully created all plans on Stripe.'))

@@ -85,8 +85,7 @@ class CustomerAdmin(admin.ModelAdmin):
             customer_id=obj.cu_id,
             account_balance=obj.account_balance,
             description=obj.description,
-            email=obj.email,
-            currency=obj.currency
+            email=obj.email
         )
         if cu:
             obj.cu_id = cu['id']

@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
-from billing.models import Customer, Plan
+from billing.models import Customer, Plan, Subscription
 from events.models import Event
 from .forms import AccountSettingsForm
 from .models import MyUser
@@ -30,6 +30,8 @@ def detail(request, user_pk):
 def account_settings(request):
     user = request.user
     customer = Customer.objects.get(user=user)
+    subscription = Subscription.objects.get(customer=customer)
+
     form = AccountSettingsForm(request.POST or None,
                                request.FILES or None,
                                instance=user, user=user)
@@ -49,6 +51,7 @@ def account_settings(request):
     context = {
         'form': form,
         'customer': customer,
+        'subscription': subscription,
         'user': user,
     }
     return render(request, 'accounts/settings.html', context)

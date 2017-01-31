@@ -38,8 +38,8 @@ class StripeUnitTest(TestCase):
         return customer
 
     def create_plan(self):
-        return Plan.objects.create(name="Test plan", amount=1000,
-                                   interval='year')
+        return Plan.objects.create(name='Test plan', amount=1000,
+                                   interval='year', description='Test plan')
 
     def setUp(self):
         pass

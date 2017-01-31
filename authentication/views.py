@@ -81,12 +81,14 @@ def auth_register(request):
 
                     if sub:
                         messages.success(request,
-                                         'Your account has been successfully created.')
+                                         'Your account has been successfully '
+                                         'created.')
                         return redirect('home')
                     else:
                         user.delete()
                         messages.error(request,
-                                   'There was an error creating your account.')
+                                       'There was an error creating your '
+                                       'account.')
                         return redirect('accounts:memberships')
                 elif stripe_form.errors:
                     for field in stripe_form:
@@ -95,6 +97,25 @@ def auth_register(request):
                 else:
                     messages.error(request,
                                    'There was an error creating your account.')
+                user.delete()
+                return redirect('accounts:memberships')
+            elif plan.amount == 0:
+                sub = Subscription.objects.create(customer=cu, plan=plan)
+
+                if sub:
+                    messages.success(request,
+                                     'Your account has been successfully '
+                                     'created.')
+                    return redirect('home')
+                else:
+                    user.delete()
+                    messages.error(request,
+                                   'There was an error creating your '
+                                   'account.')
+                    return redirect('accounts:memberships')
+            else:
+                messages.error(request,
+                               'There was an error creating your account.')
                 user.delete()
                 return redirect('accounts:memberships')
 

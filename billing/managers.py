@@ -1,6 +1,6 @@
 import stripe
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.conf import settings
 from django.db import models
@@ -16,14 +16,15 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class PlanManager(models.Manager):
-    def create(self, name, amount, interval, currency='usd',
+    def create(self, name, amount, interval, description='', currency='usd',
                interval_count=1, metadata={}, statement_descriptor='',
                trial_period_days=0, **extra_fields):
 
         if not name:
             raise ValueError('Plans must have a name.')
-        elif not amount:
-            raise ValueError('Plans must have an amount.')
+        elif not int(amount) >= 0:
+            raise ValueError('Plans must have an amount, and the value must '
+                             'be greater than 0.')
         elif not interval:
             raise ValueError('Plans must have an interval.')
 
@@ -46,11 +47,11 @@ class PlanManager(models.Manager):
         plan = self.model(
             plan_id=stripe_plan['id'],
             name=stripe_plan['name'],
-            amount=amount,
+            description=description,
+            amount=stripe_plan['amount'],
             interval=stripe_plan['interval'],
             currency=stripe_plan['currency'],
             interval_count=stripe_plan['interval_count'],
-            metadata=stripe_plan['metadata'],
             statement_descriptor=statement_descriptor,
             trial_period_days=stripe_plan['trial_period_days'],
             **extra_fields
