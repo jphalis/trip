@@ -73,12 +73,23 @@ class CustomerAdmin(admin.ModelAdmin):
         (_('Permissions'),
             {'fields': ('is_active',)}),
     )
-    readonly_fields = ('cu_id', 'currency', 'email',
-                       'created', 'modified',)
+    # readonly_fields = ('cu_id', 'currency', 'email',
+    #                    'created', 'modified',)
     search_fields = ('user__first_name', 'user__last_name', 'email', 'cu_id',)
 
     class Meta:
         model = Customer
+
+    def get_readonly_fields(self, request, obj=None):
+        result = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        result.remove('id')
+        return result
+
+    def has_add_permission(self, request):
+        return False
 
     def save_model(self, request, obj, form, change):
         cu = get_or_create_stripe_cus(
@@ -110,12 +121,23 @@ class SubscriptionAdmin(admin.ModelAdmin):
                         'cancel_at_period_end', 'canceled_at',
                         'created', 'modified',)}),
     )
-    readonly_fields = ('sub_id', 'customer', 'start', 'created', 'modified',)
+    # readonly_fields = ('sub_id', 'customer', 'start', 'created', 'modified',)
     search_fields = ('customer__user__first_name', 'customer__user__last_name',
                      'customer__email', 'plan__plan_id', 'sub_id')
 
     class Meta:
         model = Subscription
+
+    def get_readonly_fields(self, request, obj=None):
+        result = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        result.remove('id')
+        return result
+
+    def has_add_permission(self, request):
+        return False
 
     def save_model(self, request, obj, form, change):
         sub = get_or_create_stripe_sub(
@@ -216,14 +238,25 @@ class ChargeAdmin(admin.ModelAdmin):
         (_('Dates'),
             {'fields': ('charge_created', 'receipt_sent',)}),
     )
-    readonly_fields = ('customer', 'charge_id', 'charge_created',
-                       'receipt_sent', 'captured', 'refunded', 'disputed',
-                       'paid', 'statement_descriptor',)
+    # readonly_fields = ('customer', 'charge_id', 'charge_created',
+    #                    'receipt_sent', 'captured', 'refunded', 'disputed',
+    #                    'paid', 'statement_descriptor',)
     search_fields = ('customer__user__first_name', 'customer__user__last_name',
                      'customer__email',)
 
     class Meta:
         model = Charge
+
+    def get_readonly_fields(self, request, obj=None):
+        result = list(set(
+            [field.name for field in self.opts.local_fields] +
+            [field.name for field in self.opts.local_many_to_many]
+        ))
+        result.remove('id')
+        return result
+
+    def has_add_permission(self, request):
+        return False
 
     def save_model(self, request, obj, form, change):
         charge = get_or_create_stripe_charge(
@@ -248,8 +281,8 @@ class ChargeAdmin(admin.ModelAdmin):
         obj.save()
 
 
-# admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Plan, PlanAdmin)
-# admin.site.register(Subscription, SubscriptionAdmin)
+admin.site.register(Subscription, SubscriptionAdmin)
 # admin.site.register(Invoice, InvoiceAdmin)
-# admin.site.register(Charge, ChargeAdmin)
+admin.site.register(Charge, ChargeAdmin)
