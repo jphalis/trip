@@ -4,6 +4,8 @@
 {% block title %} / Settings{% endblock title %}
 
 {% block content %}
+  <img id="page-loader" style="position:fixed; top:50%; left:50%; display:none;" src="{% static 'img/loader.svg' %}" alt="Loader" />
+
   <div class="col-md-8 col-lg-8">
     <form class="form-validation" method="POST" action="{% url 'accounts:account_settings' %}">
       {% csrf_token %}
@@ -123,12 +125,20 @@
                     csrfmiddlewaretoken: "{{ csrf_token }}"
                 },
                 dataType: "json",
+                beforeSend: function() {
+                    $("body").css({"opacity":"0.3", "background-color":"rgb(0, 0, 0)"});
+                    $('#page-loader').show();
+                },
+                complete: function(){
+                    $('#page-loader').hide();
+                },
                 success: function(e) {
-                    location.reload()
+                    location.reload();
                 },
                 error: function() {
                     alert("Sorry, there was an error with your request. Please try again later.");
-                }
+                    location.reload();
+                },
             })
         });
   </script>
