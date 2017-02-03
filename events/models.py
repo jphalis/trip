@@ -68,10 +68,12 @@ class Event(TimeStampedModel):
                                    help_text='You may use HTML when rendering')
     member_fee = models.DecimalField(_('member fee'), default=0.00,
                                      max_digits=8, decimal_places=2,
-                                     validators=[MinValueValidator(0.0)])
+                                     validators=[MinValueValidator(0.0)],
+                                     help_text=_('Amount in dollars.'))
     non_member_fee = models.DecimalField(_('non-member fee'), max_digits=8,
                                          decimal_places=2,
-                                         validators=[MinValueValidator(0.0)])
+                                         validators=[MinValueValidator(0.0)],
+                                         help_text=_('Amount in dollars.'))
     sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
                                       blank=True)
     attendees = models.ManyToManyField(MyUser, related_name='event_attendees',
@@ -97,6 +99,12 @@ class Event(TimeStampedModel):
         Returns the url for the event.
         """
         return reverse('events:detail', kwargs={"event_pk": self.pk})
+
+    def get_reg_success_url(self):
+        """
+        Returns the url for an event after being successfully registered.
+        """
+        return reverse('events:reg_success', kwargs={"event_pk": self.pk})
 
     @property
     def event_status(self):

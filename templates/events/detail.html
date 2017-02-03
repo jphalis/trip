@@ -23,9 +23,15 @@
       <div class="col-md-4 sidebar-gutter">
 
         <div class="sidebar-widget">
-          <a href="{% url 'events:registration_success' event.pk %}">
+          {% if member_attending %}
+            <button class="attend-button attend-disabled">Registered</button>
+          {% elif request.user.is_authenticated and event.member_fee == 0 %}
+            <a href="{{ event.get_reg_success_url }}">
+              <button class="attend-button arrow">Register For Event</button>
+            </a>
+          {% else %}
             <button class="attend-button arrow">Register For Event</button>
-          </a>
+          {% endif %}
         </div>
 
         <div class="sidebar-widget">

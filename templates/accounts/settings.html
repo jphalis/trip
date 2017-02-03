@@ -127,17 +127,18 @@
                 dataType: "json",
                 beforeSend: function() {
                     $("body").css({"opacity":"0.3", "background-color":"rgb(0, 0, 0)"});
+                    $("page-loader").css({"opacity":"1.0"});
                     $('#page-loader').show();
                 },
                 complete: function(){
                     $('#page-loader').hide();
+                    location.reload();
                 },
                 success: function(e) {
-                    location.reload();
+
                 },
                 error: function() {
                     alert("Sorry, there was an error with your request. Please try again later.");
-                    location.reload();
                 },
             })
         });

@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render
 
 from .models import Event
@@ -6,21 +7,34 @@ from .models import Event
 
 
 def list(request):
-    events = Event.objects.active()
-    featured_events = Event.objects.featured(num_returned=5)
-
     context = {
-        'events': events,
-        'featured_events': featured_events,
+        'events': Event.objects.active(),
+        'featured_events': Event.objects.featured(num_returned=5),
     }
     return render(request, 'events/list.html', context)
 
 
 def detail(request, event_pk):
     event = get_object_or_404(Event, pk=event_pk)
-    return render(request, 'events/detail.html', {'event': event})
+    context = {
+        'event': event,
+        'member_attending': event.attendees.filter(pk=request.user.pk).exists()
+    }
+    return render(request, 'events/detail.html', context)
 
 
-def registration_success(request, event_pk):
-    event = get_object_or_404(Event, pk=event_pk)
-    return render(request, 'events/success.html', {'event': event})
+def reg_success(request, event_pk):
+    user = request.user
+
+    if not user.is_anonymous():
+        event = get_object_or_404(Event, pk=event_pk)
+        user_registered = event.attendees.filter(pk=user.pk).exists()
+
+        if event.member_fee == 0 and not user_registered:
+            event.attendees.add(user)
+
+        context = {
+            'event': event
+        }
+        return render(request, 'events/success.html', context)
+    return HttpResponseForbidden()

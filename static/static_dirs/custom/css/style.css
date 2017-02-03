@@ -255,6 +255,17 @@ header {
 .attend-button {
     min-width: 15em;
 }
+.attend-disabled {
+    background: #878989;
+    cursor: not-allowed;
+}
+.attend-disabled:hover {
+    background: #616263;
+}
+.attend-disabled:active,
+.attend-disabled:focus {
+    background: #616263;
+}
 .arrow {
     background: #FE5F55;
 }
@@ -265,9 +276,11 @@ header {
 .arrow:focus {
     background: #b90c01;
 }
+.attend-button:after,
 .arrow:after {
     content: "\F054";
 }
+.attend-disabled:hover:after,
 .arrow:hover:after {
     -webkit-animation: bounceright .3s alternate ease infinite;
     animation: bounceright .3s alternate ease infinite;
