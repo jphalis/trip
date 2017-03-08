@@ -54,12 +54,14 @@ def auth_login(request):
 
 @never_cache
 def auth_register(request):
-    form = SignupForm(request.POST or None)
+    form = SignupForm(request.POST or None, plan_id=request.POST['plan_id'])
 
     if request.method == 'POST' and form.is_valid():
-        plan = get_object_or_404(Plan, plan_id=request.POST['plan_id'])
+        plan_id = request.POST['plan_id']
+        plan = get_object_or_404(Plan, plan_id=plan_id)
         email = form.cleaned_data['email']
         password = form.cleaned_data['password_confirm']
+
         new_user = MyUser.objects.create_user(
             email=email,
             first_name=form.cleaned_data['first_name'],
@@ -74,7 +76,8 @@ def auth_register(request):
             cu = Customer.objects.create(user=user, account_balance=0)
 
             if plan.amount > 0:
-                stripe_form = StripeCreditCardForm(request.POST, user=user,
+                stripe_form = StripeCreditCardForm(request.POST,
+                                                   user=user,
                                                    customer=cu)
                 if stripe_form.is_valid():
                     sub = Subscription.objects.create(customer=cu, plan=plan)
@@ -84,21 +87,10 @@ def auth_register(request):
                                          'Your account has been successfully '
                                          'created.')
                         return redirect('home')
-                    else:
-                        user.delete()
-                        messages.error(request,
-                                       'There was an error creating your '
-                                       'account.')
-                        return redirect('accounts:memberships')
                 elif stripe_form.errors:
                     for field in stripe_form:
                         for error in field.errors:
                             messages.error(request, error)
-                else:
-                    messages.error(request,
-                                   'There was an error creating your account.')
-                user.delete()
-                return redirect('accounts:memberships')
             elif plan.amount == 0:
                 sub = Subscription.objects.create(customer=cu, plan=plan)
 
@@ -107,18 +99,11 @@ def auth_register(request):
                                      'Your account has been successfully '
                                      'created.')
                     return redirect('home')
-                else:
-                    user.delete()
-                    messages.error(request,
-                                   'There was an error creating your '
-                                   'account.')
-                    return redirect('accounts:memberships')
-            else:
-                messages.error(request,
-                               'There was an error creating your account.')
-                user.delete()
-                return redirect('accounts:memberships')
 
+            user.delete()
+            messages.error(request,
+                           'There was an error creating your account.')
+            return redirect('accounts:memberships')
     elif form.errors:
         for field in form:
             for error in field.errors:

@@ -3,17 +3,37 @@ from __future__ import unicode_literals
 from datetime import datetime
 
 from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import MyUser, Sponsor
+from accounts.models import Sponsor
 from core.models import TimeStampedModel
 
 # Create your models here.
+
+
+class Attendee(TimeStampedModel):
+    email = models.EmailField(max_length=120)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+
+    class Meta:
+        app_label = 'events'
+        verbose_name = _('attendee')
+        verbose_name_plural = _('attendees')
+
+    def __str__(self):
+        return str(self.email)
+
+    @cached_property
+    def get_full_name(self):
+        """
+        Returns the first_name plus the last_name, with a space in between.
+        """
+        return "{0} {1}".format(self.first_name, self.last_name)
 
 
 class EventManager(models.Manager):
@@ -66,17 +86,13 @@ class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
     description = models.TextField(max_length=2000, blank=True,
                                    help_text='You may use HTML when rendering')
-    member_fee = models.DecimalField(_('member fee'), default=0.00,
-                                     max_digits=8, decimal_places=2,
-                                     validators=[MinValueValidator(0.0)],
-                                     help_text=_('Amount in dollars.'))
-    non_member_fee = models.DecimalField(_('non-member fee'), max_digits=8,
-                                         decimal_places=2,
-                                         validators=[MinValueValidator(0.0)],
-                                         help_text=_('Amount in dollars.'))
+    member_fee = models.PositiveIntegerField(_('member fee'),
+                                             help_text='Value in cents.')
+    non_member_fee = models.PositiveIntegerField(_('non-member fee'),
+                                                 help_text='Value in cents.')
     sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
                                       blank=True)
-    attendees = models.ManyToManyField(MyUser, related_name='event_attendees',
+    attendees = models.ManyToManyField(Attendee, related_name='event_attendees',
                                        blank=True)
 
     start_date = models.DateTimeField(_('start date of event'))
@@ -98,13 +114,19 @@ class Event(TimeStampedModel):
         """
         Returns the url for the event.
         """
-        return reverse('events:detail', kwargs={"event_pk": self.pk})
+        return reverse('events:detail', kwargs={'event_pk': self.pk})
 
     def get_reg_success_url(self):
         """
         Returns the url for an event after being successfully registered.
         """
-        return reverse('events:reg_success', kwargs={"event_pk": self.pk})
+        return reverse('events:reg_success', kwargs={'event_pk': self.pk})
+
+    def get_checkout_url(self):
+        """
+        Returns the checkout url for an event.
+        """
+        return reverse('billing:checkout', kwargs={'event_pk': self.pk})
 
     @property
     def event_status(self):

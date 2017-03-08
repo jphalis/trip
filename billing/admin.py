@@ -224,25 +224,23 @@ class InvoiceAdmin(admin.ModelAdmin):
 
 
 class ChargeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'amount', 'charge_created',)
-    list_display_links = ('id', 'customer',)
+    list_display = ('id', 'charge_id', 'amount', 'charge_created',)
+    list_display_links = ('id', 'charge_id',)
     list_filter = ('paid', 'disputed', 'refunded', 'captured',
                    'charge_created',)
     fieldsets = (
         (None,
-            {'fields': ('customer', 'charge_id', 'invoice', 'amount',
-                        'amount_refunded', 'currency', 'description',
-                        'statement_descriptor',)}),
+            {'fields': ('charge_id', 'invoice', 'amount', 'amount_refunded',
+                        'currency', 'description', 'statement_descriptor',)}),
         ('Actions',
             {'fields': ('paid', 'disputed', 'refunded', 'captured',)}),
         (_('Dates'),
             {'fields': ('charge_created', 'receipt_sent',)}),
     )
-    # readonly_fields = ('customer', 'charge_id', 'charge_created',
-    #                    'receipt_sent', 'captured', 'refunded', 'disputed',
-    #                    'paid', 'statement_descriptor',)
-    search_fields = ('customer__user__first_name', 'customer__user__last_name',
-                     'customer__email',)
+    # readonly_fields = ('charge_id', 'charge_created', 'receipt_sent',
+    #                    'captured', 'refunded', 'disputed', 'paid',
+    #                    'statement_descriptor',)
+    search_fields = ('charge_id',)
 
     class Meta:
         model = Charge
@@ -264,7 +262,6 @@ class ChargeAdmin(admin.ModelAdmin):
             amount=obj.amount,
             currency=obj.currency,
             description=obj.description,
-            customer=obj.customer.cu_id,
             statement_descriptor=obj.statement_descriptor
         )
 

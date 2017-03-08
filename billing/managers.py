@@ -1,7 +1,5 @@
 import stripe
 
-from datetime import datetime
-
 from django.conf import settings
 from django.db import models
 
@@ -134,8 +132,9 @@ class SubscriptionManager(models.Manager):
 
 
 class ChargeManager(models.Manager):
-    def create(self, amount, customer=None, source=None, currency='usd',
-               description='', statement_descriptor='', **extra_fields):
+    def create(self, amount, source=None, currency='usd',
+               description='', statement_descriptor='', receipt_email=None,
+               **extra_fields):
 
         if not amount:
             raise ValueError('Charges must have an amount.')
@@ -146,10 +145,9 @@ class ChargeManager(models.Manager):
                 amount=amount,
                 currency=currency,
                 description=description,
-                receipt_email=customer.user.email if customer else None,
-                customer=customer,
+                receipt_email=receipt_email,
                 source=source,
-                statement_descriptor=statement_descriptor
+                statement_descriptor=statement_descriptor if statement_descriptor else None
             )
         except stripe.error.InvalidRequestError as e:
             print e
@@ -157,18 +155,16 @@ class ChargeManager(models.Manager):
 
         charge = self.model(
             amount=amount,
-            customer=customer,
-            source=source,
             currency=currency,
             description=description,
             charge_id=stripe_charge['id'],
             amount_refunded=stripe_charge['amount_refunded'],
             paid=stripe_charge['paid'],
-            disputed=stripe_charge['disputed'],
+            disputed=stripe_charge['dispute'],
             refunded=stripe_charge['refunded'],
             captured=stripe_charge['captured'],
-            receipt_sent=stripe_charge['receipt_sent'],
-            charge_created=stripe_charge['charge_created'],
+            statement_descriptor=statement_descriptor,
+            charge_created=convert_tstamp(stripe_charge['created']),
             **extra_fields)
         charge.save(using=self._db)
         return charge

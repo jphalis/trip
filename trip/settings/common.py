@@ -34,7 +34,7 @@ SITE_ID = 1
 # MAINTENANCE MODE #
 ####################
 MAINTENANCE_ADMIN_IGNORED_URLS = [
-    '^hidden/secure/trip/admin/'
+    '^hidden/secure/{}/admin/'.format(APP_NAME)
 ]
 
 

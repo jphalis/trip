@@ -75,13 +75,13 @@
               </h1>
               <section style="margin-bottom: 49px;">
 
-                <form method="POST" action="{% url 'authentication:auth_register' %}">
+                <form method="POST" action="{% url 'authentication:auth_register' %}" enctype="application/x-www-form-urlencoded" role="form">
                   {% csrf_token %}
                   <input type="hidden" name="plan_id" value="" />
 
                   <!-- register form -->
                   <div class="form-container">
-                    <div class="personal-information">
+                    <div class="form-header">
                       <h2 class="form-title">Account Information</h2>
                     </div>
                     <input id="input-field" type="email" name="email" required="required" autocomplete="on" maxlength="120" placeholder="Email*" />
@@ -94,7 +94,7 @@
 
                   <!-- credit card form -->
                   <div id="cc-form" class="form-container">
-                    <div class="personal-information">
+                    <div class="form-header">
                       <h2 class="form-title">Payment Information</h2>
                     </div>
                     <input id="input-field" type="text" name="street_address" required="required" autocomplete="on" maxlength="50" placeholder="Street Address*" />
@@ -109,7 +109,7 @@
                   <!-- /credit card form -->
 
                   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                    <button type="submit" class="btn btn-block register-submit" name="register_form">
+                    <button class="btn btn-block register-submit" type="submit" name="register_form">
                       Register
                     </button>
                   </div>
@@ -170,7 +170,19 @@
                 $('input[name=number]').attr("disabled", true);
                 $('input[name=expiry]').attr("disabled", true);
                 $('input[name=cvc]').attr("disabled", true);
+            } else {
+                $('#cc-form').show();
+                $('input[name=street_address]').attr("disabled", false);
+                $('input[name=city]').attr("disabled", false);
+                $('input[name=zip_code]').attr("disabled", false);
+                $('input[name=number]').attr("disabled", false);
+                $('input[name=expiry]').attr("disabled", false);
+                $('input[name=cvc]').attr("disabled", false);
             }
+        });
+        $('.register-submit').click(function(){
+            $(this).attr('disabled', 'disabled').addClass('btn-disabled');
+            $(this).parents('form:first').submit();
         });
     </script>
 {% endblock scripts %}

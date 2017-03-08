@@ -172,8 +172,6 @@ class Invoice(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Charge(models.Model):
-    customer = models.ForeignKey(Customer, related_name="charges",
-                                 on_delete=models.CASCADE)
     charge_id = models.SlugField(max_length=255, unique=True, null=True,
                                  blank=True)
     invoice = models.ForeignKey(Invoice, null=True, related_name="charges",

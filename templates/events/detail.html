@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load billing_extras %}
 
 {% block title %} / {{ event.name }}{% endblock title %}
 
@@ -21,16 +22,13 @@
       </div>
 
       <div class="col-md-4 sidebar-gutter">
-
         <div class="sidebar-widget">
           {% if member_attending %}
-            <button class="attend-button attend-disabled">Registered</button>
-          {% elif request.user.is_authenticated and event.member_fee == 0 %}
-            <a href="{{ event.get_reg_success_url }}">
-              <button class="attend-button arrow">Register For Event</button>
-            </a>
+            <button class="attend-button attend-disabled" type="button">Registered</button>
           {% else %}
-            <button class="attend-button arrow">Register For Event</button>
+            <a href="{{ event.get_checkout_url }}">
+              <button class="attend-button arrow" type="button">Register For Event</button>
+            </a>
           {% endif %}
         </div>
 
@@ -47,19 +45,17 @@
               <tbody>
                 <tr>
                   <td>Member Registration</td>
-                  <td class="text-right">${{ event.member_fee }}</td>
+                  <td class="text-right">${{ event.member_fee|divide:"100" }}</td>
                 </tr>
                 <tr>
                   <td>Non-Member Registration</td>
-                  <td class="text-right">${{ event.non_member_fee }}</td>
+                  <td class="text-right">${{ event.non_member_fee|divide:"100" }}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
-
     </div>
   </section>
 {% endblock content %}

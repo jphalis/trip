@@ -7,12 +7,16 @@ from django import forms
 from django.conf import settings
 from django.utils import timezone
 
-from .utils import get_or_create_stripe_cus
+from .models import Charge, Customer
+from .utils import get_or_create_stripe_cus  # get_or_create_stripe_charge
 
 # Create your forms here.
 
 
 class StripeCreditCardForm(forms.Form):
+    first_name = forms.CharField(max_length=120, required=False)
+    last_name = forms.CharField(max_length=120, required=False)
+    email = forms.EmailField(max_length=150, required=False)
     number = forms.CharField(required=False)
     expiry = forms.CharField(max_length=12, required=False)
     cvc = forms.CharField(max_length=5, min_length=3, required=False)
@@ -21,8 +25,8 @@ class StripeCreditCardForm(forms.Form):
     zip_code = forms.CharField(max_length=20, required=False)
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
-        self.customer = kwargs.pop('customer')
+        self.user = kwargs.pop('user', None)
+        self.customer = kwargs.pop('customer', None)
 
         super(StripeCreditCardForm, self).__init__(*args, **kwargs)
         self.token = None
@@ -55,17 +59,18 @@ class StripeCreditCardForm(forms.Form):
         non_numbers = re.compile('\D')
         return non_numbers.sub('', number)
 
-    def get_or_create_customer(self):
+    def get_or_create_customer(self, email):
         customer = get_or_create_stripe_cus(
-            customer_id=self.customer.cu_id,
-            description='Customer for {}'.format(self.user)
+            customer_id=self.customer.cu_id if self.customer else None,
+            description='Customer for {}'.format(email),
+            email=email
         )
         self.customer = customer
         return customer
 
     def create_card(self, number, expire_month, expire_year, cvc, city,
-                    street_address, zip_code):
-        customer = self.get_or_create_customer()
+                    street_address, zip_code, name, email):
+        customer = self.get_or_create_customer(email=email)
 
         try:
             # Create the card for the customer
@@ -78,27 +83,27 @@ class StripeCreditCardForm(forms.Form):
                 'address_city': city,
                 'address_line1': street_address,
                 'address_zip': zip_code,
-                'name': self.user.get_full_name
+                'name': name
             })
-
+            self.token = stripe.Token.create(card={
+                "number": number,
+                "exp_month": expire_month,
+                "exp_year": expire_year,
+                "cvc": cvc
+            })
         except stripe.error.CardError:
             raise forms.ValidationError(
                 "Sorry, we weren't able to validate your credit card "
                 "at this time. Please try again later!")
 
-    def charge_customer(self, amount, description):
+    def charge_customer(self, amount, description, receipt_email):
         # Amount must be a positive integer in cents.
-        try:
-            charge = self.stripe.Charge.create(
-                amount=amount,
-                currency='usd',
-                customer=self.customer.cu_id,
-                description=description,
-                source=self.card
-            )
-        except self.stripe.CardError:
-            charge = None
-        return charge
+        return Charge.objects.create(
+            amount=amount,
+            description=description,
+            receipt_email=receipt_email.lower(),
+            source=self.token
+        )
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -118,6 +123,14 @@ class StripeCreditCardForm(forms.Form):
         street_address = cleaned_data.get('street_address')
         zip_code = cleaned_data.get('zip_code')
 
+        if self.user:
+            name = self.user.get_full_name
+            email = self.user.email
+        else:
+            name = '{} {}'.format(cleaned_data.get('first_name'),
+                                  cleaned_data.get('last_name'))
+            email = cleaned_data.get('email').lower()
+
         if expire_year == this_year and expire_month < this_month:
             raise forms.ValidationError(
                 'Expiration month must be greater '
@@ -132,5 +145,5 @@ class StripeCreditCardForm(forms.Form):
             # When the Stripe "card" object is created, it also functions
             # as the stripe "token".
             self.create_card(number, expire_month, expire_year, cvc, city,
-                             street_address, zip_code)
+                             street_address, zip_code, name, email)
         return cleaned_data

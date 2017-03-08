@@ -97,14 +97,24 @@ class SignupForm(forms.Form):
         widget=forms.PasswordInput(render_value=False)
     )
 
+    def __init__(self, *args, **kwargs):
+        self.plan_id = kwargs.pop('plan_id', None)
+        super(SignupForm, self).__init__(*args, **kwargs)
+
     def clean_email(self):
         """
         Verify that the new email is not already taken.
         """
         value = self.cleaned_data['email'].lower()
+        username, domain = value.split('@')
+
         if MyUser.objects.filter(email__iexact=value):
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
+        elif self.plan_id == 'academic' and domain.split('.')[1] != 'edu':
+            raise forms.ValidationError(
+                _('Sorry, but you must have a valid university email for this '
+                  'membership.'))
         return value
 
     def clean_password_confirm(self):

@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from .models import Event
+from .models import Attendee, Event
 
 # Register your models here.
+
+
+# class AttendeeAdmin(admin.ModelAdmin):
+    # Add which event they are registered for - KnobLinx code
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -47,4 +51,5 @@ class EventAdmin(admin.ModelAdmin):
     disable.short_description = _("Disable events")
 
 
+admin.site.register(Attendee)
 admin.site.register(Event, EventAdmin)

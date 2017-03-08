@@ -179,7 +179,7 @@ def get_or_create_stripe_charge(charge_id, amount, currency='usd',
                                 metadata={}, fraud_details={},
                                 receipt_email=None, shipping={}, customer=None,
                                 source={}, statement_descriptor=None):
-    if not source or customer:
+    if not source and not customer:
         raise ValueError('Charges must have a source or a customer.')
 
     try:
@@ -195,18 +195,21 @@ def get_or_create_stripe_charge(charge_id, amount, currency='usd',
         charge.shipping = shipping
         charge.save()
     else:
-        charge = stripe.Charge.create(
-            amount=amount,
-            currency=currency,
-            application_fee=application_fee,
-            capture=capture,
-            description=description,
-            destination=destination,
-            metadata=metadata,
-            receipt_email=receipt_email,
-            shipping=shipping,
-            customer=customer,
-            source=source,
-            statement_descriptor=statement_descriptor
-        )
+        try:
+            charge = stripe.Charge.create(
+                amount=amount,
+                currency=currency,
+                application_fee=application_fee,
+                capture=capture,
+                description=description,
+                destination=destination,
+                metadata=metadata,
+                receipt_email=receipt_email,
+                shipping=shipping,
+                customer=customer,
+                source=source,
+                statement_descriptor=statement_descriptor
+            )
+        except stripe.CardError:
+            charge = None
     return charge
