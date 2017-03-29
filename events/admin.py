@@ -6,8 +6,22 @@ from .models import Attendee, Event
 # Register your models here.
 
 
-# class AttendeeAdmin(admin.ModelAdmin):
+class AttendeeAdmin(admin.ModelAdmin):
     # Add which event they are registered for - KnobLinx code
+    list_display = ('id', 'email', 'full_name', 'event_name',)
+    list_display_links = ('id', 'email',)
+    list_filter = ('created', 'modified',)
+    fieldsets = (
+        (None,
+            {'fields': ('email', 'first_name', 'last_name',)}),
+        (_('Dates'),
+            {'fields': ('created', 'modified',)}),
+    )
+    readonly_fields = ('created', 'modified',)
+    search_fields = ('email', 'last_name',)
+
+    class Meta:
+        model = Attendee
 
 
 class EventAdmin(admin.ModelAdmin):
@@ -51,5 +65,5 @@ class EventAdmin(admin.ModelAdmin):
     disable.short_description = _("Disable events")
 
 
-admin.site.register(Attendee)
+admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(Event, EventAdmin)

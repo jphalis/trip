@@ -29,11 +29,16 @@ class Attendee(TimeStampedModel):
         return str(self.email)
 
     @cached_property
-    def get_full_name(self):
+    def full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
         """
         return "{0} {1}".format(self.first_name, self.last_name)
+
+    @cached_property
+    def event_name(self):
+        event = Event.objects.get(attendees__pk=self.pk)
+        return str(event.name)
 
 
 class EventManager(models.Manager):

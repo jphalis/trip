@@ -1,12 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponseForbidden, JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from events.models import Attendee, Event
 from .forms import StripeCreditCardForm
-from .models import Customer, Plan, Subscription
+from .models import Customer, Subscription
 from .utils import get_or_create_stripe_sub, cancel_stripe_sub
 
 # Create your views here.
