@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 
 from .models import Attendee, Event
+from .utils import send_event_email
 
 # Register your models here.
 
@@ -41,14 +42,47 @@ class EventAdmin(admin.ModelAdmin):
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )
-    readonly_fields = ('created', 'modified',)
+    readonly_fields = ('created', 'modified',)  # add attendees
     search_fields = ('name', 'sponsors__name', 'sponsors__email',
                      'attendees__first_name', 'attendees_last_name',
                      'attendees__email',)
-    actions = ('enable', 'disable',)
+    actions = ('send_email_to_list', 'enable', 'disable',)
 
     class Meta:
         model = Event
+
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            obj.save()
+            # send email about new event
+            send_event_email({
+                'event_name': obj.name,
+                'event_start_date': obj.start_date,
+                'event_end_date': obj.end_date,
+                'event_pk': obj.pk,
+                'event_member_fee': obj.member_fee,
+                'event_non_member_fee': obj.non_member_fee,
+                'event_description': obj.description
+            })
+        else:
+            obj.save()
+        return obj
+
+    def send_email_to_list(self, request, queryset):
+        """
+        Sends an email about the event to the mailing list.
+        """
+        for event in queryset:
+            send_event_email({
+                'event_name': event.name,
+                'event_start_date': event.start_date,
+                'event_end_date': event.end_date,
+                'event_pk': event.pk,
+                'event_member_fee': event.member_fee,
+                'event_non_member_fee': event.non_member_fee,
+                'event_description': event.description
+            })
+    send_email_to_list.short_description = _("Send event email")
 
     def enable(self, request, queryset):
         """

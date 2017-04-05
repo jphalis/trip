@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.staticfiles',
 
+    'anymail',
     'widget_tweaks',
 
     'accounts',

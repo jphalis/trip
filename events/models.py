@@ -92,9 +92,9 @@ class Event(TimeStampedModel):
     description = models.TextField(max_length=2000, blank=True,
                                    help_text='You may use HTML when rendering')
     member_fee = models.PositiveIntegerField(_('member fee'),
-                                             help_text='Value in cents.')
+                                             help_text='Enter amount in cents.')
     non_member_fee = models.PositiveIntegerField(_('non-member fee'),
-                                                 help_text='Value in cents.')
+                                                 help_text='Enter amount in cents.')
     sponsors = models.ManyToManyField(Sponsor, related_name='event_sponsors',
                                       blank=True)
     attendees = models.ManyToManyField(Attendee, related_name='event_attendees',

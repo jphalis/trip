@@ -27,7 +27,7 @@ def inquiry(request):
             <b>Email:</b> {2}<br><br>
             <b>Message:</b> {3}""".format(company, name, email, message)
         email = EmailMessage(
-            'Trip Inquiry',
+            'TRIP Inquiry',
             contact_message,
             from_email,
             [from_email],
