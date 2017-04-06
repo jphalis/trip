@@ -4,6 +4,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
+from contact.models import Newsletter
 from events.models import Attendee, Event
 from .forms import StripeCreditCardForm
 from .models import Customer, Subscription
@@ -18,11 +19,9 @@ def update_auto_renew(request):
     customer = get_object_or_404(Customer, user=request.user)
     customer.auto_renew = False if customer.auto_renew else True
     customer.save(update_fields=['auto_renew'])
-
     sub = Subscription.objects.filter(customer=customer).order_by('created')[0]
 
     if sub:
-
         if sub.cancel_at_period_end:
             stripe_sub = get_or_create_stripe_sub(subscription_id=sub.sub_id,
                                                   customer=customer.cu_id,
@@ -37,9 +36,9 @@ def update_auto_renew(request):
         messages.success(request,
                          "You have updated your preferences.")
         return JsonResponse({'auto_renew': customer.auto_renew})
-    else:
-        messages.error(request,
-                       "There was an error with your request.")
+
+    messages.error(request,
+                   "There was an error with your request.")
     return JsonResponse('Error.')
 
 
@@ -52,7 +51,7 @@ def checkout(request, event_pk):
     if user.is_authenticated() and event.attendees.filter(email__iexact=user.email).exists():
         return HttpResponseForbidden()
 
-    # Make sure user is not attending
+    # User is authenticated and not registered for the event
     if user.is_authenticated() and event.member_fee == 0 and not event.attendees.filter(email__iexact=user.email).exists():
         attendee = Attendee.objects.create(
             email=user.email,
@@ -75,6 +74,7 @@ def checkout(request, event_pk):
     if request.method == 'POST' and form.is_valid():
         email = form.cleaned_data['email']
 
+        # User is not authenticated and not registered for the event
         if not event.attendees.filter(email__iexact=email).exists():
             charge = form.charge_customer(
                 amount=event_price,
@@ -82,13 +82,15 @@ def checkout(request, event_pk):
                 receipt_email=email
             )
 
+            # Charge was created
             if charge:
+                first_name = form.cleaned_data['first_name']
+                last_name = form.cleaned_data['last_name']
                 attendee = Attendee.objects.create(
-                    email=email,
-                    first_name=form.cleaned_data['first_name'],
-                    last_name=form.cleaned_data['last_name']
-                )
+                    email=email, first_name=first_name, last_name=last_name)
                 event.attendees.add(attendee)
+                newsletter = Newsletter.objects.get_or_create(
+                    email=email, first_name=first_name, last_name=last_name)
                 return redirect(event.get_reg_success_url())
             else:
                 messages.error(request,
