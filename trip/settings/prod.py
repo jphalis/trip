@@ -52,6 +52,14 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 
+###########
+# ANYMAIL #
+###########
+ANYMAIL = {
+    "SPARKPOST_API_KEY": ""
+}
+EMAIL_BACKEND = "anymail.backends.sparkpost.EmailBackend"
+
 
 ################
 # SSL SECURITY #

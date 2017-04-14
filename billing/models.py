@@ -167,7 +167,7 @@ class Invoice(TimeStampedModel):
 
     @property
     def status(self):
-        return "Paid" if self.paid else "Open"
+        return _("Paid") if self.paid else _("Open")
 
 
 @python_2_unicode_compatible
@@ -198,4 +198,4 @@ class Charge(models.Model):
         verbose_name_plural = _('charges')
 
     def __str__(self):
-        return str(self.customer)
+        return str(self.charge_id)

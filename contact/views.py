@@ -1,17 +1,17 @@
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import BadHeaderError
-from django.core.mail import EmailMessage
+from django.core.mail import BadHeaderError, EmailMessage
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import ContactForm
+from .models import Newsletter
 
 # Create your views here.
 
 
-@cache_page(60 * 7)
+@cache_page(60 * 3)
 def inquiry(request):
     form = ContactForm(request.POST or None)
     if form.is_valid() and 'contact_form' in request.POST:
@@ -27,13 +27,8 @@ def inquiry(request):
             <b>Email:</b> {2}<br><br>
             <b>Message:</b> {3}""".format(company, name, email, message)
         email = EmailMessage(
-            'TRIP Inquiry',
-            contact_message,
-            from_email,
-            [from_email],
-            # ['bcc@example.com'],
-            reply_to=[email],
-            headers={'From': from_email},
+            'TRIP Inquiry', contact_message, from_email,
+            [from_email], reply_to=[email], headers={'From': from_email},
         )
         email.content_subtype = "html"
         try:
@@ -45,3 +40,11 @@ def inquiry(request):
         except BadHeaderError:
             return HttpResponse('Invalid header found.')
     return render(request, 'contact/inquiry.html', {'form': form})
+
+
+def unsubscribe(request, email):
+    obj = get_object_or_404(Newsletter, email=email)
+    obj.is_subscribed = False
+    obj.save(update_fields=['is_subscribed'])
+    messages.success(request, "You have been unsubscribed.")
+    return redirect('home')

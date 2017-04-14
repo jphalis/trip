@@ -47,11 +47,11 @@ class EventManager(models.Manager):
         Creates an event.
         """
         if not name:
-            raise ValueError('The event must have a name.')
+            raise ValueError(_('The event must have a name.'))
         elif not start_date:
-            raise ValueError('The event must have a start date.')
+            raise ValueError(_('The event must have a start date.'))
         elif not end_date:
-            raise ValueError('The event must have a end date.')
+            raise ValueError(_('The event must have a end date.'))
 
         event = self.model(name=name, start_date=start_date, end_date=end_date,
                            image=image, **extra_fields)
@@ -89,8 +89,9 @@ class EventManager(models.Manager):
 @python_2_unicode_compatible
 class Event(TimeStampedModel):
     name = models.CharField(max_length=120)
-    description = models.TextField(max_length=2000, blank=True,
-                                   help_text='You may use HTML when rendering')
+    description = models.TextField(blank=True,
+                                   help_text='You may use HTML tags')
+    email_description = models.TextField(help_text='You may use HTML tags')
     member_fee = models.PositiveIntegerField(_('member fee'),
                                              help_text='Enter amount in cents.')
     non_member_fee = models.PositiveIntegerField(_('non-member fee'),
@@ -138,10 +139,10 @@ class Event(TimeStampedModel):
         now = datetime.now()
         start = self.start_date
         if start <= now and self.end_date >= now:
-            return "Happening now"
+            return _("Happening now")
         elif start >= now:
-            return "Upcoming"
-        return "Completed"
+            return _("Upcoming")
+        return _("Completed")
 
     @cached_property
     def event_date(self):

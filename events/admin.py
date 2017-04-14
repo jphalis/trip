@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.conf import settings
+from django.contrib import admin, messages
 from django.utils.translation import ugettext as _
 
 from .models import Attendee, Event
@@ -35,8 +36,8 @@ class EventAdmin(admin.ModelAdmin):
     fieldsets = (
         (None,
             {'fields': ('name', 'start_date', 'end_date', 'description',
-                        'member_fee', 'non_member_fee', 'sponsors',
-                        'attendees',)}),
+                        'email_description', 'member_fee', 'non_member_fee',
+                        'sponsors', 'attendees',)}),
         (_('Permissions'),
             {'fields': ('is_active',)}),
         (_('Dates'),
@@ -56,13 +57,18 @@ class EventAdmin(admin.ModelAdmin):
             obj.save()
             # send email about new event
             send_event_email({
+                'protocol': 'https' if request.is_secure() else 'http',
+                'domain': request.get_host(),
                 'event_name': obj.name,
-                'event_start_date': obj.start_date,
-                'event_end_date': obj.end_date,
+                'event_start_date': obj.event_start_date,
+                'event_end_date': obj.event_end_date,
                 'event_pk': obj.pk,
                 'event_member_fee': obj.member_fee,
                 'event_non_member_fee': obj.non_member_fee,
-                'event_description': obj.description
+                'event_email_description': obj.email_description,
+                'event_sponsors': obj.get_sponsors_info,
+                'event_url': obj.get_absolute_url,
+                'contact_email': settings.DEFAULT_HR_EMAIL
             })
         else:
             obj.save()
@@ -72,16 +78,23 @@ class EventAdmin(admin.ModelAdmin):
         """
         Sends an email about the event to the mailing list.
         """
-        for event in queryset:
+        for obj in queryset:
             send_event_email({
-                'event_name': event.name,
-                'event_start_date': event.start_date,
-                'event_end_date': event.end_date,
-                'event_pk': event.pk,
-                'event_member_fee': event.member_fee,
-                'event_non_member_fee': event.non_member_fee,
-                'event_description': event.description
+                'protocol': 'https' if request.is_secure() else 'http',
+                'domain': request.get_host(),
+                'event_name': obj.name,
+                'event_start_date': obj.event_start_date,
+                'event_end_date': obj.event_end_date,
+                'event_pk': obj.pk,
+                'event_member_fee': obj.member_fee,
+                'event_non_member_fee': obj.non_member_fee,
+                'event_email_description': obj.email_description,
+                'event_sponsors': obj.get_sponsors_info,
+                'event_url': obj.get_absolute_url,
+                'contact_email': settings.DEFAULT_HR_EMAIL
             })
+        messages.add_message(
+            request, messages.SUCCESS, _('Emails have been sent.'))
     send_email_to_list.short_description = _("Send event email")
 
     def enable(self, request, queryset):
@@ -89,6 +102,8 @@ class EventAdmin(admin.ModelAdmin):
         Updates is_active to be True.
         """
         queryset.update(is_active=True)
+        messages.add_message(
+            request, messages.SUCCESS, _('Events have been enabled.'))
     enable.short_description = _("Make events public")
 
     def disable(self, request, queryset):
@@ -96,8 +111,10 @@ class EventAdmin(admin.ModelAdmin):
         Updates is_active to be False.
         """
         queryset.update(is_active=False)
+        messages.add_message(
+            request, messages.SUCCESS, _('Events have been disabled.'))
     disable.short_description = _("Disable events")
 
 
-admin.site.register(Attendee, AttendeeAdmin)
+# admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(Event, EventAdmin)

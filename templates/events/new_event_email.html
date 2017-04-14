@@ -12,7 +12,7 @@
         .header { padding: 40px 30px 20px 30px; }
         .innerpadding { padding: 30px 30px 30px 30px; }
         .borderbottom { border-bottom: 1px solid #f2eeed; }
-        .subhead { font-size: 15px; color: #ffffff; font-family: sans-serif; letter-spacing: 10px; }
+        .subhead { font-size: 15px; color: #ffffff; font-family: sans-serif; letter-spacing: 3px; }
         .h1, .h2, .bodycopy { color: #153643; font-family: sans-serif; }
         .h1 { font-size: 33px; line-height: 38px; font-weight: bold; }
         .h2 { padding: 0 0 15px 0; font-size: 24px; line-height: 28px; font-weight: bold; }
@@ -39,22 +39,15 @@
           <table bgcolor="#ffffff" class="content" align="center" cellpadding="0" cellspacing="0" border="0">
             <tr>
               <td bgcolor="#c7d8a7" class="header">
-                <table width="70" align="left" border="0" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td height="70" style="padding: 0 20px 20px 0;">
-                      <img class="fix" src="images/icon.gif" width="70" height="70" border="0" alt="" />
-                    </td>
-                  </tr>
-                </table>
                 <table class="col425" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 425px;">
                   <tr>
                     <td height="70">
                       <table width="100%" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td class="subhead" style="padding: 0 0 0 3px;">CREATING</td>
+                          <td class="subhead" style="padding: 0 0 0 3px;">Transaction Risk Insurance Professionals'</td>
                         </tr>
                         <tr>
-                          <td class="h1" style="padding: 5px 0 0 0;">Responsive Email Magic</td>
+                          <td class="h1" style="padding: 5px 0 0 0;">{{ event_name }}</td>
                         </tr>
                       </table>
                     </td>
@@ -66,59 +59,40 @@
               <td class="innerpadding borderbottom">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td class="h2">Welcome to our responsive email!</td>
+                    <td class="bodycopy">
+                      {{ recipient_first_name }},<br><br>
+                    </td>
                   </tr>
                   <tr>
                     <td class="bodycopy">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                      {{ event_email_description|safe|linebreaksbr }}
                     </td>
                   </tr>
                 </table>
-              </td>
-            </tr>
-            <tr>
-              <td class="innerpadding borderbottom">
-                <table width="115" align="left" border="0" cellpadding="0" cellspacing="0">
+                <br><br>
+                <table class="buttonwrapper" bgcolor="#e05443" border="0" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td height="115" style="padding: 0 20px 20px 0;">
-                      <img class="fix" src="images/article1.png" width="115" height="115" border="0" alt="" />
-                    </td>
-                  </tr>
-                </table>
-                <table class="col380" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 380px;">
-                  <tr>
-                    <td>
-                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td class="bodycopy">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
-                          </td>
-                        </tr>
-                        <tr>
-                          <td style="padding: 20px 0 0 0;">
-                            <table class="buttonwrapper" bgcolor="#e05443" border="0" cellspacing="0" cellpadding="0">
-                              <tr>
-                                <td class="button" height="45">
-                                  <a href="#">Claim yours!</a>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
+                    <td class="button" height="45">
+                      <a href="{{ protocol }}://{{ domain }}{{ event_url }}">Register now!</a>
                     </td>
                   </tr>
                 </table>
               </td>
             </tr>
-            <tr>
-              <td class="innerpadding borderbottom">
-                <img class="fix" src="images/wide.png" width="100%" border="0" alt="" />
-              </td>
-            </tr>
+            {% if event_sponsors %}
+              <tr>
+                <td class="innerpadding bodycopy borderbottom">
+                  <b>Sponsors:</b> {% for obj in event_sponsors %}{% if forloop.last %}{{ obj.name }}{% else %}{{ obj.name }}, {% endif %}{% endfor %}
+                </td>
+              </tr>
+            {% endif %}
             <tr>
               <td class="innerpadding bodycopy">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
+                Contact <a href="mailto:{{ contact_email }}">{{ contact_email }}</a> for sponsorship or speaking inquiries.
+                <br><br>
+                Regards!
+                <br><br>
+                Transaction Risk Insurance Professionals
               </td>
             </tr>
             <tr>
@@ -126,27 +100,11 @@
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td align="center" class="footercopy">
-                      &reg; Someone, somewhere 2013<br/>
-                      <a href="#" class="unsubscribe"><font color="#ffffff">Unsubscribe</font></a>
-                      <span class="hide">from this newsletter instantly</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td align="center" style="padding: 20px 0 0 0;">
-                      <table border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td width="37" style="text-align: center; padding: 0 10px 0 10px;">
-                            <a href="http://www.facebook.com/">
-                              <img src="images/facebook.png" width="37" height="37" alt="Facebook" border="0" />
-                            </a>
-                          </td>
-                          <td width="37" style="text-align: center; padding: 0 10px 0 10px;">
-                            <a href="http://www.twitter.com/">
-                              <img src="images/twitter.png" width="37" height="37" alt="Twitter" border="0" />
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
+                      &reg; Transaction Risk Insurance Professionals {% now "Y" %}<br/>
+                      <a href="{{ protocol }}://{{ domain }}{% url 'contact:unsubscribe' email=recipient_email %}" class="unsubscribe">
+                        <font color="#ffffff">Unsubscribe</font>
+                      </a>
+                      <span class="hide"> from this newsletter</span>
                     </td>
                   </tr>
                 </table>

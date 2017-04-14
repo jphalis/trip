@@ -6,9 +6,10 @@ import stripe
 from django import forms
 from django.conf import settings
 from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
 
-from .models import Charge, Customer
-from .utils import get_or_create_stripe_cus  # get_or_create_stripe_charge
+from .models import Charge
+from .utils import get_or_create_stripe_cus
 
 # Create your forms here.
 
@@ -46,10 +47,10 @@ class StripeCreditCardForm(forms.Form):
         for count in range(0, num_digits):
             digit = int(number[count])
             if not ((count & 1) ^ oddeven):
-                digit = digit * 2
+                digit *= 2
             if digit > 9:
-                digit = digit - 9
-            sum = sum + digit
+                digit -= 9
+            sum += digit
         return (sum % 10) == 0
 
     def strip_non_numbers(self, number):
@@ -62,8 +63,7 @@ class StripeCreditCardForm(forms.Form):
     def get_or_create_customer(self, email):
         customer = get_or_create_stripe_cus(
             customer_id=self.customer.cu_id if self.customer else None,
-            description='Customer for {}'.format(email),
-            email=email
+            description='Customer for {}'.format(email), email=email
         )
         self.customer = customer
         return customer
@@ -93,16 +93,15 @@ class StripeCreditCardForm(forms.Form):
             })
         except stripe.error.CardError:
             raise forms.ValidationError(
-                "Sorry, we weren't able to validate your credit card "
-                "at this time. Please try again later!")
+                _("Sorry, we weren't able to validate your credit card "
+                  "at this time. Please try again later!")
+            )
 
     def charge_customer(self, amount, description, receipt_email):
         # Amount must be a positive integer in cents.
         return Charge.objects.create(
-            amount=amount,
-            description=description,
-            receipt_email=receipt_email.lower(),
-            source=self.token
+            amount=amount, description=description,
+            receipt_email=receipt_email.lower(), source=self.token
         )
 
     def clean(self):
@@ -111,7 +110,8 @@ class StripeCreditCardForm(forms.Form):
         # validate card checksum
         if not self.card_luhn_checksum_valid():
             raise forms.ValidationError(
-                'The credit card you entered was invalid.')
+                _('The credit card you entered was invalid.')
+            )
 
         today = timezone.now().today()
         this_year = today.year
@@ -127,14 +127,14 @@ class StripeCreditCardForm(forms.Form):
             name = self.user.full_name
             email = self.user.email
         else:
-            name = '{} {}'.format(cleaned_data.get('first_name'),
+            name = '{0} {1}'.format(cleaned_data.get('first_name'),
                                   cleaned_data.get('last_name'))
             email = cleaned_data.get('email').lower()
 
         if expire_year == this_year and expire_month < this_month:
             raise forms.ValidationError(
                 'Expiration month must be greater '
-                'than or equal to {} for {}'.format(this_month, this_year))
+                'than or equal to {0} for {1}'.format(this_month, this_year))
 
         # Validate card number and create Stripe token
         number = cleaned_data.get('number')

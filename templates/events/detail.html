@@ -24,10 +24,18 @@
       <div class="col-md-4 sidebar-gutter">
         <div class="sidebar-widget">
           {% if member_attending %}
-            <button class="attend-button attend-disabled" type="button">Registered</button>
+            <button class="attend-button attend-disabled" type="button">
+              Registered
+            </button>
+          {% elif event.event_status == 'Completed' %}
+            <button class="attend-button attend-disabled" type="button">
+              Registration Expired
+            </button>
           {% else %}
             <a href="{{ event.get_checkout_url }}">
-              <button class="attend-button arrow" type="button">Register For Event</button>
+              <button class="attend-button arrow" type="button">
+                Register For Event
+              </button>
             </a>
           {% endif %}
         </div>

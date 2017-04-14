@@ -30,4 +30,4 @@ class Newsletter(models.Model):
         verbose_name_plural = _('newsletters')
 
     def __str__(self):
-        return u"{}".format(self.email)
+        return str(self.email)

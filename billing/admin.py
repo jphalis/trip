@@ -40,11 +40,8 @@ class PlanAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         plan = get_or_create_stripe_plan(
-            plan_id=obj.plan_id,
-            name=obj.name,
-            amount=obj.amount,
-            interval=obj.interval,
-            currency=obj.currency,
+            plan_id=obj.plan_id, name=obj.name, amount=obj.amount,
+            interval=obj.interval, currency=obj.currency,
             interval_count=obj.interval_count,
             statement_descriptor=obj.statement_descriptor,
             trial_period_days=obj.trial_period_days
@@ -73,8 +70,8 @@ class CustomerAdmin(admin.ModelAdmin):
         (_('Permissions'),
             {'fields': ('is_active',)}),
     )
-    # readonly_fields = ('cu_id', 'currency', 'email',
-    #                    'created', 'modified',)
+    readonly_fields = ('cu_id', 'currency', 'email',
+                       'created', 'modified',)
     search_fields = ('user__first_name', 'user__last_name', 'email', 'cu_id',)
 
     class Meta:
@@ -93,10 +90,8 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         cu = get_or_create_stripe_cus(
-            customer_id=obj.cu_id,
-            account_balance=obj.account_balance,
-            description=obj.description,
-            email=obj.email
+            customer_id=obj.cu_id, account_balance=obj.account_balance,
+            description=obj.description, email=obj.email
         )
         if cu:
             obj.cu_id = cu['id']
@@ -141,12 +136,9 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         sub = get_or_create_stripe_sub(
-            subscription_id=obj.sub_id,
-            customer=obj.customer.cu_id,
-            plan=obj.plan.plan_id,
-            quantity=obj.quantity,
-            trial_end=obj.trial_end,
-            trial_period_days=obj.trial_period_days
+            subscription_id=obj.sub_id, customer=obj.customer.cu_id,
+            plan=obj.plan.plan_id, quantity=obj.quantity,
+            trial_end=obj.trial_end, trial_period_days=obj.trial_period_days
         )
 
         if obj.cancel_at_period_end:
@@ -196,10 +188,8 @@ class InvoiceAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         invoice = get_or_create_stripe_invoice(
-            invoice_id=obj.invoice_id,
-            customer_id=obj.customer.cu_id,
-            closed=obj.closed,
-            description=obj.description,
+            invoice_id=obj.invoice_id, customer_id=obj.customer.cu_id,
+            closed=obj.closed, description=obj.description,
             forgiven=obj.forgiven,
             statement_descriptor=obj.statement_descriptor,
             subscription=obj.subscription.sub_id
@@ -237,9 +227,9 @@ class ChargeAdmin(admin.ModelAdmin):
         (_('Dates'),
             {'fields': ('charge_created', 'receipt_sent',)}),
     )
-    # readonly_fields = ('charge_id', 'charge_created', 'receipt_sent',
-    #                    'captured', 'refunded', 'disputed', 'paid',
-    #                    'statement_descriptor',)
+    readonly_fields = ('charge_id', 'charge_created', 'receipt_sent',
+                       'captured', 'refunded', 'disputed', 'paid',
+                       'statement_descriptor',)
     search_fields = ('charge_id',)
 
     class Meta:
@@ -258,9 +248,7 @@ class ChargeAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         charge = get_or_create_stripe_charge(
-            charge_id=obj.charge_id,
-            amount=obj.amount,
-            currency=obj.currency,
+            charge_id=obj.charge_id, amount=obj.amount, currency=obj.currency,
             description=obj.description,
             statement_descriptor=obj.statement_descriptor
         )
