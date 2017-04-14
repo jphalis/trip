@@ -42,7 +42,8 @@ class Attendee(TimeStampedModel):
 
 
 class EventManager(models.Manager):
-    def create(self, name, start_date, end_date, image=None, **extra_fields):
+    def create(self, name, start_date, end_date, member_fee, non_member_fee,
+               email_description, **extra_fields):
         """
         Creates an event.
         """
@@ -52,9 +53,18 @@ class EventManager(models.Manager):
             raise ValueError(_('The event must have a start date.'))
         elif not end_date:
             raise ValueError(_('The event must have a end date.'))
+        elif not int(member_fee) >= 0:
+            raise ValueError(_('The event must have a member fee.'))
+        elif not int(non_member_fee) >= 0:
+            raise ValueError(_('The event must have a non-member fee.'))
+        elif not email_description:
+            raise ValueError(_('The event must have an email description.'))
 
-        event = self.model(name=name, start_date=start_date, end_date=end_date,
-                           image=image, **extra_fields)
+        event = self.model(
+            name=name, start_date=start_date, end_date=end_date,
+            member_fee=member_fee, non_member_fee=non_member_fee,
+            email_description=email_description, **extra_fields
+        )
         event.save(using=self._db)
         return event
 

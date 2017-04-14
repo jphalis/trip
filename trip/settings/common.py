@@ -80,6 +80,7 @@ INSTALLED_APPS = (
     'authentication',
     'billing',
     'contact',
+    'core',
     'events',
     'maintenancemode',
 )
