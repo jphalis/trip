@@ -61,10 +61,9 @@ def read_dotenv(dotenv=None, set_heroku=False):
                 # Test section - may or may not work
                 try:
                     os.environ.setdefault(k, v)
-                    value = os.environ[k]
 
-                    if set_heroku:
-                        print(_yellow('Setting {}...'))
+                    if set_heroku and v:
+                        print(_yellow('Setting {}...'.format(k)))
                         local("heroku config:set {0}={1}".format(k, v))
                 except KeyError:
                     error_msg = "Set the {} environment variable".format(k)

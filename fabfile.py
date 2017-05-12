@@ -11,11 +11,10 @@ from fabric.operations import prompt
 @task
 def deploy():
     """ Deploys the latest files to the production server. """
-    local('pip freeze > requirements.txt')
     local('python manage.py makemigrations')
     local('python manage.py migrate')
     local('git add .')
-    msg = prompt("enter your git commit message: ")
+    msg = prompt("Enter your git commit message: ")
     local('git commit -m "{}"'.format(msg))
     _push_bitbucket()
     _push_heroku()
