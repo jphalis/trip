@@ -9,13 +9,19 @@ app_name = 'accounts'
 
 
 urlpatterns = [
-    url(r"^memberships/$",
-        views.memberships,
-        name="memberships"),
-    url(r"^settings/$",
-        views.account_settings,
-        name="account_settings"),
-    url(r'^(?P<sponsor_pk>\d+)/$',
-        views.detail,
-        name='detail'),
+    url(
+        regex=r"^memberships/$",
+        view=views.memberships,
+        name="memberships"
+    ),
+    url(
+        regex=r"^settings/$",
+        view=views.account_settings,
+        name="account_settings"
+    ),
+    url(
+        regex=r'^(?P<sponsor_pk>\d+)/$',
+        view=views.detail,
+        name='detail'
+    ),
 ]

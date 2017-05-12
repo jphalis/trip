@@ -10,6 +10,7 @@ from .models import MyUser, Sponsor
 # Register your models here.
 
 
+@admin.register(MyUser)
 class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
     add_form = MyUserCreationForm
@@ -54,6 +55,7 @@ class MyUserAdmin(UserAdmin):
     disable.short_description = _("Disable selected users")
 
 
+@admin.register(Sponsor)
 class SponsorAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'is_active',)
     list_display_links = ('id', 'name',)
@@ -91,5 +93,5 @@ class SponsorAdmin(admin.ModelAdmin):
 
 
 admin.site.unregister(Group)
-admin.site.register(MyUser, MyUserAdmin)
-admin.site.register(Sponsor, SponsorAdmin)
+# admin.site.register(MyUser, MyUserAdmin)
+# admin.site.register(Sponsor, SponsorAdmin)

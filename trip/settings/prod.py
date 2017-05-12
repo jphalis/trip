@@ -23,42 +23,41 @@ import dj_database_url
 ADMINS = (
     # Uncomment lines below if you want email about server errors.
     # ("Kirk Sanderson", "kirksanderson1@gmail.com"),
+    ("JP Halis", "jphalisnj@gmail.com"),
 )
 MANAGERS = ADMINS
-FULL_DOMAIN = 'transactionrisk.herokuapp.com'
+FULL_DOMAIN = ''
+HEROKU_DOMAIN = 'transactionrisk.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    '*{}'.format(FULL_DOMAIN),
-    '*.{}'.format(FULL_DOMAIN),
-    'wwww.{}'.format(FULL_DOMAIN),
+
     FULL_DOMAIN,
+    '*.{}'.format(FULL_DOMAIN),
+
+    HEROKU_DOMAIN,
+    '*.{}'.format(HEROKU_DOMAIN),
 ]
 
 
 ##########
 # STRIPE #
 ##########
-STRIPE_SECRET_KEY = ''
-STRIPE_PUBLISHABLE_KEY = ''
+STRIPE_SECRET_KEY = os.environ["STRIPE_SECRET_KEY"]
+STRIPE_PUBLISHABLE_KEY = os.environ["STRIPE_PUBLISHABLE_KEY"]
 
 
 #########
 # EMAIL #
 #########
-DEFAULT_FROM_EMAIL = ''
-DEFAULT_HR_EMAIL = DEFAULT_FROM_EMAIL
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
-
-###########
-# ANYMAIL #
-###########
-ANYMAIL = {
-    "SPARKPOST_API_KEY": ""
-}
+DEFAULT_FROM_EMAIL = DEFAULT_HR_EMAIL = EMAIL_HOST_USER
 EMAIL_BACKEND = "anymail.backends.sparkpost.EmailBackend"
+ANYMAIL = {
+    "SPARKPOST_API_KEY": os.environ['SPARKPOST_API_KEY']
+}
 
 
 ################
@@ -90,11 +89,11 @@ INSTALLED_APPS += (
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '5432',
+        'NAME': os.environ.get('DATABASE_NAME', ''),
+        'USER': os.environ.get('DATABASE_USER', ''),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', ''),
+        'HOST': os.environ.get('DATABASE_HOST', ''),
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),
     }
 }
 DATABASES['default'].update(dj_database_url.config())  # For Heroku only
@@ -133,8 +132,8 @@ TEMPLATES = [
 #####################
 # HTML MINIFICATION #
 #####################
-KEEP_COMMENTS_ON_MINIFYING = False
-EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
+# KEEP_COMMENTS_ON_MINIFYING = False
+# EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
 
 
 #########
@@ -165,29 +164,35 @@ USING_CLOUDFRONT = False
 USING_EC2 = False
 
 if USING_S3:
-    AWS_ACCESS_KEY_ID = ''
-    AWS_SECRET_ACCESS_KEY = ''
-    AWS_STORAGE_BUCKET_NAME = ''
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_AUTO_CREATE_BUCKET = False
     S3DIRECT_REGION = 'us-east-1'
 
     AWS_QUERYSTRING_AUTH = False
+    AWS_QUERYSTRING_EXPIRE = 3600
     AWS_FILE_EXPIRE = 200
     AWS_PRELOAD_METADATA = True
+    AWS_S3_ENCRYPTION = False
+    AWS_S3_USE_SSL = True
     AWS_S3_SECURE_URLS = True
+    AWS_S3_FILE_OVERWRITE = True
+    AWS_S3_ENDPOINT_URL = None
 
-    STATICFILES_STORAGE = '{}.utils.StaticRootS3BotoStorage'.format(APP_NAME)
+    STATICFILES_STORAGE = '{}.s3utils.StaticRootS3BotoStorage'.format(APP_NAME)
     STATIC_S3_PATH = 'media/'
-    DEFAULT_FILE_STORAGE = '{}.utils.MediaRootS3BotoStorage'.format(APP_NAME)
+    DEFAULT_FILE_STORAGE = '{}.s3utils.MediaRootS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
+    S3_URL = '//s3.amazonaws.com/{}/'.format(AWS_STORAGE_BUCKET_NAME)
+    MEDIA_URL = S3_URL + STATIC_S3_PATH
+    STATIC_URL = S3_URL + DEFAULT_S3_PATH
 
     if USING_CLOUDFRONT:
         AWS_CLOUDFRONT_DOMAIN = ''
-        MEDIA_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
-        STATIC_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
+        MEDIA_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
+        STATIC_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
     elif USING_EC2:
-        S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
-        MEDIA_URL = S3_URL + STATIC_S3_PATH
-        STATIC_URL = S3_URL + DEFAULT_S3_PATH
         MEDIA_ROOT = '/home/ubuntu/{0}/{1}/media'.format(
             FULL_DOMAIN, APP_NAME)
         STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
@@ -221,7 +226,21 @@ LOGGING = {
         'null': {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} [{name}.{funcName}:{lineno}] {message}',
+            'datefmt': "%m/%d/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '[{asctime}] {levelname} {message}',
+        },
     },
     'loggers': {
         'django.request': {

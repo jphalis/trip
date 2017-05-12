@@ -10,7 +10,9 @@
     <meta name="author" content="Trip">
     <link rel="icon" href="favicon.ico">
 
-    <title>Trip{% block title %}{% endblock title %}</title>
+    <title>
+      Transaction Risk Insurance Professionals{% block title %}{% endblock title %}
+    </title>
 
     <!-- Bootstrap -->
     <link href="{% static 'vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -104,17 +106,13 @@
                     <i class="fa fa-gear"></i>
                   </a>
                 </li>
-                <li>
-                  <a href="{{ request.scheme }}://{{ request.META.HTTP_HOST }}/hidden/secure/trip/admin/events/event/add/">
-                    <i class="fa fa-plus"></i>
-                  </a>
-                </li>
-              {% elif request.user.is_authenticated %}
-                <li style="border-left: 1px solid #ccc;">
-                  <a href="{% url 'accounts:account_settings' %}">
-                    <i class="fa fa-gear"></i>
-                  </a>
-                </li>
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                  <li>
+                    <a href="{{ request.scheme }}://{{ request.get_host }}/hidden/secure/trip/admin/events/event/add/">
+                      <i class="fa fa-plus"></i>
+                    </a>
+                  </li>
+                {% endif %}
               {% endif %}
             </ul>
         </div>

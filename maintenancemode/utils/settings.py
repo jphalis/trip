@@ -108,9 +108,9 @@ class AppSettings(object):
         super(AppSettings, self).__setattr__('_prefix', prefix)
         for setting, class_value in getmembers(self.__class__):
             if setting == setting.upper():
-                prefixed = "%s_%s" % (prefix.upper(), setting.upper())
+                prefixed = "{}_{}".format(prefix.upper(), setting.upper())
                 configured_value = getattr(settings, prefixed, class_value)
-                callback_name = "configure_%s" % setting.lower()
+                callback_name = "configure_{}".format(setting.lower())
                 callback = getattr(self, callback_name, None)
                 if callable(callback):
                     configured_value = callback(configured_value)

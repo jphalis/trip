@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from accounts.models import MyUser
-from billing.models import Plan
+from billing.models import Customer, Plan, Subscription
 from events.models import Event
 
 # Create your commands here.
@@ -62,10 +62,13 @@ def _create_stripe_plans(command):
 
 def _create_demo_accounts(command):
     if not MyUser.objects.filter(email__iexact='user@demo.com').exists():
-        MyUser.objects.create_user(
+        user = MyUser.objects.create_user(
             email='user@demo.com', first_name='Demo', last_name='User',
             password='demo'
         )
+        cu = Customer.objects.create(user=user, account_balance=0)
+        plan = Plan.objects.get(name='Individual')
+        sub = Subscription.objects.create(customer=cu, plan=plan)
         command.stdout.write(command.style.WARNING('Created demo user account.'))
     if not MyUser.objects.filter(email__iexact='admin@demo.com').exists():
         MyUser.objects.create_superuser(
@@ -77,7 +80,6 @@ def _create_demo_accounts(command):
 
 
 def _create_events(command):
-    import calendar
     import random
     from datetime import date, timedelta
 

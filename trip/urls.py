@@ -29,36 +29,54 @@ admin.site.index_title = "Trip"
 
 urlpatterns = [
     # ADMIN
-    url(r'^hidden/secure/trip/admin/',
-        include(admin.site.urls)),
+    url(
+        r'^hidden/secure/trip/admin/',
+        include(admin.site.urls)
+    ),
 
     # GENERAL
-    url(r'^$',
-        views.home, name='home'),
+    url(
+        regex=r'^$',
+        view=views.home,
+        name='home'
+    ),
 
     # ACCOUNTS
-    url(r'^accounts/',
-        include('accounts.urls', namespace='accounts')),
+    url(
+        r'^accounts/',
+        include('accounts.urls', namespace='accounts')
+    ),
 
     # AUTHENTICATION
-    url(r'^auth/',
-        include('authentication.urls', namespace='authentication')),
+    url(
+        r'^auth/',
+        include('authentication.urls', namespace='authentication')
+    ),
 
     # BILLING
-    url(r'^billing/',
-        include('billing.urls', namespace='billing')),
+    url(
+        r'^billing/',
+        include('billing.urls', namespace='billing')
+    ),
 
     # CONTACT
-    url(r'^contact/',
-        include('contact.urls', namespace='contact')),
+    url(
+        r'^contact/',
+        include('contact.urls', namespace='contact')
+    ),
 
     # EVENTS
-    url(r'^events/',
-        include('events.urls', namespace='events')),
+    url(
+        r'^events/',
+        include('events.urls', namespace='events')
+    ),
 
     # SPONSORS
-    url(r'^sponsors/$',
-        views.sponsors, name='sponsors'),
+    url(
+        regex=r'^sponsors/$',
+        view=views.sponsors,
+        name='sponsors'
+    ),
 ]
 
 
@@ -67,3 +85,8 @@ if settings.DEBUG:
                                document_root=settings.STATIC_ROOT)
     urlpatterns += [] + static(settings.MEDIA_URL,
                                document_root=settings.MEDIA_ROOT)
+    # if 'debug_toolbar' in settings.INSTALLED_APPS:
+    #     import debug_toolbar
+    #     urlpatterns = [
+    #         url(r'^__debug__/', include(debug_toolbar.urls)),
+    #     ] + urlpatterns

@@ -51,7 +51,7 @@ class MaintenanceModeMiddleware(object):
         ignored_url_list = [str(url.pattern) for url in
             IgnoredURL.objects.filter(maintenance=maintenance)] + MAINTENANCE_ADMIN_IGNORED_URLS
 
-        ignored_url_patterns = tuple([re.compile(r'%s' % url) for url in ignored_url_list])
+        ignored_url_patterns = tuple([re.compile(r'{}'.format(url)) for url in ignored_url_list])
         request_path = request.path_info[1:]
 
         for url in ignored_url_patterns:

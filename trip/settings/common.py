@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ############################
 # HOSTING + AUTHENTICATION #
 ############################
-SECRET_KEY = 'vme0aiye#am&*@0o4^di1o8d6k5834^#7w7!&m6_x*7py(fka-'
+SECRET_KEY = os.environ["SECRET_KEY"]
 LOGIN_URL = "/accounts/authenticate/"
 AUTH_USER_MODEL = 'accounts.MyUser'
 APP_NAME = 'trip'
@@ -155,7 +155,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap3"
 ############
 # SESSIONS #
 ############
-SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 4 * 3  # three months
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 * 4 * 2  # two months
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
