@@ -7,15 +7,16 @@ from django.utils.translation import ugettext as _
 from billing.utils import (get_or_create_stripe_plan, delete_stripe_plan,
                            get_or_create_stripe_cus, delete_stripe_cus,
                            get_or_create_stripe_sub, cancel_stripe_sub,
-                           get_or_create_stripe_invoice, delete_stripe_invoice,
                            get_or_create_stripe_charge, convert_tstamp)
-from .models import Customer, Plan, Subscription, Invoice, Charge
+from .models import Customer, Plan, Subscription, Charge
 
 # Register your models here.
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+@admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
     list_display = ('name', 'display_amount', 'is_active',)
     list_filter = ('name', 'created', 'modified', 'is_active',)
@@ -38,6 +39,12 @@ class PlanAdmin(admin.ModelAdmin):
     class Meta:
         model = Plan
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('amount', 'currency', 'interval',
+                                           'interval_count',)
+        return self.readonly_fields
+
     def save_model(self, request, obj, form, change):
         plan = get_or_create_stripe_plan(
             plan_id=obj.plan_id, name=obj.name, amount=obj.amount,
@@ -54,7 +61,14 @@ class PlanAdmin(admin.ModelAdmin):
         delete_stripe_plan(obj.plan_id)
         obj.delete()
 
+    def get_actions(self, request):
+        actions = super(PlanAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
+
+@admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('id', 'user',)
     list_display_links = ('id', 'user',)
@@ -102,6 +116,7 @@ class CustomerAdmin(admin.ModelAdmin):
         obj.delete()
 
 
+@admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'plan_display', 'status_display',)
     list_display_links = ('id', 'customer',)
@@ -116,7 +131,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
                         'cancel_at_period_end', 'canceled_at',
                         'created', 'modified',)}),
     )
-    # readonly_fields = ('sub_id', 'customer', 'start', 'created', 'modified',)
     search_fields = ('customer__user__first_name', 'customer__user__last_name',
                      'customer__email', 'plan__plan_id', 'sub_id')
 
@@ -164,55 +178,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
         obj.delete()
 
 
-class InvoiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'status',)
-    list_display_links = ('id', 'customer',)
-    list_filter = ('closed', 'paid', 'created', 'modified',)
-    fieldsets = (
-        (None,
-            {'fields': ('customer', 'invoice_id', 'charge', 'subscription',
-                        'receipt_number', 'amount_due', 'subtotal', 'total',
-                        'currency', 'statement_descriptor', 'description',)}),
-        ('Actions',
-            {'fields': ('attempted', 'attempted_count', 'closed', 'paid',)}),
-        (_('Dates'),
-            {'fields': ('period_start', 'period_end',
-                        'created', 'modified',)}),
-    )
-    readonly_fields = ('invoice_id', 'period_start', 'created', 'modified',)
-    search_fields = ('customer__user__first_name', 'customer__user__last_name',
-                     'customer__user__email', 'receipt_number',)
-
-    class Meta:
-        model = Invoice
-
-    def save_model(self, request, obj, form, change):
-        invoice = get_or_create_stripe_invoice(
-            invoice_id=obj.invoice_id, customer_id=obj.customer.cu_id,
-            closed=obj.closed, description=obj.description,
-            forgiven=obj.forgiven,
-            statement_descriptor=obj.statement_descriptor,
-            subscription=obj.subscription.sub_id
-        )
-
-        if invoice:
-            obj.invoice_id = invoice['id']
-            obj.amount_due = invoice['amount_due']
-            obj.attempted = invoice['attempted']
-            obj.attempted_count = invoice['attempted_count']
-            obj.currency = invoice['currency']
-            obj.receipt_number = invoice['receipt_number']
-            obj.period_end = convert_tstamp(invoice['period_end'])
-            obj.period_start = convert_tstamp(invoice['period_start'])
-            obj.subtotal = invoice['subtotal']
-            obj.total = invoice['total']
-        obj.save()
-
-    def delete_model(self, request, obj):
-        delete_stripe_invoice(obj.invoice_id)
-        obj.delete()
-
-
+@admin.register(Charge)
 class ChargeAdmin(admin.ModelAdmin):
     list_display = ('id', 'charge_id', 'amount', 'charge_created',)
     list_display_links = ('id', 'charge_id',)
@@ -220,8 +186,8 @@ class ChargeAdmin(admin.ModelAdmin):
                    'charge_created',)
     fieldsets = (
         (None,
-            {'fields': ('charge_id', 'invoice', 'amount', 'amount_refunded',
-                        'currency', 'description', 'statement_descriptor',)}),
+            {'fields': ('charge_id', 'amount', 'amount_refunded', 'currency',
+                        'description', 'statement_descriptor',)}),
         ('Actions',
             {'fields': ('paid', 'disputed', 'refunded', 'captured',)}),
         (_('Dates'),
@@ -264,10 +230,3 @@ class ChargeAdmin(admin.ModelAdmin):
             obj.charge_created = charge['charge_created']
             obj.statement_descriptor = charge['statement_descriptor']
         obj.save()
-
-
-admin.site.register(Customer, CustomerAdmin)
-admin.site.register(Plan, PlanAdmin)
-admin.site.register(Subscription, SubscriptionAdmin)
-# admin.site.register(Invoice, InvoiceAdmin)
-admin.site.register(Charge, ChargeAdmin)

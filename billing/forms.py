@@ -36,9 +36,7 @@ class StripeCreditCardForm(forms.Form):
         self.stripe.api_key = settings.STRIPE_SECRET_KEY
 
     def card_luhn_checksum_valid(self):
-        """
-        Checks to make sure that the card passes a luhn mod-10 checksum.
-        """
+        """Checks to make sure that the card passes a luhn mod-10 checksum."""
         number = self.strip_non_numbers(
             self.cleaned_data.get('number', ''))
         sum = 0
@@ -54,9 +52,7 @@ class StripeCreditCardForm(forms.Form):
         return (sum % 10) == 0
 
     def strip_non_numbers(self, number):
-        """
-        Gets rid of all non-numeric characters.
-        """
+        """Gets rid of all non-numeric characters."""
         non_numbers = re.compile('\D')
         return non_numbers.sub('', number)
 
@@ -128,7 +124,7 @@ class StripeCreditCardForm(forms.Form):
             email = self.user.email
         else:
             name = '{0} {1}'.format(cleaned_data.get('first_name'),
-                                  cleaned_data.get('last_name'))
+                                    cleaned_data.get('last_name'))
             email = cleaned_data.get('email').lower()
 
         if expire_year == this_year and expire_month < this_month:

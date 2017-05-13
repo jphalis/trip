@@ -106,5 +106,5 @@ def checkout(request, event_pk):
         messages.error(request,
                        _('This email is already registered for this event.'))
 
-    context = {'form': form, 'event_price': event_price}
-    return render(request, 'billing/checkout.html', context)
+    ctx = {'form': form, 'event_price': event_price}
+    return render(request, 'billing/checkout.html', ctx)

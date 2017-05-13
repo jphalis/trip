@@ -21,9 +21,7 @@ msg.send()
 
 
 def send_event_email(context):
-    """
-    Sends an email to mailing list about creation of new event.
-    """
+    """Sends an email to mailing list about creation of new event."""
     email_recipients = Newsletter.objects.subscribed()
     to_emails = []
     merged_data = {}

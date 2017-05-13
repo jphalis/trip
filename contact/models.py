@@ -7,9 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class NewsletterManager(models.Manager):
     def subscribed(self):
-        """
-        Returns all active sponsors.
-        """
+        """Returns all active sponsors."""
         return super(NewsletterManager, self).get_queryset().filter(
             is_subscribed=True)
 

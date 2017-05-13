@@ -10,6 +10,9 @@ from .models import MyUser, Sponsor
 # Register your models here.
 
 
+admin.site.unregister(Group)
+
+
 @admin.register(MyUser)
 class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
@@ -41,16 +44,12 @@ class MyUserAdmin(UserAdmin):
     actions = ('enable', 'disable',)
 
     def enable(self, request, queryset):
-        """
-        Updates is_active to be True.
-        """
+        """Updates is_active to be True."""
         queryset.update(is_active=True)
     enable.short_description = _("Enable selected users")
 
     def disable(self, request, queryset):
-        """
-        Updates is_active to be False.
-        """
+        """Updates is_active to be False."""
         queryset.update(is_active=False)
     disable.short_description = _("Disable selected users")
 
@@ -78,20 +77,11 @@ class SponsorAdmin(admin.ModelAdmin):
         model = Sponsor
 
     def enable(self, request, queryset):
-        """
-        Updates is_active to be True.
-        """
+        """Updates is_active to be True."""
         queryset.update(is_active=True)
     enable.short_description = _("Enable selected sponsors")
 
     def disable(self, request, queryset):
-        """
-        Updates is_active to be False.
-        """
+        """Updates is_active to be False."""
         queryset.update(is_active=False)
     disable.short_description = _("Disable selected sponsors")
-
-
-admin.site.unregister(Group)
-# admin.site.register(MyUser, MyUserAdmin)
-# admin.site.register(Sponsor, SponsorAdmin)

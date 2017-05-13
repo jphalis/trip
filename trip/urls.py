@@ -23,8 +23,9 @@ from django.contrib import admin
 from . import views
 
 
-admin.site.site_header = "Trip Administration"
-admin.site.index_title = "Trip"
+admin.site.site_header = "TRIP Administration"
+admin.site.site_title = "TRIP Administration"
+admin.site.index_title = "TRIP"
 
 
 urlpatterns = [
@@ -85,8 +86,8 @@ if settings.DEBUG:
                                document_root=settings.STATIC_ROOT)
     urlpatterns += [] + static(settings.MEDIA_URL,
                                document_root=settings.MEDIA_ROOT)
-    # if 'debug_toolbar' in settings.INSTALLED_APPS:
-    #     import debug_toolbar
-    #     urlpatterns = [
-    #         url(r'^__debug__/', include(debug_toolbar.urls)),
-    #     ] + urlpatterns
+    if 'debug_toolbar' in settings.INSTALLED_APPS:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns

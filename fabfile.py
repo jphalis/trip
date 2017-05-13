@@ -17,7 +17,7 @@ def deploy():
     msg = prompt("Enter your git commit message: ")
     local('git commit -m "{}"'.format(msg))
     _push_bitbucket()
-    _push_heroku()
+    # _push_heroku()
     print(_green('Successfully pushed project', bold=True))
 
 

@@ -6,20 +6,22 @@ from .models import Event
 
 
 def list(request):
-    context = {
+    ctx = {
         'events': Event.objects.active(),
         'featured_events': Event.objects.featured(num_returned=5),
     }
-    return render(request, 'events/list.html', context)
+    return render(request, 'events/list.html', ctx)
 
 
 def detail(request, event_pk):
     event = get_object_or_404(Event, pk=event_pk)
-    context = {
+    attending = event.attendees.filter(
+        email__iexact=request.user.email).exists()
+    ctx = {
         'event': event,
-        'member_attending': event.attendees.filter(pk=request.user.pk).exists()
+        'member_attending': attending
     }
-    return render(request, 'events/detail.html', context)
+    return render(request, 'events/detail.html', ctx)
 
 
 def reg_success(request, event_pk):

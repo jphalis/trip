@@ -30,9 +30,8 @@ class Attendee(TimeStampedModel):
 
     @cached_property
     def full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
+        """Returns the first_name plus the last_name, with a space in
+        between."""
         return "{0} {1}".format(self.first_name, self.last_name)
 
     @cached_property
@@ -44,9 +43,7 @@ class Attendee(TimeStampedModel):
 class EventManager(models.Manager):
     def create(self, name, start_date, end_date, member_fee, non_member_fee,
                email_description, **extra_fields):
-        """
-        Creates an event.
-        """
+        """Creates an event."""
         if not name:
             raise ValueError(_('The event must have a name.'))
         elif not start_date:
@@ -69,27 +66,21 @@ class EventManager(models.Manager):
         return event
 
     def active(self):
-        """
-        Returns all active events.
-        """
+        """Returns all active events."""
         return super(EventManager, self).get_queryset() \
             .filter(is_active=True) \
             .prefetch_related('sponsors')
 
     def featured(self, num_returned=None):
-        """
-        Returns all featured events.
-        Featured events are ordered by closest to their date.
-        """
+        """Returns all featured events.
+        Featured events are ordered by closest to their date."""
         return super(EventManager, self).get_queryset() \
             .filter(is_active=True, end_date__gte=timezone.now()) \
             .prefetch_related('sponsors') \
             .order_by('start_date', 'end_date')[:num_returned]
 
     def own(self, user):
-        """
-        Returns all events the user is sponsoring.
-        """
+        """Returns all events the user is sponsoring."""
         return super(EventManager, self).get_queryset() \
             .filter(sponsors=user) \
             .prefetch_related('sponsors') \
@@ -127,21 +118,15 @@ class Event(TimeStampedModel):
         return u'{0}'.format(self.name)
 
     def get_absolute_url(self):
-        """
-        Returns the url for the event.
-        """
+        """Returns the url for the event."""
         return reverse('events:detail', kwargs={'event_pk': self.pk})
 
     def get_reg_success_url(self):
-        """
-        Returns the url for an event after being successfully registered.
-        """
+        """Returns the url for an event after being successfully registered."""
         return reverse('events:reg_success', kwargs={'event_pk': self.pk})
 
     def get_checkout_url(self):
-        """
-        Returns the checkout url for an event.
-        """
+        """Returns the checkout url for an event."""
         return reverse('billing:checkout', kwargs={'event_pk': self.pk})
 
     @property
@@ -180,28 +165,20 @@ class Event(TimeStampedModel):
 
     @cached_property
     def get_sponsors_info(self):
-        """
-        Returns the information for each sponsor of the event.
-        """
+        """Returns the information for each sponsor of the event."""
         return self.sponsors.values('id', 'name', 'logo', 'website')
 
     @cached_property
     def get_attendees_info(self):
-        """
-        Returns the information for each user registered for the event.
-        """
+        """Returns the information for each user registered for the event."""
         return self.attendees.values('id', 'first_name', 'last_name')
 
     @property
     def sponsor_count(self):
-        """
-        Returns the number of sponsors for the event..
-        """
+        """Returns the number of sponsors for the event.."""
         return self.get_sponsors_info.count()
 
     @property
     def attendee_count(self):
-        """
-        Returns the number of attendees of the event.
-        """
+        """Returns the number of attendees of the event."""
         return self.get_attendees_info.count()

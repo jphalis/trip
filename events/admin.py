@@ -2,30 +2,13 @@ from django.conf import settings
 from django.contrib import admin, messages
 from django.utils.translation import ugettext as _
 
-from .models import Attendee, Event
+from .models import Event
 from .utils import send_event_email
 
 # Register your models here.
 
 
-class AttendeeAdmin(admin.ModelAdmin):
-    # Add which event they are registered for - KnobLinx code
-    list_display = ('id', 'email', 'full_name', 'event_name',)
-    list_display_links = ('id', 'email',)
-    list_filter = ('created', 'modified',)
-    fieldsets = (
-        (None,
-            {'fields': ('email', 'first_name', 'last_name',)}),
-        (_('Dates'),
-            {'fields': ('created', 'modified',)}),
-    )
-    readonly_fields = ('created', 'modified',)
-    search_fields = ('email', 'last_name',)
-
-    class Meta:
-        model = Attendee
-
-
+@admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'start_date', 'end_date',
                     'sponsor_count', 'attendee_count', 'is_active',)
@@ -43,7 +26,7 @@ class EventAdmin(admin.ModelAdmin):
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )
-    readonly_fields = ('created', 'modified',)  # add attendees
+    readonly_fields = ('created', 'modified', 'attendees',)
     search_fields = ('name', 'sponsors__name', 'sponsors__email',
                      'attendees__first_name', 'attendees_last_name',
                      'attendees__email',)
@@ -75,9 +58,7 @@ class EventAdmin(admin.ModelAdmin):
         return obj
 
     def send_email_to_list(self, request, queryset):
-        """
-        Sends an email about the event to the mailing list.
-        """
+        """Sends an email about the event to the mailing list."""
         for obj in queryset:
             send_event_email({
                 'protocol': 'https' if request.is_secure() else 'http',
@@ -98,23 +79,15 @@ class EventAdmin(admin.ModelAdmin):
     send_email_to_list.short_description = _("Send event email")
 
     def enable(self, request, queryset):
-        """
-        Updates is_active to be True.
-        """
+        """Updates is_active to be True."""
         queryset.update(is_active=True)
         messages.add_message(
             request, messages.SUCCESS, _('Events have been enabled.'))
     enable.short_description = _("Make events public")
 
     def disable(self, request, queryset):
-        """
-        Updates is_active to be False.
-        """
+        """Updates is_active to be False."""
         queryset.update(is_active=False)
         messages.add_message(
             request, messages.SUCCESS, _('Events have been disabled.'))
     disable.short_description = _("Disable events")
-
-
-# admin.site.register(Attendee, AttendeeAdmin)
-admin.site.register(Event, EventAdmin)

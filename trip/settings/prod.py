@@ -56,7 +56,7 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = DEFAULT_HR_EMAIL = EMAIL_HOST_USER
 EMAIL_BACKEND = "anymail.backends.sparkpost.EmailBackend"
 ANYMAIL = {
-    "SPARKPOST_API_KEY": os.environ['SPARKPOST_API_KEY']
+    "SPARKPOST_API_KEY": os.environ.get('SPARKPOST_API_KEY', '')
 }
 
 

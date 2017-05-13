@@ -57,18 +57,15 @@ def read_dotenv(dotenv=None, set_heroku=False):
     if os.path.exists(dotenv):
         with open(dotenv) as f:
             for k, v in parse_dotenv(f.read()).items():
-
-                # Test section - may or may not work
                 try:
                     os.environ.setdefault(k, v)
 
                     if set_heroku and v:
                         print(_yellow('Setting {}...'.format(k)))
-                        local("heroku config:set {0}={1}".format(k, v))
+                        local("heroku config:set {0}='{1}'".format(k, v))
                 except KeyError:
                     error_msg = "Set the {} environment variable".format(k)
                     raise ImproperlyConfigured(error_msg)
-                # End test section
     else:
         warnings.warn("Not reading {} - it doesn't exist.".format(dotenv),
                       stacklevel=2)

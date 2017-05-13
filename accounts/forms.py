@@ -33,10 +33,7 @@ def clean_passwords(data, password1, password2):
 
 
 class AccountSettingsForm(forms.ModelForm):
-    """
-    A form used for users to update their account
-    information.
-    """
+    """A form used for users to update their account information."""
     email = forms.EmailField(
         label=_('Email'),
         widget=forms.EmailInput(),
@@ -73,9 +70,7 @@ class AccountSettingsForm(forms.ModelForm):
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
 
     def clean_email(self):
-        """
-        Verify that the new email is not already taken.
-        """
+        """Verify that the new email is not already taken."""
         value = self.cleaned_data['email'].lower()
         if self.initial.get('email') == value:
             return value
@@ -96,8 +91,7 @@ class AccountSettingsForm(forms.ModelForm):
 class MyUserChangeForm(UserChangeForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
-    password hash display field.
-    """
+    password hash display field."""
     def __init__(self, *args, **kargs):
         super(MyUserChangeForm, self).__init__(*args, **kargs)
         # del self.fields['username']
@@ -107,9 +101,7 @@ class MyUserChangeForm(UserChangeForm):
         fields = '__all__'
 
     def clean_email(self):
-        """
-        Verify that the new email is not already taken.
-        """
+        """Verify that the new email is not already taken."""
         value = self.cleaned_data['email'].lower()
         if self.initial.get('email') == value:
             return value

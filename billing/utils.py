@@ -22,8 +22,11 @@ def get_or_create_stripe_plan(plan_id, name, amount, interval, currency='usd',
                               trial_period_days=0):
     try:
         plan = stripe.Plan.retrieve(plan_id)
+        plan.plan = plan_id
         plan.name = name
         plan.metadata = metadata
+        if statement_descriptor == '':
+            statement_descriptor = None
         plan.statement_descriptor = statement_descriptor
         plan.trial_period_days = trial_period_days
         plan.save()
@@ -111,40 +114,6 @@ def cancel_stripe_sub(subscription_id, at_period_end=False):
     except stripe.error.InvalidRequestError:
         sub = None
     return sub
-
-
-def get_or_create_stripe_invoice(invoice_id, customer_id, application_fee=None,
-                                 closed=False, description=None,
-                                 forgiven=False, metadata={},
-                                 statement_descriptor=None, subscription=None):
-    try:
-        invoice = stripe.Invoice.retrieve(invoice_id)
-        invoice.application_fee = application_fee
-        invoice.closed = closed
-        invoice.description = description
-        invoice.forgiven = forgiven
-        invoice.metadata = metadata
-        invoice.statement_descriptor = statement_descriptor
-        invoice.save()
-    except stripe.error.InvalidRequestError:
-        invoice = stripe.Invoice.create(
-            customer=customer_id,
-            application_fee=application_fee,
-            description=description,
-            metadata=metadata,
-            statement_descriptor=statement_descriptor,
-            subscription=subscription
-        )
-    return invoice
-
-
-def delete_stripe_invoice(invoice_id):
-    try:
-        invoice = stripe.Invoice.retrieve(invoice_id)
-        invoice.delete()
-        return True
-    except stripe.error.InvalidRequestError:
-        return False
 
 
 def get_or_create_stripe_charge(charge_id, amount, currency='usd',

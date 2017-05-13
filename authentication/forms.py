@@ -37,9 +37,8 @@ def clean_passwords(data, password1, password2):
 
 
 class MyUserCreationForm(UserCreationForm):
-    """
-    A form that creates a user, with no privileges, from the given fields.
-    """
+    """A form that creates a user, with no privileges, from the given
+    fields."""
     def __init__(self, *args, **kargs):
         super(MyUserCreationForm, self).__init__(*args, **kargs)
         # del self.fields['username']
@@ -49,9 +48,7 @@ class MyUserCreationForm(UserCreationForm):
         fields = ('email', 'first_name', 'last_name',)
 
     def clean_email(self):
-        """
-        Verify that the new email is not already taken.
-        """
+        """Verify that the new email is not already taken."""
         value = self.cleaned_data['email'].lower()
         if self.initial.get('email') == value:
             return value
@@ -76,9 +73,7 @@ class LoginForm(forms.Form):
     )
 
     def clean_email(self):
-        """
-        Makes the value of the email lowercase.
-        """
+        """Makes the value of the email lowercase."""
         value = self.cleaned_data.get("email").lower()
         if MyUser.objects.filter(Q(email__iexact=value) &
                                  Q(is_active=False)).exists():
@@ -102,9 +97,7 @@ class SignupForm(forms.Form):
         super(SignupForm, self).__init__(*args, **kwargs)
 
     def clean_email(self):
-        """
-        Verify that the new email is not already taken.
-        """
+        """Verify that the new email is not already taken."""
         value = self.cleaned_data['email'].lower()
         username, domain = value.split('@')
 
@@ -133,9 +126,7 @@ class PasswordResetForm(forms.Form):
 
     def send_mail(self, subject_template_name, email_template_name,
                   context, from_email, to_email, html_email_template_name):
-        """
-        Sends a django.core.mail.EmailMultiAlternatives to `to_email`.
-        """
+        """Sends a django.core.mail.EmailMultiAlternatives to `to_email`."""
         subject = subject_template_name
         # Email subject *must not* contain newlines
         subject = ''.join(subject.splitlines())
@@ -152,8 +143,7 @@ class PasswordResetForm(forms.Form):
         """Given an email, return matching user(s) who should receive a reset.
         This allows subclasses to more easily customize the default policies
         that prevent inactive users and users with unusable passwords from
-        resetting their password.
-        """
+        resetting their password."""
         active_users = MyUser._default_manager.filter(
             email__iexact=email, is_active=True)
         return (u for u in active_users if u.has_usable_password())
@@ -164,10 +154,8 @@ class PasswordResetForm(forms.Form):
              from_email=settings.DEFAULT_HR_EMAIL, request=None,
              html_email_template_name='accounts/password_reset_email.html',
              extra_email_context=None):
-        """
-        Generates a one-use only link for resetting password and sends to the
-        user.
-        """
+        """Generates a one-use only link for resetting password and sends to the
+        user."""
         email = self.cleaned_data["email"].lower()
         for user in self.get_users(email):
             context = {
@@ -187,10 +175,8 @@ class PasswordResetForm(forms.Form):
 
 
 class PasswordResetTokenForm(forms.Form):
-    """
-    A form that lets a user change set their password without entering the old
-    password.
-    """
+    """ A form that lets a user change set their password without entering the
+    old password."""
     password_new = forms.CharField(
         label=_("New Password"),
         widget=forms.PasswordInput(render_value=False),
@@ -212,10 +198,8 @@ class PasswordResetTokenForm(forms.Form):
                         password2="password_new_confirm")
 
     def save(self, commit=True):
-        """
-        Saves the form and sets the user's password to be the value he/she
-        typed in.
-        """
+        """Saves the form and sets the user's password to be the value he/she
+        typed in."""
         user = self.user
         if user:
             user.set_password(self.cleaned_data["password_new_confirm"])

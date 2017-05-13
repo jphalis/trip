@@ -18,19 +18,15 @@ from core.models import TimeStampedModel
 
 
 def logo_upload_loc(instance, filename):
-    """
-    Stores the company logo in <company_name>/logos/filename.
-    """
+    """Stores the company logo in <company_name>/logos/filename."""
     return "{0}/logos/{1}".format(instance.name, filename)
 
 
 class MyUserManager(BaseUserManager):
     def _create_user(self, email, first_name, last_name, password,
                      is_staff, is_superuser, **extra_fields):
-        """
-        Creates and saves a User with the given email, first name, last name,
-        and password.
-        """
+        """Creates and saves a User with the given email, first name,
+        last name, and password."""
         now = timezone.now()
 
         if not email:
@@ -62,7 +58,7 @@ class MyUserManager(BaseUserManager):
                                  **extra_fields)
         cu = Customer.objects.create(user=user, account_balance=0)
         plan = Plan.objects.get(name='Admin')
-        sub = Subscription.objects.create(customer=cu, plan=plan)
+        Subscription.objects.create(customer=cu, plan=plan)
         return user
 
 
@@ -94,42 +90,31 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     @cached_property
     def full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
+        """Returns the first_name plus the last_name, with a space in
+        between."""
         return "{0} {1}".format(self.first_name, self.last_name)
 
     @cached_property
     def get_short_name(self):
-        """
-        Returns the first name for the user.
-        """
+        """Returns the first name for the user."""
         return str(self.first_name)
 
     def email_user(self, subject, message, from_email=None):
-        """
-        Sends an email to the user.
-        """
+        """Sends an email to the user."""
         send_mail(subject, message, from_email, [self.email])
 
     def has_module_perms(self, app_label):
-        """
-        Does the user have permissions to view the app `app_label`?
-        """
+        """Does the user have permissions to view the app `app_label`?"""
         return True
 
     def has_perm(self, perm, obj=None):
-        """
-        Does the user have a specific permission?
-        """
+        """Does the user have a specific permission?"""
         return True
 
 
 class SponsorManager(models.Manager):
     def active(self):
-        """
-        Returns all active sponsors.
-        """
+        """Returns all active sponsors."""
         return super(SponsorManager, self).get_queryset().filter(
             is_active=True)
 
@@ -160,17 +145,13 @@ class Sponsor(TimeStampedModel):
         return str(self.name)
 
     def get_absolute_url(self):
-        """
-        Returns the url for the user.
-        """
+        """Returns the url for the user."""
         return reverse_lazy('accounts:detail', kwargs={"sponsor_pk": self.pk})
 
     @property
     def company_logo(self):
-        """
-        Returns the logo of the user. If there is no logo,
-        a default one will be rendered.
-        """
+        """Returns the logo of the user. If there is no logo, a default one
+        will be rendered."""
         if self.logo:
             return "{0}{1}".format(settings.MEDIA_URL, self.logo)
         return settings.STATIC_URL + 'img/default-company-logo.jpg'

@@ -17,11 +17,11 @@ from .models import MyUser
 def detail(request, user_pk):
     user = get_object_or_404(MyUser, pk=user_pk)
     own_events = Event.objects.own(user=user)
-    context = {
+    ctx = {
         'own_events': own_events,
         'user': user,
     }
-    return render(request, 'accounts/detail.html', context)
+    return render(request, 'accounts/detail.html', ctx)
 
 
 @login_required
@@ -48,13 +48,13 @@ def account_settings(request):
         form.save()
         messages.success(request,
                          "You have successfully updated your profile.")
-    context = {
+    ctx = {
         'form': form,
         'customer': customer,
         'subscription': subscription,
         'user': user,
     }
-    return render(request, 'accounts/settings.html', context)
+    return render(request, 'accounts/settings.html', ctx)
 
 
 def memberships(request):

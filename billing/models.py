@@ -40,7 +40,7 @@ class Plan(TimeStampedModel):
     plan_id = models.SlugField(max_length=255, unique=True, null=True,
                                blank=True)
     name = models.CharField(max_length=150, help_text=HELP_TXT['name'])
-    description = models.TextField(blank=True)
+    description = models.TextField()
     amount = models.PositiveIntegerField(help_text=HELP_TXT['amount'])
     interval = models.CharField(max_length=5, default='year',
                                 help_text=HELP_TXT['interval'])
@@ -62,7 +62,7 @@ class Plan(TimeStampedModel):
         verbose_name_plural = _('plans')
 
     def __str__(self):
-        return u"{} ({}{})".format(self.name, self.amount, self.currency)
+        return u"{0} ({1}{2})".format(self.name, self.amount, self.currency)
 
     def display_amount(self):
         return '{} cents'.format(intcomma(self.amount))
@@ -134,48 +134,9 @@ class Subscription(TimeStampedModel):
 
 
 @python_2_unicode_compatible
-class Invoice(TimeStampedModel):
-    customer = models.ForeignKey(Customer, related_name="invoices",
-                                 on_delete=models.CASCADE)
-    invoice_id = models.SlugField(max_length=255, unique=True, null=True,
-                                  blank=True)
-    amount_due = models.DecimalField(decimal_places=2, max_digits=9)
-    attempted = models.NullBooleanField()
-    attempt_count = models.PositiveIntegerField(null=True)
-    charge = models.ForeignKey("Charge", null=True, related_name="invoices",
-                               on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, null=True,
-                                     on_delete=models.CASCADE)
-    statement_descriptor = models.TextField(blank=True)
-    currency = models.CharField(max_length=10, default="usd")
-    closed = models.BooleanField(default=False)
-    description = models.TextField(blank=True)
-    paid = models.BooleanField(default=False)
-    receipt_number = models.CharField(max_length=255, blank=True)
-    period_end = models.DateTimeField()
-    period_start = models.DateTimeField()
-    subtotal = models.DecimalField(decimal_places=2, max_digits=9)
-    total = models.DecimalField(decimal_places=2, max_digits=9)
-
-    class Meta:
-        app_label = 'billing'
-        verbose_name = _('invoice')
-        verbose_name_plural = _('invoices')
-
-    def __str__(self):
-        return str(self.customer)
-
-    @property
-    def status(self):
-        return _("Paid") if self.paid else _("Open")
-
-
-@python_2_unicode_compatible
 class Charge(models.Model):
     charge_id = models.SlugField(max_length=255, unique=True, null=True,
                                  blank=True)
-    invoice = models.ForeignKey(Invoice, null=True, related_name="charges",
-                                on_delete=models.CASCADE)
     currency = models.CharField(max_length=10, default="usd")
     amount = models.PositiveIntegerField(help_text=HELP_TXT['amount'],
                                          null=True)

@@ -45,11 +45,11 @@ def auth_login(request):
         else:
             messages.warning(request, 'Username or password is incorrect.')
             return redirect('authentication:auth_base_view')
-    context = {
+    ctx = {
         'login_form': login_form,
         'next': next_url,
     }
-    return render(request, 'auth/_login_form.html', context)
+    return render(request, 'auth/_login_form.html', ctx)
 
 
 @never_cache
@@ -171,8 +171,8 @@ def password_reset_confirm(request, uidb64=None, token=None,
         validlink = False
         form = None
         messages.error(request, "Password reset unsuccessful")
-    context = {
+    ctx = {
         'form': form,
         'validlink': validlink,
     }
-    return render(request, 'auth/password_set.html', context)
+    return render(request, 'auth/password_set.html', ctx)
