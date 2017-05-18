@@ -120,7 +120,7 @@ class StripeCreditCardForm(forms.Form):
         zip_code = cleaned_data.get('zip_code')
 
         if self.user:
-            name = self.user.full_name
+            name = self.user.get_full_name
             email = self.user.email
         else:
             name = '{0} {1}'.format(cleaned_data.get('first_name'),

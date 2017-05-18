@@ -89,7 +89,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         return u"{0} {1}".format(self.first_name, self.last_name)
 
     @cached_property
-    def full_name(self):
+    def get_full_name(self):
         """Returns the first_name plus the last_name, with a space in
         between."""
         return "{0} {1}".format(self.first_name, self.last_name)

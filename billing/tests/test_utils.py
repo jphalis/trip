@@ -33,7 +33,7 @@ class StripeUnitTest(TestCase):
             'address_city': 'Hoboken',
             'address_line1': '1 Castle Point Terrace',
             'address_zip': '07030',
-            'name': customer.user.full_name
+            'name': customer.user.get_full_name
         })
         return customer
 

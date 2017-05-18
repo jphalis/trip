@@ -69,7 +69,7 @@ class SponsorAdmin(admin.ModelAdmin):
             {'fields': ('created', 'modified',)}),
     )
     readonly_fields = ('created', 'modified',)
-    search_fields = ('name', 'website', 'name', 'affiliates__full_name',
+    search_fields = ('name', 'website', 'name', 'affiliates__get_full_name',
                      'affiliates__email',)
     actions = ('enable', 'disable',)
 
